@@ -5,16 +5,17 @@
  * Created on October 28, 2013, 3:17 PM
  */
 
-#include <cstdlib>
+#include "game/BaseGame.h"
 
 using namespace std;
 
 /*
  * 
  */
-int main(int argc, char** argv)
+int main()
 {
-
+    BaseGame game;
+    game.start();
     return 0;
 }
 
