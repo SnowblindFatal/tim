@@ -17,7 +17,7 @@ public:
     EditMode(const EditMode& orig) = delete;
     EditMode operator=(const EditMode& orig) = delete;
     virtual ~EditMode(){}
-    void run();
+    GameState::StateSelect run();
 private:
 
 };

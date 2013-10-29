@@ -6,12 +6,13 @@
  */
 
 #include "MainMenu.h"
-void MainMenu::run()
+#include "GameState.h"
+GameState::StateSelect MainMenu::run()
 {
     sf::Font coolFont;
     if (!coolFont.LoadFromFile("res/fonts/BLASTER.TTF"))
     {
-        return;
+        return GameState::StateSelect::Exit;
     }
     sf::String welcomeText("Eat shit and die", coolFont, 100);
     welcomeText.SetPosition((App.GetWidth() - welcomeText.GetRect().GetWidth()) / 2, (App.GetHeight() - welcomeText.GetRect().GetHeight()) / 2);
@@ -40,6 +41,7 @@ void MainMenu::run()
         // Update the window
         App.Display();
     }
+    return GameState::StateSelect::Exit;
 }
 
 void MainMenu::drawStuff()

@@ -16,7 +16,7 @@ public:
     MainMenu(const MainMenu& orig) = delete;
     MainMenu operator=(const MainMenu& orig) = delete;
     virtual ~MainMenu(){}
-    void run();
+    GameState::StateSelect run();
 private:
     void handleKeyPress(sf::Event event);
     void drawStuff();

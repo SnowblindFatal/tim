@@ -17,26 +17,33 @@ void BaseGame::start()
 {
     initialise();
     
-    GameState *currentState, *nextState;
     
     MainMenu menu(App);
     EditMode edit(App);
     PlayMode play(App);
-    nextState = &menu;
+    GameState::StateSelect stateSelector = GameState::StateSelect::Menu;
     
-    while (nextState != NULL)
+    while (stateSelector != GameState::StateSelect::Exit)
     {
-        currentState = nextState;
-        nextState = NULL;
-        currentState->run();
-        //TODO: the run method returns an enum value which determines which mode will be picked next.
+        if (stateSelector == GameState::StateSelect::Play)
+        {
+            stateSelector = play.run();
+        }
+        else if (stateSelector == GameState::StateSelect::Edit)
+        {
+            stateSelector = edit.run();
+        }
+        else if (stateSelector == GameState::StateSelect::Menu)
+        {
+            stateSelector = menu.run();
+        }
     }
     
 }
 
 void BaseGame::initialise()
 {
-    App.Create(sf::VideoMode(800, 600, 32), "SFML Window");
+    App.Create(sf::VideoMode(800, 600, 32), "The Incredibly Violent Machine");
     App.SetFramerateLimit(60); // Limit to 60 frames per second
     App.UseVerticalSync(true);
     

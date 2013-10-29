@@ -6,8 +6,9 @@
  */
 
 #include "EditMode.h"
+#include "GameState.h"
 
-void EditMode::run()
+GameState::StateSelect EditMode::run()
 {
-    
+    return GameState::StateSelect::Menu;
 }

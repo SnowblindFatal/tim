@@ -6,8 +6,9 @@
  */
 
 #include "PlayMode.h"
-void PlayMode::run()
+#include "GameState.h"
+GameState::StateSelect PlayMode::run()
 {
-    
+    return GameState::StateSelect::Menu;
 }
 

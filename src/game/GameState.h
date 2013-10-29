@@ -12,9 +12,18 @@
 
 class GameState {
 public:
+    enum StateSelect
+    {
+        Play,
+        Menu,
+        Edit,
+        Exit,
+    };
+    
     explicit GameState(sf::RenderWindow& _window) : App(_window) {}
     virtual ~GameState(){}
-    virtual void run() = 0;
+    virtual StateSelect run() = 0;
+    
 protected:
     sf::RenderWindow& App;
 

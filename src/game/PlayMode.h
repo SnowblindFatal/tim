@@ -17,7 +17,7 @@ public:
     PlayMode(const PlayMode& orig) = delete;
     PlayMode operator=(const PlayMode& orig) = delete;
     virtual ~PlayMode(){}
-    void run();
+    GameState::StateSelect run();
 private:
 
 };
