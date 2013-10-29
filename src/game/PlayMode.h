@@ -13,12 +13,14 @@
 
 class PlayMode : public PlayingField {
 public:
-    PlayMode(sf::RenderWindow& window) : PlayingField(window){}
+    PlayMode(sf::RenderWindow& _App, Resources& res, Settings& set) : PlayingField(_App, res, set){}
     PlayMode(const PlayMode& orig) = delete;
     PlayMode operator=(const PlayMode& orig) = delete;
     virtual ~PlayMode(){}
     GameState::StateSelect run();
 private:
+    void drawStuff();
+    void handleKeyPress(sf::Event event);
 
 };
 

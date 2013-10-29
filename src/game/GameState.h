@@ -9,6 +9,8 @@
 #define	GAMESTATE_H
 
 #include <SFML/Graphics.hpp>
+#include "../general/Resources.h"
+#include "../general/Settings.h"
 
 class GameState {
 public:
@@ -20,12 +22,17 @@ public:
         Exit,
     };
     
-    explicit GameState(sf::RenderWindow& _window) : App(_window) {}
+    explicit GameState(sf::RenderWindow& _App, Resources& res, Settings& set) : App(_App), resources(res), settings(set) {}
     virtual ~GameState(){}
     virtual StateSelect run() = 0;
     
 protected:
     sf::RenderWindow& App;
+    Resources& resources;
+    Settings& settings;
+    bool done;
+    GameState::StateSelect retval = GameState::StateSelect::Exit;
+    
 
 };
 

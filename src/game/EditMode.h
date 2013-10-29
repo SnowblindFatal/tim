@@ -13,12 +13,14 @@
 
 class EditMode : public PlayingField {
 public:
-    EditMode(sf::RenderWindow& window) : PlayingField(window){}
+    EditMode(sf::RenderWindow& _App, Resources& res, Settings& set) : PlayingField(_App, res, set){}
     EditMode(const EditMode& orig) = delete;
     EditMode operator=(const EditMode& orig) = delete;
     virtual ~EditMode(){}
     GameState::StateSelect run();
 private:
+    void drawStuff();
+    void handleKeyPress(sf::Event event);
 
 };
 

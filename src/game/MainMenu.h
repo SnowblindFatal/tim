@@ -12,7 +12,12 @@
 
 class MainMenu : public GameState {
 public:
-    explicit MainMenu(sf::RenderWindow& window) : GameState(window){}
+private:
+            
+    
+    
+public:
+    explicit MainMenu(sf::RenderWindow& _App, Resources& res, Settings& set) : GameState(_App, res, set){}
     MainMenu(const MainMenu& orig) = delete;
     MainMenu operator=(const MainMenu& orig) = delete;
     virtual ~MainMenu(){}

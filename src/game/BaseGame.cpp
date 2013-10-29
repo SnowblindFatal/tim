@@ -8,7 +8,6 @@
 #include "BaseGame.h"
 #include <SFML/Graphics.hpp>
 #include <list>
-#include "GameState.h"
 #include "MainMenu.h"
 #include "EditMode.h"
 #include "PlayMode.h"
@@ -17,25 +16,30 @@ void BaseGame::start()
 {
     initialise();
     
+    Settings settings("cfg/config.txt");
+    Resources resources("res/");
     
-    MainMenu menu(App);
-    EditMode edit(App);
-    PlayMode play(App);
-    GameState::StateSelect stateSelector = GameState::StateSelect::Menu;
+    MainMenu menu(App, resources, settings);
+    EditMode edit(App, resources, settings);
+    PlayMode play(App, resources, settings);
     
-    while (stateSelector != GameState::StateSelect::Exit)
+    
+    
+    GameState::StateSelect nextState = GameState::StateSelect::Menu;
+    
+    while (nextState != GameState::StateSelect::Exit)
     {
-        if (stateSelector == GameState::StateSelect::Play)
+        if (nextState == GameState::StateSelect::Play)
         {
-            stateSelector = play.run();
+            nextState = play.run();
         }
-        else if (stateSelector == GameState::StateSelect::Edit)
+        else if (nextState == GameState::StateSelect::Edit)
         {
-            stateSelector = edit.run();
+            nextState = edit.run();
         }
-        else if (stateSelector == GameState::StateSelect::Menu)
+        else if (nextState == GameState::StateSelect::Menu)
         {
-            stateSelector = menu.run();
+            nextState = menu.run();
         }
     }
     
@@ -46,9 +50,6 @@ void BaseGame::initialise()
     App.Create(sf::VideoMode(800, 600, 32), "The Incredibly Violent Machine");
     App.SetFramerateLimit(60); // Limit to 60 frames per second
     App.UseVerticalSync(true);
-    
-    //TODO: load settings from config file
-    //TODO: load resources into a resource object
 }
 
 

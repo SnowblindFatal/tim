@@ -9,12 +9,16 @@
 
 #ifndef RESOURCES_H
 #define	RESOURCES_H
+
+#include <string>
+
 //All resources, such as graphics and sounds will be loaded into this class at startup.
 class Resources {
 public:
-    Resources();
-    Resources(const Resources& orig);
-    virtual ~Resources();
+    Resources(std::string path);
+    Resources(const Resources& orig) = delete;
+    Resources& operator=(const Resources& orig) = delete;
+    ~Resources(){}
 private:
 
 };

@@ -10,12 +10,7 @@
 
 #include <SFML/Graphics.hpp>
 
-class BaseGame {
-public:
-private:
-    sf::RenderWindow App;
-    
-    
+class BaseGame {    
 public:
     explicit BaseGame(){}
     BaseGame(const BaseGame& orig) = delete;
@@ -24,6 +19,7 @@ public:
 private:
     void initialise();
 
+    sf::RenderWindow App;
 };
 
 #endif	/* BASEGAME_H */

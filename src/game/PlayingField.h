@@ -14,7 +14,7 @@
 
 class PlayingField : public GameState {
 public:
-    PlayingField(sf::RenderWindow& window) : GameState(window){}
+    PlayingField(sf::RenderWindow& _App, Resources& res, Settings& set) : GameState(_App, res, set){}
     virtual ~PlayingField(){}
 private:
 

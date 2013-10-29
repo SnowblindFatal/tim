@@ -3,7 +3,7 @@ SFML=/usr
 CC=g++
 CFLAGS=-c -g -std=c++0x -Wall -Wextra -pedantic -I $(SFML)/include
 LDFLAGS=-lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -L $(SFML)/lib -Wl,-rpath=$(SFML)/lib -Wl,-rpath-link=$(SFML)/lib
-SOURCES=src/main.cpp src/game/BaseGame.cpp src/game/EditMode.cpp src/game/PlayMode.cpp src/game/GameState.cpp src/game/MainMenu.cpp src/game/PlayingField.cpp
+SOURCES=src/main.cpp src/game/BaseGame.cpp src/game/EditMode.cpp src/game/PlayMode.cpp src/game/GameState.cpp src/game/MainMenu.cpp src/game/PlayingField.cpp src/general/Resources.cpp src/general/Settings.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=machine
 
