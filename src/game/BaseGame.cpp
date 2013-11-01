@@ -7,6 +7,7 @@
 
 #include "BaseGame.h"
 #include <SFML/Graphics.hpp>
+#include <Box2D/Box2D.h>
 #include <list>
 #include "MainMenu.h"
 #include "EditMode.h"
@@ -47,9 +48,8 @@ void BaseGame::start()
 
 void BaseGame::initialise()
 {
-    App.Create(sf::VideoMode(800, 600, 32), "The Incredibly Violent Machine");
-    App.SetFramerateLimit(60); // Limit to 60 frames per second
-    App.UseVerticalSync(true);
+    App.create(sf::VideoMode(800, 600, 32), "The Incredibly Violent Machine");
+    App.setFramerateLimit(60); // Limit to 60 frames per second
 }
 
 

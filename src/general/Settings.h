@@ -17,6 +17,10 @@ public:
     Settings operator=(const Settings& orig) = delete;
     ~Settings(){}
     
+    unsigned int b2_to_sfml; // a conversion ratio, you have to multiply b2 coordinates
+    			     // by this amount to get pixel coordinates
+    
+    
 private:
 
 };

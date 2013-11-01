@@ -10,7 +10,7 @@
 Settings::Settings(std::string filePath)
 {
     filePath.size(); //suppress warnings. :)
-    
+    this->b2_to_sfml = 10;
     //!!TODO: 
     //Load config data from a file.
     //TODO: figure out how to implement getters nicely.
