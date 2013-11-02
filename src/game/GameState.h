@@ -11,6 +11,7 @@
 #include <SFML/Graphics.hpp>
 #include "../general/Resources.h"
 #include "../general/Settings.h"
+#include "Level.h"
 
 class GameState {
 public:
@@ -26,6 +27,7 @@ public:
     virtual ~GameState(){}
     virtual StateSelect run() = 0;
     
+    friend class LevelData;
 protected:
     sf::RenderWindow& App;
     Resources& resources;

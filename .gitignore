@@ -1,3 +1,5 @@
 machine
 nbproject
 *.o
+OSX_*
+*.DS_Store
