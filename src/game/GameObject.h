@@ -17,6 +17,7 @@ public:
 	virtual void update_sprite() {
 		b2Vec2 position = body_ptr->GetPosition();
         float32 angle = body_ptr->GetAngle();
+        sprite_ptr->setOrigin(sprite_ptr->getSize().x/2, sprite_ptr->getSize().y/2);
 		sprite_ptr->setPosition(sf::Vector2f(position.x * 10, position.y * 10));
         sprite_ptr->setRotation(angle);
         //std::cout << name << ":  " << position.x << " " << position.y << std::endl;;

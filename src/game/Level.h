@@ -6,6 +6,7 @@
 #include "GameObject.h"
 #include <Box2D/Box2D.h>
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 
 namespace {
     b2Vec2 default_gravity(0.0f, 9.8f);
@@ -14,10 +15,38 @@ namespace {
     int32 positionIterations = 2;
 }
 
+//Copyright: Allen Jordan, Xabier Koetxea, under GNU licence.
+class DebugDraw : public b2Draw
+{
+public:
+    DebugDraw(sf::RenderWindow &window);
+    virtual ~DebugDraw();
+    
+    void DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color);
+    void DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color);
+    void DrawCircle(const b2Vec2& center, float32 radius, const b2Color& color);
+    void DrawSolidCircle(const b2Vec2& center, float32 radius, const b2Vec2& axis, const b2Color& color);
+    void DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color);
+    void DrawTransform(const b2Transform& xf);
+    void DrawPoint(const b2Vec2& p, float32 size, const b2Color& color);
+    void DrawString(int x, int y, const char* string);
+    void DrawAABB(b2AABB* aabb, const b2Color& color);
+    sf::Color B2SFColor(const b2Color &color, int alpha);
+    void DrawMouseJoint(b2Vec2& p1, b2Vec2& p2, const b2Color &boxColor, const b2Color &lineColor);
+    
+private:
+    sf::RenderWindow *window;
+    size_t RATIO = 10;
+};
+
+
 class LevelData
 {
 public:
-	LevelData() : phys_world(default_gravity), level_loaded(false) {}
+	LevelData(sf::RenderWindow& _App) : phys_world(default_gravity), level_loaded(false), App(_App), DebugDrawInstance(_App) {
+        phys_world.SetDebugDraw(&DebugDrawInstance);
+        DebugDrawInstance.SetFlags(b2Draw::e_shapeBit);
+    }
     ~LevelData() {
         for (auto &iter : levelobjects) {
             delete iter;
@@ -42,6 +71,7 @@ public:
         sf::RectangleShape statblock_sprite;
         sf::Vector2f statspritesize(100.0f, 30.0f);
         statblock_sprite.setSize(statspritesize);
+        //statblock_sprite.setOrigin(100.0f/2, 30.0f/2);
         statblock_sprite.setFillColor(sf::Color::White);
         
         
@@ -59,8 +89,9 @@ public:
         dynblock->CreateFixture(&fixtureDef);
         //SFML:
         sf::RectangleShape dynblock_sprite;
-        sf::Vector2f dynspritesize(40.0f, 40.0f);
+        sf::Vector2f dynspritesize(10.0f, 10.0f);
         dynblock_sprite.setSize(dynspritesize);
+        //dynblock_sprite.setOrigin(10.0f/2, 10.0f/2);
         dynblock_sprite.setFillColor(sf::Color::Red);
         
         
@@ -76,19 +107,21 @@ public:
 	}
     
     
-	void draw(sf::RenderWindow& win) {
+	void draw(bool debug=false) {
+        if (debug)
+            phys_world.DrawDebugData();
+            
+            
         for (auto &iter : levelobjects) {
             iter->update_sprite();
-            win.draw(*(iter->sprite_ptr));
+            App.draw(*(iter->sprite_ptr));
         }
     }
-	
     
     //One Box2D step:
 	void simulate() {
         phys_world.Step(timestep, velocityIterations, positionIterations);
     }
-    
     
 	bool loaded(void) const {
         return level_loaded;
@@ -96,7 +129,8 @@ public:
 private:
 	
 	b2World phys_world;
-    
+    DebugDraw DebugDrawInstance;
+    sf::RenderWindow& App;
     
     bool level_loaded;
 	std::list<sf::RectangleShape> sprites;      //Just for the demo

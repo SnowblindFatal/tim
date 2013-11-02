@@ -14,17 +14,19 @@
 
 class PlayMode : public PlayingField {
 public:
-    PlayMode(sf::RenderWindow& _App, Resources& res, Settings& set) : PlayingField(_App, res, set), simulate(false) {}
+    PlayMode(sf::RenderWindow& _App, Resources& res, Settings& set) : PlayingField(_App, res, set), simulate(false), level(_App), drawDebug(false) {}
     PlayMode(const PlayMode& orig) = delete;
     PlayMode operator=(const PlayMode& orig) = delete;
     virtual ~PlayMode(){}
     GameState::StateSelect run();
     void set_simulate(); // Runs the Box2D Simulator for a few steps.
+    void set_drawdebug(); // Draws the debug info.
 private:
     bool simulate;
     void drawStuff();
     void handleKeyPress(sf::Event event);
     LevelData level;
+    bool drawDebug;
 
 };
 

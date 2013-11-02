@@ -27,7 +27,10 @@ GameState::StateSelect PlayMode::run()
             else if (event.type == sf::Event::KeyPressed)
             {
                 if (event.key.code == sf::Keyboard::S) {
-                    PlayMode::set_simulate();
+                    set_simulate();
+                }
+                if (event.key.code == sf::Keyboard::D) {
+                    set_drawdebug();
                 }
                 else handleKeyPress(event);
             }
@@ -36,7 +39,7 @@ GameState::StateSelect PlayMode::run()
         App.clear();
         if (simulate)
             level.simulate();
-        level.draw(App); //do the actual drawing here!
+        level.draw(drawDebug);
         App.display();
     }
     return retval;
@@ -44,6 +47,9 @@ GameState::StateSelect PlayMode::run()
 
 void PlayMode::set_simulate() {
     simulate=simulate?0:1;
+}
+void PlayMode::set_drawdebug() {
+    drawDebug=drawDebug?0:1;
 }
 
 void PlayMode::handleKeyPress(sf::Event event)
