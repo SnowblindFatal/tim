@@ -7,11 +7,14 @@
 
 #include "Settings.h"
 #include <string>
-Settings::Settings(std::string filePath)
+void TIMSettings::loadSettings(std::string filePath)
 {
     filePath.size(); //suppress warnings. :)
-    this->b2_to_sfml = 10;
-    //!!TODO: 
+    
+    
+    
+    
+    //!!TODO:
     //Load config data from a file.
     //TODO: figure out how to implement getters nicely.
     //Would be nice if the usage was just: 

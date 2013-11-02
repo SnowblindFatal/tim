@@ -7,13 +7,14 @@
 
 #ifndef EDITMODE_H
 #define	EDITMODE_H
+#include "Settings.h"
 
 #include "PlayingField.h"
 
 
 class EditMode : public PlayingField {
 public:
-    EditMode(sf::RenderWindow& _App, Resources& res, Settings& set) : PlayingField(_App, res, set){}
+    EditMode(sf::RenderWindow& _App, Resources& res) : PlayingField(_App, res){}
     EditMode(const EditMode& orig) = delete;
     EditMode operator=(const EditMode& orig) = delete;
     virtual ~EditMode(){}

@@ -12,17 +12,18 @@
 #include "MainMenu.h"
 #include "EditMode.h"
 #include "PlayMode.h"
+#include "Settings.h"
 
 void BaseGame::start()
 {
     initialise();
     
-    Settings settings("cfg/config.txt");
+    TIMSettings::loadSettings("cfg/config.txt");
     Resources resources("res/");
     
-    MainMenu menu(App, resources, settings);
-    EditMode edit(App, resources, settings);
-    PlayMode play(App, resources, settings);
+    MainMenu menu(App, resources);
+    EditMode edit(App, resources);
+    PlayMode play(App, resources);
     
     
     

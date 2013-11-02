@@ -23,7 +23,7 @@ public:
         Exit
     };
     
-    explicit GameState(sf::RenderWindow& _App, Resources& res, Settings& set) : App(_App), resources(res), settings(set), retval(GameState::StateSelect::Exit) {}
+    explicit GameState(sf::RenderWindow& _App, Resources& res) : App(_App), resources(res), retval(GameState::StateSelect::Exit) {}
     virtual ~GameState(){}
     virtual StateSelect run() = 0;
     
@@ -31,7 +31,6 @@ public:
 protected:
     sf::RenderWindow& App;
     Resources& resources;
-    Settings& settings;
     bool done;
     GameState::StateSelect retval;
     

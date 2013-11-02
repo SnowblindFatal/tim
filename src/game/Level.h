@@ -3,6 +3,7 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 #include <list>
+#include <utility>
 #include "GameObject.h"
 #include <Box2D/Box2D.h>
 #include <SFML/Graphics.hpp>
@@ -59,17 +60,18 @@ public:
         
         
         //A static block:
+        std::pair<float,float> statsize(10.0f, 3.0f);
         
         //B2D:
         b2BodyDef blockbodydef;
         blockbodydef.position.Set(12.0f, 40.0f);
         b2Body* statblock = phys_world.CreateBody(&blockbodydef);
         b2PolygonShape blockbox;
-        blockbox.SetAsBox(10.0f, 3.0f);
+        blockbox.SetAsBox(statsize.first, statsize.second);
         statblock->CreateFixture(&blockbox, 0.0f);
         //SFML:
         sf::RectangleShape statblock_sprite;
-        sf::Vector2f statspritesize(100.0f, 30.0f);
+        sf::Vector2f statspritesize(statsize.first * 20, statsize.second * 20);
         statblock_sprite.setSize(statspritesize);
         //statblock_sprite.setOrigin(100.0f/2, 30.0f/2);
         statblock_sprite.setFillColor(sf::Color::White);
@@ -78,7 +80,7 @@ public:
         //A moving block:
         b2BodyDef bodyDef;
         bodyDef.type = b2_dynamicBody;
-        bodyDef.position.Set(12.0f, 20.0f);
+        bodyDef.position.Set(22.5f, 20.0f);
         b2Body* dynblock = phys_world.CreateBody(&bodyDef);
         b2PolygonShape dynblockbox;
         dynblockbox.SetAsBox(1.0f, 1.0f);
@@ -89,7 +91,7 @@ public:
         dynblock->CreateFixture(&fixtureDef);
         //SFML:
         sf::RectangleShape dynblock_sprite;
-        sf::Vector2f dynspritesize(10.0f, 10.0f);
+        sf::Vector2f dynspritesize(20.0f, 20.0f); //Here, the Box2D size is half of the box2D side size.
         dynblock_sprite.setSize(dynspritesize);
         //dynblock_sprite.setOrigin(10.0f/2, 10.0f/2);
         dynblock_sprite.setFillColor(sf::Color::Red);

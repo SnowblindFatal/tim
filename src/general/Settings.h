@@ -9,21 +9,32 @@
 #define	SETTINGS_H
 
 #include <string>
+#include <cstddef>
+/*
+This implementation seems to me the most logical.
+For each parameter you need in code, just use: TIMSettings::parameter
+Each file should probably include this.
 
-class Settings {
-public:
-    Settings(std::string filePath);
-    Settings(const Settings& orig) = delete;
-    Settings operator=(const Settings& orig) = delete;
-    ~Settings(){}
-    
-    unsigned int b2_to_sfml; // a conversion ratio, you have to multiply b2 coordinates
-    			     // by this amount to get pixel coordinates
-    
-    
-private:
+Currently, however, for some reason this does not work!
+*/
 
-};
+
+namespace TIMSettings {
+    /*
+     Pixels per meter.
+     Multiply b2 units by this to get SFML pixels.
+     */
+    //size_t PixelsPerMeter;
+
+    
+    
+
+
+    //loadSettings from a file:
+    void loadSettings(std::string filename);
+
+    
+}
 
 #endif	/* SETTINGS_H */
 

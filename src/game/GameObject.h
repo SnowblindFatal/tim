@@ -19,7 +19,7 @@ public:
         float32 angle = body_ptr->GetAngle();
         sprite_ptr->setOrigin(sprite_ptr->getSize().x/2, sprite_ptr->getSize().y/2);
 		sprite_ptr->setPosition(sf::Vector2f(position.x * 10, position.y * 10));
-        sprite_ptr->setRotation(angle);
+        sprite_ptr->setRotation(angle*180/3.141);
         //std::cout << name << ":  " << position.x << " " << position.y << std::endl;;
 	}
 	sf::RectangleShape* sprite_ptr; //for the demo
