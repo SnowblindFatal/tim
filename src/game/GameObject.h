@@ -4,9 +4,9 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 #include <string>
-#include "settings.h"
+#include "../general/Settings.h"
 #include <Box2D/Box2D.h>
-#include <SFML/graphics.hpp>
+#include <SFML/Graphics.hpp>
 #include <iostream>
 
 class GameObject

@@ -7,7 +7,7 @@
 
 #ifndef EDITMODE_H
 #define	EDITMODE_H
-#include "Settings.h"
+#include "../general/Settings.h"
 
 #include "PlayingField.h"
 

@@ -9,6 +9,7 @@
 #define	BASEGAME_H
 
 #include <SFML/Graphics.hpp>
+#include "DebugDraw.h"
 
 class BaseGame {    
 public:

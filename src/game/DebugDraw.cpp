@@ -1,5 +1,5 @@
-#include "Level.h"
-DebugDraw::DebugDraw(sf::RenderWindow &window)
+#include "DebugDraw.h"
+DebugDraw::DebugDraw(sf::RenderWindow &window) : RATIO(10)
 {
     this->window = &window;
 }

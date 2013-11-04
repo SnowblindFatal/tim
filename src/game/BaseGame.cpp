@@ -12,7 +12,7 @@
 #include "MainMenu.h"
 #include "EditMode.h"
 #include "PlayMode.h"
-#include "Settings.h"
+#include "../general/Settings.h"
 
 void BaseGame::start()
 {
