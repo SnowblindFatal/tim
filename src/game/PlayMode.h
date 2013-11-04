@@ -14,19 +14,21 @@
 
 class PlayMode : public PlayingField {
 public:
-    PlayMode(sf::RenderWindow& _App, Resources& res) : PlayingField(_App, res), simulate(false), level(_App), drawDebug(false) {}
+    PlayMode(sf::RenderWindow& _App, Resources& res) : PlayingField(_App, res), simulate(false), level(_App), drawDebug(false), drawLevel(true) {}
     PlayMode(const PlayMode& orig) = delete;
     PlayMode operator=(const PlayMode& orig) = delete;
     virtual ~PlayMode(){}
     GameState::StateSelect run();
-    void set_simulate(); // Runs the Box2D Simulator for a few steps.
-    void set_drawdebug(); // Draws the debug info.
+    void set_simulate(); // Sets the Box2D Simulation on/off.
+    void set_drawdebug(); // Sets the Box2D Debug drawing on/off.
+    void set_drawlevel(); // Sets level object drawing on/off. 
 private:
     bool simulate;
     void drawStuff();
     void handleKeyPress(sf::Event event);
     LevelData level;
     bool drawDebug;
+    bool drawLevel;
 
 };
 

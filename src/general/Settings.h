@@ -19,12 +19,12 @@ Currently, however, for some reason this does not work!
 */
 
 
-namespace TIMSettings {
+namespace Settings {
     /*
      Pixels per meter.
      Multiply b2 units by this to get SFML pixels.
      */
-    //size_t PixelsPerMeter;
+    //size_t PPM=10;
 
     
     

@@ -7,10 +7,9 @@
 
 #include "Settings.h"
 #include <string>
-void TIMSettings::loadSettings(std::string filePath)
+void Settings::loadSettings(std::string filePath)
 {
     filePath.size(); //suppress warnings. :)
-    
     
     
     

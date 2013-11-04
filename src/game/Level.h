@@ -34,9 +34,6 @@ public:
     }
     void loadlevel() {
       //Load a demo level:
-      //NOTE: The sprites and bodies do not match yet.
-      
-      
       
       //A static block:
       std::pair<float,float> statsize(10.0f, 3.0f);
@@ -50,9 +47,8 @@ public:
       statblock->CreateFixture(&blockbox, 0.0f);
       //SFML:
       sf::RectangleShape statblock_sprite;
-      sf::Vector2f statspritesize(statsize.first * 20, statsize.second * 20);
+      sf::Vector2f statspritesize(statsize.first * 2 * 10, statsize.second * 2 * 10);
       statblock_sprite.setSize(statspritesize);
-      //statblock_sprite.setOrigin(100.0f/2, 30.0f/2);
       statblock_sprite.setFillColor(sf::Color::White);
       
       
@@ -70,9 +66,8 @@ public:
       dynblock->CreateFixture(&fixtureDef);
       //SFML:
       sf::RectangleShape dynblock_sprite;
-      sf::Vector2f dynspritesize(20.0f, 20.0f); //Here, the Box2D size is half of the box2D side size.
+      sf::Vector2f dynspritesize(2.0f * 10, 2.0f * 10); //Here, the Box2D size is half of the box2D side size.
       dynblock_sprite.setSize(dynspritesize);
-      //dynblock_sprite.setOrigin(10.0f/2, 10.0f/2);
       dynblock_sprite.setFillColor(sf::Color::Red);
       
       
@@ -88,14 +83,15 @@ public:
     }
     
     
-    void draw(bool debug=false) {
+    void draw(bool debug=false, bool drawsfml=true) {
       if (debug)
 	phys_world.DrawDebugData();
       
-      
-      for (auto &iter : levelobjects) {
-	iter->update_sprite();
-	App.draw(*(iter->sprite_ptr));
+      if (drawsfml) {
+      	for (auto &iter : levelobjects) {
+		iter->update_sprite();
+		App.draw(*(iter->sprite_ptr));
+      	}
       }
     }
     

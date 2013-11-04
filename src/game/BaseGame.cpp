@@ -18,7 +18,7 @@ void BaseGame::start()
 {
     initialise();
     
-    TIMSettings::loadSettings("cfg/config.txt");
+    Settings::loadSettings("cfg/config.txt");
     Resources resources("res/");
     
     MainMenu menu(App, resources);
