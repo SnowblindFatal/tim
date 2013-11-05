@@ -1,0 +1,19 @@
+SFML=$(CURDIR)/SFML-32
+B2D=$(CURDIR)/B2D32
+CC=g++
+CFLAGS=-c -g -std=c++0x -Wall -Wextra -pedantic -I $(SFML)/include -I $(B2D)
+LDFLAGS=-lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lBox2D -L $(SFML)/lib -Wl,-rpath=$(SFML)/lib -Wl,-rpath-link=$(SFML)/lib -L $(B2D)/Box2D
+SOURCES=src/main.cpp src/game/BaseGame.cpp src/game/EditMode.cpp src/game/PlayMode.cpp src/game/GameState.cpp src/game/MainMenu.cpp src/game/PlayingField.cpp src/game/DebugDraw.cpp src/general/Resources.cpp src/general/Settings.cpp
+OBJECTS=$(SOURCES:.cpp=.o)
+EXECUTABLE=machine
+
+all: $(SOURCES) $(EXECUTABLE)
+  
+$(EXECUTABLE): $(OBJECTS) 
+	$(CC) $(OBJECTS) $(LDFLAGS) -o $@ 
+
+.cpp.o:
+	$(CC) $(CFLAGS) $< -o $@
+
+clean:
+	rm -f $(OBJECTS) $(EXECUTABLE)
