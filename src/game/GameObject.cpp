@@ -5,9 +5,9 @@
 
 
 void HorizontalBlock::update_drawable() {
-	drawable.update(body_ptr->GetPosition().x, body_ptr->GetPosition().y, body_ptr->GetAngle());
+	drawable.update(body_ptr);
 }
 
 void DroppingSquare::update_drawable() {
-	drawable.update(body_ptr->GetPosition().x, body_ptr->GetPosition().y, body_ptr->GetAngle());
+	drawable.update(body_ptr);
 }

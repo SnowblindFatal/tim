@@ -38,6 +38,8 @@ public:
 		levelobjects.push_back(new DroppingSquare(phys_world,22.5f,20.0f));
 		levelobjects.push_back(new DroppingSquare(phys_world,23.0f,18.0f));
 		levelobjects.push_back(new DroppingSquare(phys_world,10.0f,20.0f,3.0f));
+		levelobjects.push_back(new ExampleSquare(phys_world,15.0f,20.0f));
+		
 		level_loaded = true;
     }
     

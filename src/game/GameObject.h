@@ -8,6 +8,8 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+
+//A Base type, that also defines the interface for drawing.
 class GameObject
 {
 
@@ -16,16 +18,18 @@ public:
 	virtual ~GameObject() {};
     virtual void update_drawable() {};
     virtual void draw(sf::RenderWindow&) const {};
-    
+protected:
+	b2Body* body_ptr;
 };	
 
-
+//An abstract base type, defines the interface.
 class Drawable
 {
 public:
 	Drawable() {};
 	virtual ~Drawable() {};
-	virtual void draw(sf::RenderWindow&) const {};
+	virtual void draw(sf::RenderWindow&) const =0;
+	virtual void update(b2Body*) =0;
 };
 
 
@@ -38,6 +42,7 @@ public:
 
 class HorizontalBlockDrawable : public Drawable
 {
+
 public:
 	HorizontalBlockDrawable(float x, float y, float length, float angle) {
 		
@@ -49,8 +54,11 @@ public:
 		sprite.setOrigin(sprite.getSize().x/2, sprite.getSize().y/2);
 	}
 	~HorizontalBlockDrawable() {};
-
-	void update(float x, float y, float angle) {
+	
+	void update(b2Body* body_ptr) {
+		float x = body_ptr->GetPosition().x;
+		float y = body_ptr->GetPosition().y; 
+		float angle = body_ptr->GetAngle();
 		sprite.setPosition(x*10,y*10);
 		sprite.setRotation(180.0f*angle/3.14159f);
 		sprite.setOrigin(sprite.getSize().x/2, sprite.getSize().y/2);
@@ -85,7 +93,6 @@ public:
 
 private:
 	HorizontalBlockDrawable drawable;
-	b2Body* body_ptr;
 };	
 
 
@@ -106,7 +113,10 @@ public:
 		sprite.setOrigin(sprite.getSize().x/2, sprite.getSize().y/2);
 	}
 	
-	void update(float x, float y, float angle) {
+	void update(b2Body* body_ptr) {
+		float x = body_ptr->GetPosition().x;
+		float y = body_ptr->GetPosition().y; 
+		float angle = body_ptr->GetAngle();
 		sprite.setPosition(x*10,y*10);
 		sprite.setRotation(180.0f*angle/3.14159f);
 		sprite.setOrigin(sprite.getSize().x/2, sprite.getSize().y/2);
@@ -148,8 +158,33 @@ public:
 
 private:
 	DroppingSquareDrawable drawable;
-	b2Body* body_ptr;
 };
+
+/*
+Now drawing is separated from everything else.
+ExampleSquare: DroppingSquare without the drawing.
+You can still see it in the with the debug draw (press D).
+*/
+
+class ExampleSquare : public GameObject
+{
+public:
+	ExampleSquare(b2World& world, float x, float y, float length=1.0f) : GameObject() {
+		b2BodyDef bodyDef;
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.position.Set(x, y);
+		body_ptr = world.CreateBody(&bodyDef);
+		b2PolygonShape dynblockbox;
+		dynblockbox.SetAsBox(length, length);
+		b2FixtureDef fixtureDef;
+		fixtureDef.shape = &dynblockbox;
+		fixtureDef.density = 1.0f;
+		fixtureDef.friction = 0.3f;
+		body_ptr->CreateFixture(&fixtureDef);
+	}
+	~ExampleSquare() {};
+};
+	
 
 
 
