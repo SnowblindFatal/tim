@@ -185,8 +185,45 @@ public:
 	~ExampleSquare() {};
 };
 	
+class Ball : public GameObject
+{
+	public:
+		Ball(b2World& world, float x, float y, float r) : GameObject() {
+			b2BodyDef bodyDef;
+			bodyDef.type = b2_dynamicBody;
+			bodyDef.position.Set(x, y);
+			body_ptr = world.CreateBody(&bodyDef);	
+			b2CircleShape circleShape;
+  			circleShape.m_p.Set(0, 0);
+  			circleShape.m_radius = r;
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &circleShape;
+			fixtureDef.density = 1.0f;
+			fixtureDef.friction = 0.3f;
+			body_ptr->CreateFixture(&fixtureDef);
+		}
+};
 
+class InclinedPlatform : public GameObject
+{
+	public:
+		InclinedPlatform(b2World& world, float x, float y, float width, float heigth) : GameObject() {
+			b2BodyDef bodyDef;
+			bodyDef.position.Set(x, y);
+			body_ptr = world.CreateBody(&bodyDef);
+			b2Vec2 vertices[4];
+			vertices[0].Set(0, 0);
+			vertices[1].Set(0, 2);
+			vertices[2].Set(width, heigth);
+			vertices[3].Set(width, heigth + 2);
+			b2PolygonShape polygonShape;
+			polygonShape.Set(vertices, 4);
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &polygonShape;
+			body_ptr->CreateFixture(&fixtureDef);
+		}
 
+};
 
 #endif //GAMEOBJECT_H
 
