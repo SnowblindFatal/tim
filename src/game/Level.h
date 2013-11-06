@@ -40,7 +40,10 @@ public:
 		levelobjects.push_back(new DroppingSquare(phys_world,23.0f,18.0f));
 		levelobjects.push_back(new DroppingSquare(phys_world,10.0f,20.0f,3.0f));
 		levelobjects.push_back(new ExampleSquare(phys_world,15.0f,20.0f));
-		
+		levelobjects.push_back(new Ball(phys_world,31.0f,25.0f, 1.0f));
+		levelobjects.push_back(new InclinedPlatform(phys_world, 30.0f, 30.0f, 4.0f, 4.0f));
+		levelobjects.push_back(new InclinedPlatform(phys_world, 34.0f, 34.0f, 8.0f, 4.0f));
+		levelobjects.push_back(new InclinedPlatform(phys_world, 42.0f, 38.0f, 12.0f, -4.0f));
 		level_loaded = true;
     }
     
