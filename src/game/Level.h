@@ -26,6 +26,7 @@ public:
 	{
         phys_world.SetDebugDraw(&DebugDrawInstance);
         DebugDrawInstance.SetFlags(b2Draw::e_shapeBit);
+		DebugDrawInstance.AppendFlags(b2Draw::e_centerOfMassBit);
     }
     ~LevelData() {
         for (auto &iter : levelobjects) {
