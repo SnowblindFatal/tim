@@ -185,7 +185,24 @@ public:
 	~ExampleSquare() {};
 };
 	
-
+class Ball : public GameObject
+{
+	public:
+		Ball(b2World& world, float x, float y, float r) : GameObject() {
+			b2BodyDef bodyDef;
+			bodyDef.type = b2_dynamicBody;
+			bodyDef.position.Set(x, y);
+			body_ptr = world.CreateBody(&bodyDef);	
+			b2CircleShape circleShape;
+  			circleShape.m_p.Set(0, 0);
+  			circleShape.m_radius = 1;
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &cirleShape;
+			fixtureDef.density = 1.0f;
+			fixtureDef.friction = 0.3f;
+			body_ptr->CreateFixture(&fixtureDef);
+		}
+}
 
 
 #endif //GAMEOBJECT_H
