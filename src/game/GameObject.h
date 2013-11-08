@@ -184,11 +184,50 @@ public:
 	}
 	~ExampleSquare() {};
 };
-	
+
+class Domino : public GameObject
+{
+	public:
+		Domino(b2World& world, float x, float y) : GameObject() {
+			b2BodyDef bodyDef;
+			bodyDef.type = b2_dynamicBody;
+			bodyDef.position.Set(x, y);
+			body_ptr = world.CreateBody(&bodyDef);
+			b2PolygonShape dominoShape;
+			dominoShape.SetAsBox(0.4, 1.5);
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &dominoShape;
+			fixtureDef.density = 3.0f;
+			fixtureDef.friction = 0.5f;
+			body_ptr->CreateFixture(&fixtureDef);
+		}
+};
+
+/*
+class Dominos : public GameObject
+{
+	public:
+		Dominos(b2World world, float x, float y, float length=1.0f) : GameObject() {
+			b2BodyDef bodyDef;
+			bodyDef.type = b2_dynamicBody;
+			bodyDef.position.Set(x, y);
+			body_ptr = world.CreateBody(&bodyDef);
+			b2PolygonShape dominoShape;
+			dominoShape.SetAsBox(1.0, 1.0);
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &dominoShape;
+			fixtureDef.density = 1.0f;
+			fixtureDef.friction = 0.3f;
+			//fixtureDef.restitution = 0.1f;
+			body_ptr->CreateFixture(&fixtureDef);
+		}
+		~Dominos() {};
+};
+*/
 class Ball : public GameObject
 {
 	public:
-		Ball(b2World& world, float x, float y, float r) : GameObject() {
+		Ball(b2World& world, float x, float y, float r, float restitution = 0, float density = 1.0) : GameObject() {
 			b2BodyDef bodyDef;
 			bodyDef.type = b2_dynamicBody;
 			bodyDef.position.Set(x, y);
@@ -198,16 +237,34 @@ class Ball : public GameObject
   			circleShape.m_radius = r;
 			b2FixtureDef fixtureDef;
 			fixtureDef.shape = &circleShape;
-			fixtureDef.density = 1.0f;
+			fixtureDef.density = density;
 			fixtureDef.friction = 0.3f;
+			fixtureDef.restitution = restitution;
 			body_ptr->CreateFixture(&fixtureDef);
 		}
 };
 
-class InclinedPlatform : public GameObject
+class BouncingBall : public Ball
 {
 	public:
-		InclinedPlatform(b2World& world, float x, float y, float width, float heigth) : GameObject() {
+		BouncingBall(b2World& world, float x, float y) : Ball(world, x, y, 0.5, 0.5, 1.0) {}
+};
+
+class BowlingBall : public Ball
+{
+	public:
+		BowlingBall(b2World& world, float x, float y) : Ball(world, x, y, 0.8, 0.1, 3.0) {}
+};
+
+class BigBall : public Ball
+{
+	public:
+		BigBall(b2World& world, float x, float y) : Ball(world, x, y, 2.0, 0.1, 0.4) {}
+};
+class Platform : public GameObject
+{
+	public:
+		Platform(b2World& world, float x, float y, float width, float heigth) : GameObject() {
 			b2BodyDef bodyDef;
 			bodyDef.position.Set(x, y);
 			body_ptr = world.CreateBody(&bodyDef);
@@ -222,8 +279,28 @@ class InclinedPlatform : public GameObject
 			fixtureDef.shape = &polygonShape;
 			body_ptr->CreateFixture(&fixtureDef);
 		}
-
 };
+
+class Wall : public GameObject
+{
+	public:
+		Wall(b2World& world, float x, float y, float width, float heigth) :GameObject() {
+			b2BodyDef bodyDef;
+			bodyDef.position.Set(x, y);
+			body_ptr = world.CreateBody(&bodyDef);
+			b2Vec2 vertices[4];
+			vertices[0].Set(0, 0);
+			vertices[1].Set(2, 0);
+			vertices[2].Set(width, heigth);
+			vertices[3].Set(width +2, heigth);
+			b2PolygonShape polygonShape;
+			polygonShape.Set(vertices, 4);
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &polygonShape;
+			body_ptr->CreateFixture(&fixtureDef);		
+		}
+};
+
 
 #endif //GAMEOBJECT_H
 

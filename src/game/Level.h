@@ -35,19 +35,30 @@ public:
     }
 	void loadlevel() {
       //Load a demo level:
+/*
 		levelobjects.push_back(new HorizontalBlock(phys_world,12.0f, 40.0f));
 		levelobjects.push_back(new DroppingSquare(phys_world,22.5f,20.0f));
 		levelobjects.push_back(new DroppingSquare(phys_world,23.0f,18.0f));
 		levelobjects.push_back(new DroppingSquare(phys_world,10.0f,20.0f,3.0f));
 		levelobjects.push_back(new ExampleSquare(phys_world,15.0f,20.0f));
-		levelobjects.push_back(new Ball(phys_world,31.0f,25.0f, 1.0f));
-		levelobjects.push_back(new InclinedPlatform(phys_world, 30.0f, 30.0f, 4.0f, 4.0f));
-		levelobjects.push_back(new InclinedPlatform(phys_world, 34.0f, 34.0f, 8.0f, 4.0f));
-		levelobjects.push_back(new InclinedPlatform(phys_world, 42.0f, 38.0f, 12.0f, -4.0f));
+		levelobjects.push_back(new BouncingBall(phys_world,31.0f,25.0f));
+		levelobjects.push_back(new Platform(phys_world, 30.0f, 30.0f, 4.0f, 4.0f));
+		levelobjects.push_back(new Platform(phys_world, 34.0f, 34.0f, 8.0f, 4.0f));
+		levelobjects.push_back(new Platform(phys_world, 42.0f, 38.0f, 12.0f, -6.0f));
+		levelobjects.push_back(new BouncingBall(phys_world, 10.0f, 10.0f));
+*/
+		levelobjects.push_back(new Platform(phys_world, 20.0, 40.0, 40.0, 0));
+		levelobjects.push_back(new Platform(phys_world, 5.0, 20.0, 15.0, 20.0));
+		levelobjects.push_back(new BigBall(phys_world, 6.0, 15.0));
+		for (size_t i = 0; i<10; i++)
+		{
+			levelobjects.push_back(new Domino(phys_world, 25.0f+i*2.5f, 38.0f));
+		}
+		levelobjects.push_back(new BouncingBall(phys_world, 50.0f, 10.0f));
 		level_loaded = true;
     }
     
-    
+     
     void draw(bool debug=false, bool drawsfml=true) {
       if (debug)
 		phys_world.DrawDebugData();
