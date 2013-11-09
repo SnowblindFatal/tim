@@ -3,3 +3,11 @@ nbproject
 *.o
 OSX_*
 *.DS_Store
+*.dll
+*.a
+*.exe
+B2D
+B2D32
+SFML-2.1
+SFML-32
+Makefile
