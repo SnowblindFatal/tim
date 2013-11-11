@@ -9,6 +9,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include "DebugDraw.h"
+#include "WinCondition.h"
 
 namespace {
     b2Vec2 default_gravity(0.0f, 9.8f);
@@ -46,7 +47,7 @@ public:
 		levelobjects.push_back(new Platform(phys_world, 34.0f, 34.0f, 8.0f, 4.0f));
 		levelobjects.push_back(new Platform(phys_world, 42.0f, 38.0f, 12.0f, -6.0f));
 		levelobjects.push_back(new BouncingBall(phys_world, 10.0f, 10.0f));
-*/
+
 		levelobjects.push_back(new Platform(phys_world, 20.0, 40.0, 40.0, 0));
 		levelobjects.push_back(new Platform(phys_world, 5.0, 20.0, 15.0, 20.0));
 		levelobjects.push_back(new BigBall(phys_world, 6.0, 15.0));
@@ -56,12 +57,29 @@ public:
 		}
 		levelobjects.push_back(new BouncingBall(phys_world, 50.0f, 10.0f));
 		levelobjects.push_back(new Chain(phys_world));
+	
 		levelobjects.push_back(new Platform(phys_world, 15.0, 12.0, 1.0, 0));
 		levelobjects.push_back(new Platform(phys_world, 35.0, 12.0, 1.0, 0));
 		level_loaded = true;
+		*/
+
+
+		//Load a demo level with a WinCondition:
+
+		levelobjects.push_back(new Platform(phys_world, 20.0, 40.0, 40.0, 0));
+		levelobjects.push_back(new Platform(phys_world, 5.0, 20.0, 15.0, 20.0));
+		levelobjects.push_back(new BigBall(phys_world, 6.0, 15.0));
+		winconditions.push_back(new IsNearPoint(levelobjects.back(), 60.0f, 30.0f, 20.0f));
     }
     
-     
+    bool checkWin() {
+		for (auto it : winconditions) {
+			if (!it->check())
+				return false;
+		}
+		return true;
+	}
+
     void draw(bool debug=false, bool drawsfml=true) {
       if (debug)
 		phys_world.DrawDebugData();
@@ -73,7 +91,17 @@ public:
       	}
       }
     }
-    
+   	void reset() {
+		for (auto it : levelobjects) {
+			it->reset();
+		}
+		for (auto it : playerobjects) {
+			it-reset();
+		}
+		for (auto it : winconditions) {
+			it->reset();
+		}
+	}
     //One Box2D step:
     void simulate() {
       phys_world.Step(timestep, velocityIterations, positionIterations);
@@ -88,10 +116,11 @@ public:
     sf::RenderWindow& App;
     DebugDraw DebugDrawInstance;
     
+	
     bool level_loaded;
     std::list<GameObject* > levelobjects;	//The level itself
     std::list<GameObject* > playerobjects;	//The objects that the player has placed
-    
+   	std::list<WinCondition* > winconditions;
     
     
 };

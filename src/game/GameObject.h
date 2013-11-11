@@ -1,5 +1,3 @@
-
-
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 #include <string>
@@ -18,8 +16,23 @@ public:
 	virtual ~GameObject() {};
     virtual void update_drawable() {};
     virtual void draw(sf::RenderWindow&) const {};
+
+	virtual b2Vec2  getPos() const {
+		return body_ptr->GetPosition();
+	}
+	//TODO: Initialise original_pos, original_rot
+	virtual void reset() {
+		body_ptr->SetPosition(original_pos);
+		body_ptr->SetRotation(original_rot);
+		body_ptr->SetLinearVelocity(b2Vec2(0,0));
+		body_ptr->SetAngularVelocity(0);
+	}
+
 protected:
 	b2Body* body_ptr;
+	b2Vec2 original_pos;
+	float original_rot;
+
 };	
 
 //An abstract base type, defines the interface.
@@ -320,7 +333,7 @@ class Chain : public GameObject
 			jointDef.localAnchorA.Set(0.25, 0);
 			jointDef.localAnchorB.Set(-0.25, 0);
 			for (int i=0; i<40; i++) {
-				bodyDef.position.Set(git 10 + i*0.5, 10);
+				bodyDef.position.Set(10 + i*0.5, 10);
 				b2Body* link = world.CreateBody(&bodyDef);
 				link->CreateFixture(&fixtureDef);
 				jointDef.bodyA = body_ptr;
@@ -330,6 +343,7 @@ class Chain : public GameObject
 			}
 		}
 };
+
 
 #endif //GAMEOBJECT_H
 

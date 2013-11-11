@@ -7,6 +7,7 @@
 
 #include "PlayMode.h"
 #include "GameState.h"
+#include <iostream>
 GameState::StateSelect PlayMode::run()
 {
     done = false;
@@ -40,8 +41,13 @@ GameState::StateSelect PlayMode::run()
             
         }
         App.clear();
-        if (simulate)
+        if (simulate) {
             level.simulate();
+			if (level.checkWin()) {
+				set_simulate();
+				std::cout << "You win!\n";
+			}
+		}
         level.draw(drawDebug, drawLevel);
         App.display();
     }
