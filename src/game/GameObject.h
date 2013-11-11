@@ -302,5 +302,34 @@ class Wall : public GameObject
 };
 
 
+class Chain : public GameObject
+{
+	public:
+		Chain(b2World& world) : GameObject() {
+			b2BodyDef bodyDef;
+			bodyDef.type = b2_dynamicBody;
+			bodyDef.position.Set(10, 10);
+			body_ptr = world.CreateBody(&bodyDef);
+			b2PolygonShape chainShape;
+			chainShape.SetAsBox(0.5, 0.25);
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &chainShape;
+			fixtureDef.density = 1.0f;
+			body_ptr->CreateFixture(&fixtureDef);
+			b2RevoluteJointDef jointDef;
+			jointDef.localAnchorA.Set(0.25, 0);
+			jointDef.localAnchorB.Set(-0.25, 0);
+			for (int i=0; i<40; i++) {
+				bodyDef.position.Set(git 10 + i*0.5, 10);
+				b2Body* link = world.CreateBody(&bodyDef);
+				link->CreateFixture(&fixtureDef);
+				jointDef.bodyA = body_ptr;
+				jointDef.bodyB = link;
+				world.CreateJoint(&jointDef);
+				body_ptr = link;
+			}
+		}
+};
+
 #endif //GAMEOBJECT_H
 

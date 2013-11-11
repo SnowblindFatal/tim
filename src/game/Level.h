@@ -55,6 +55,9 @@ public:
 			levelobjects.push_back(new Domino(phys_world, 25.0f+i*2.5f, 38.0f));
 		}
 		levelobjects.push_back(new BouncingBall(phys_world, 50.0f, 10.0f));
+		levelobjects.push_back(new Chain(phys_world));
+		levelobjects.push_back(new Platform(phys_world, 15.0, 12.0, 1.0, 0));
+		levelobjects.push_back(new Platform(phys_world, 35.0, 12.0, 1.0, 0));
 		level_loaded = true;
     }
     
