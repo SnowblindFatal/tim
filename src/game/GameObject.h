@@ -12,7 +12,7 @@ class GameObject
 {
 
 public:
-    GameObject() {};
+    GameObject(float x, float y, float rotation=0.0f) : original_pos(x,y), original_rot(rotation) {};
 	virtual ~GameObject() {};
     virtual void update_drawable() {};
     virtual void draw(sf::RenderWindow&) const {};
@@ -20,10 +20,8 @@ public:
 	virtual b2Vec2  getPos() const {
 		return body_ptr->GetPosition();
 	}
-	//TODO: Initialise original_pos, original_rot
 	virtual void reset() {
-		body_ptr->SetPosition(original_pos);
-		body_ptr->SetRotation(original_rot);
+		body_ptr->SetTransform(original_pos, original_rot);
 		body_ptr->SetLinearVelocity(b2Vec2(0,0));
 		body_ptr->SetAngularVelocity(0);
 	}
@@ -87,7 +85,7 @@ private:
 class HorizontalBlock : public GameObject
 {
 public:
-	HorizontalBlock(b2World& world, float x, float y, float length=10.0f, float angle=0.0f) : GameObject(), drawable(x,y,length,angle) {
+	HorizontalBlock(b2World& world, float x, float y, float length=10.0f, float angle=0.0f) : GameObject(x,y), drawable(x,y,length,angle) {
 		
 		//B2D:
 		b2BodyDef blockbodydef;
@@ -146,7 +144,7 @@ private:
 class DroppingSquare : public GameObject
 {
 public:
-	DroppingSquare(b2World& world, float x, float y, float length=1.0f, float angle=0.0f) : GameObject(), drawable(x,y,length,angle) {
+	DroppingSquare(b2World& world, float x, float y, float length=1.0f, float angle=0.0f) : GameObject(x,y), drawable(x,y,length,angle) {
 		
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_dynamicBody;
@@ -182,7 +180,7 @@ You can still see it in the with the debug draw (press D).
 class ExampleSquare : public GameObject
 {
 public:
-	ExampleSquare(b2World& world, float x, float y, float length=1.0f) : GameObject() {
+	ExampleSquare(b2World& world, float x, float y, float length=1.0f) : GameObject(x,y) {
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_dynamicBody;
 		bodyDef.position.Set(x, y);
@@ -201,7 +199,7 @@ public:
 class Domino : public GameObject
 {
 	public:
-		Domino(b2World& world, float x, float y) : GameObject() {
+		Domino(b2World& world, float x, float y) : GameObject(x,y) {
 			b2BodyDef bodyDef;
 			bodyDef.type = b2_dynamicBody;
 			bodyDef.position.Set(x, y);
@@ -220,7 +218,7 @@ class Domino : public GameObject
 class Dominos : public GameObject
 {
 	public:
-		Dominos(b2World world, float x, float y, float length=1.0f) : GameObject() {
+		Dominos(b2World world, float x, float y, float length=1.0f) : GameObject(x,y) {
 			b2BodyDef bodyDef;
 			bodyDef.type = b2_dynamicBody;
 			bodyDef.position.Set(x, y);
@@ -240,7 +238,7 @@ class Dominos : public GameObject
 class Ball : public GameObject
 {
 	public:
-		Ball(b2World& world, float x, float y, float r, float restitution = 0, float density = 1.0) : GameObject() {
+		Ball(b2World& world, float x, float y, float r, float restitution = 0, float density = 1.0) : GameObject(x,y) {
 			b2BodyDef bodyDef;
 			bodyDef.type = b2_dynamicBody;
 			bodyDef.position.Set(x, y);
@@ -277,7 +275,7 @@ class BigBall : public Ball
 class Platform : public GameObject
 {
 	public:
-		Platform(b2World& world, float x, float y, float width, float heigth) : GameObject() {
+		Platform(b2World& world, float x, float y, float width, float heigth) : GameObject(x,y) {
 			b2BodyDef bodyDef;
 			bodyDef.position.Set(x, y);
 			body_ptr = world.CreateBody(&bodyDef);
@@ -297,7 +295,7 @@ class Platform : public GameObject
 class Wall : public GameObject
 {
 	public:
-		Wall(b2World& world, float x, float y, float width, float heigth) :GameObject() {
+		Wall(b2World& world, float x, float y, float width, float heigth) :GameObject(x,y) {
 			b2BodyDef bodyDef;
 			bodyDef.position.Set(x, y);
 			body_ptr = world.CreateBody(&bodyDef);
@@ -318,7 +316,7 @@ class Wall : public GameObject
 class Chain : public GameObject
 {
 	public:
-		Chain(b2World& world) : GameObject() {
+		Chain(b2World& world) : GameObject(10,10) { //This class seems to be incomplete. Had to put 10,10 here.
 			b2BodyDef bodyDef;
 			bodyDef.type = b2_dynamicBody;
 			bodyDef.position.Set(10, 10);

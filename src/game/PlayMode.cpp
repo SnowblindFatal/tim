@@ -35,7 +35,11 @@ GameState::StateSelect PlayMode::run()
                 }
                 if (event.key.code == sf::Keyboard::L) {
                    set_drawlevel();
-                 }
+                }
+				if (event.key.code == sf::Keyboard::R) {
+					simulate=0;
+					level.reset();
+				}
                 else handleKeyPress(event);
             }
             

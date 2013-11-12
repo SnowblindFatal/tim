@@ -10,6 +10,9 @@
 #include <SFML/System.hpp>
 #include "DebugDraw.h"
 #include "WinCondition.h"
+#include <map>
+#include <string>
+
 
 namespace {
     b2Vec2 default_gravity(0.0f, 9.8f);
@@ -28,6 +31,16 @@ public:
         phys_world.SetDebugDraw(&DebugDrawInstance);
         DebugDrawInstance.SetFlags(b2Draw::e_shapeBit);
 		DebugDrawInstance.AppendFlags(b2Draw::e_centerOfMassBit);
+
+		//List the various GameObjects, there will of course be 0 available by default:
+		available["Platform"] = 0;
+		available["Wall"] = 0;
+		available["BouncingBall"] = 0;
+		available["BigBall"] = 0;
+		available["BowlingBall"] = 0;
+		available["Domino"] = 0;
+		available["Chain"] = 0;
+
     }
     ~LevelData() {
         for (auto &iter : levelobjects) {
@@ -96,7 +109,7 @@ public:
 			it->reset();
 		}
 		for (auto it : playerobjects) {
-			it-reset();
+			it->reset();
 		}
 		for (auto it : winconditions) {
 			it->reset();
@@ -121,7 +134,7 @@ public:
     std::list<GameObject* > levelobjects;	//The level itself
     std::list<GameObject* > playerobjects;	//The objects that the player has placed
    	std::list<WinCondition* > winconditions;
-    
+    std::map<std::string, size_t> available; //The objects available to be placed
     
 };
 #endif //LEVEL_H
