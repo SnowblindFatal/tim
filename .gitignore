@@ -3,7 +3,5 @@ nbproject
 *.o
 OSX_*
 *.DS_Store
-*.dll
-*.a
 *.exe
 Makefile
