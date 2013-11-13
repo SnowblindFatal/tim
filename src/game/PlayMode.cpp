@@ -40,10 +40,54 @@ GameState::StateSelect PlayMode::run()
 					simulate=0;
 					level.reset();
 				}
+
+				//GameObject creation:
+				if (event.key.code == sf::Keyboard::Num1) {
+					active_object = level.createObject("Platform", 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+					dragged_object = active_object;
+					if (active_object==NULL)
+						std::cout << "No Platforms available\n";
+				}
+				if (event.key.code == sf::Keyboard::Num2) {
+					active_object = level.createObject("Wall", 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+					dragged_object = active_object;
+					if (active_object==NULL)
+						std::cout << "No Walls available\n";
+				}
+				
+				
+
                 else handleKeyPress(event);
             }
-            
-        }
+           	 
+        	else if (event.type == sf::Event::MouseMoved) {
+				
+				//Move the dragged_object if there is such a thing:
+				if (dragged_object!=NULL) {
+					dragged_object->move((float)event.mouseMove.x/10.0f, (float)event.mouseMove.y/10.0f);
+				}
+			}
+			else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+				
+				//Set active and dragging when pressed over some playerobject and not dragging:
+				if (dragged_object==NULL) {
+					active_object = level.isInsidePlayerObject(0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+					dragged_object = active_object;
+				}
+
+			}
+
+			else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+				
+				//If we were dragging something, stop.
+				if (dragged_object!=NULL) {
+					dragged_object=NULL;
+				}
+			}
+		}
+
+
+
         App.clear();
         if (simulate) {
             level.simulate();

@@ -77,12 +77,13 @@ public:
 		*/
 
 
-		//Load a demo level with a WinCondition:
+		//Load a "bare minimum" playable level:
 
 		levelobjects.push_back(new Platform(phys_world, 20.0, 40.0, 40.0, 0));
-		levelobjects.push_back(new Platform(phys_world, 5.0, 20.0, 15.0, 20.0));
 		levelobjects.push_back(new BigBall(phys_world, 6.0, 15.0));
 		winconditions.push_back(new IsNearPoint(levelobjects.back(), 60.0f, 30.0f, 20.0f));
+		available["Platform"]=1;
+		available["Wall"]=1;
     }
     
     bool checkWin() {
@@ -91,6 +92,31 @@ public:
 				return false;
 		}
 		return true;
+	}
+
+	/*
+	Create a new GameObject, if available. It is placed in playerobjects.
+	A pointer to the created GameObject is also returned, so that it is possible for
+	the object to follow the mouse until a suitable position is found.
+	*/
+	GameObject* createObject(std::string name, float x, float y) {
+		if (available[name]==0) {
+			return NULL; //Denoting failed creation.
+		}
+		else {
+			available[name]--;
+			playerobjects.push_back(GameObjectFactory(phys_world,name,x,y));
+			return playerobjects.back();
+		}
+	}
+	
+	//Return the first found playerobject that the point is inside of.
+	GameObject* isInsidePlayerObject(float x, float y) {
+		for (auto it : playerobjects) {
+			if (it->isInside(x,y))
+				return it;
+		}
+		return NULL;
 	}
 
     void draw(bool debug=false, bool drawsfml=true) {
@@ -104,6 +130,7 @@ public:
       	}
       }
     }
+
    	void reset() {
 		for (auto it : levelobjects) {
 			it->reset();

@@ -14,7 +14,7 @@
 
 class PlayMode : public PlayingField {
 public:
-    PlayMode(sf::RenderWindow& _App, Resources& res) : PlayingField(_App, res), simulate(false), level(_App), drawDebug(false), drawLevel(true) {}
+    PlayMode(sf::RenderWindow& _App, Resources& res) : PlayingField(_App, res), simulate(false), level(_App), drawDebug(false), drawLevel(true), active_object(NULL), dragged_object(NULL) {}
     PlayMode(const PlayMode& orig) = delete;
     PlayMode operator=(const PlayMode& orig) = delete;
     virtual ~PlayMode(){}
@@ -30,6 +30,8 @@ private:
     bool drawDebug;
     bool drawLevel;
 
+	GameObject* active_object; //NULL denotes nothing is active.
+	GameObject* dragged_object; //NULL denotes nothing is being dragged.
 };
 
 #endif	/* PLAYMODE_H */

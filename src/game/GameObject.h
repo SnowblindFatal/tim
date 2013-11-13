@@ -12,7 +12,7 @@ class GameObject
 {
 
 public:
-    GameObject(float x, float y, float rotation=0.0f) : original_pos(x,y), original_rot(rotation) {};
+    GameObject(float x, float y, float rotation=0.0f) : original_pos(x,y), original_rot(rotation), local_mouse(0,0) {};
 	virtual ~GameObject() {};
     virtual void update_drawable() {};
     virtual void draw(sf::RenderWindow&) const {};
@@ -26,12 +26,34 @@ public:
 		body_ptr->SetAngularVelocity(0);
 	}
 
+	virtual void move(float x, float y) {
+		body_ptr->SetTransform(b2Vec2(x,y) - local_mouse, body_ptr->GetAngle());
+		original_pos=b2Vec2(x,y) - local_mouse;
+	}
+	//Checking wheter a point is inside the GameObject
+	//It will also change the local_transform so that dragging looks better. (Unimplemented)
+	virtual bool isInside(float x, float y) {
+		for (b2Fixture* f = body_ptr->GetFixtureList(); f!=NULL; f=f->GetNext()) {
+			if (f->TestPoint(b2Vec2(x,y))) {
+				local_mouse = body_ptr->GetLocalPoint(b2Vec2(x,y));
+				return true;
+			}
+		}
+		return false;
+	}
+
 protected:
+
 	b2Body* body_ptr;
 	b2Vec2 original_pos;
 	float original_rot;
+	b2Vec2 local_mouse;
 
 };	
+
+//A Function that returns a pointer to a dynamically allocated GameObject of
+//corresponding name, at location x, y
+GameObject* GameObjectFactory(b2World& world, std::string name, float x, float y);
 
 //An abstract base type, defines the interface.
 class Drawable
@@ -76,7 +98,7 @@ public:
 	}
 
 	void draw(sf::RenderWindow& target)  const {
-		target.draw(sprite); 
+		target.draw(sprite);
 	}
 private:
 	sf::RectangleShape sprite;
