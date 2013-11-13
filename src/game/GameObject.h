@@ -237,27 +237,7 @@ class Domino : public GameObject
 		}
 };
 
-/*
-class Dominos : public GameObject
-{
-	public:
-		Dominos(b2World world, float x, float y, float length=1.0f) : GameObject(x,y) {
-			b2BodyDef bodyDef;
-			bodyDef.type = b2_dynamicBody;
-			bodyDef.position.Set(x, y);
-			body_ptr = world.CreateBody(&bodyDef);
-			b2PolygonShape dominoShape;
-			dominoShape.SetAsBox(1.0, 1.0);
-			b2FixtureDef fixtureDef;
-			fixtureDef.shape = &dominoShape;
-			fixtureDef.density = 1.0f;
-			fixtureDef.friction = 0.3f;
-			//fixtureDef.restitution = 0.1f;
-			body_ptr->CreateFixture(&fixtureDef);
-		}
-		~Dominos() {};
-};
-*/
+
 class Ball : public GameObject
 {
 	public:

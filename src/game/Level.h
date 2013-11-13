@@ -64,10 +64,7 @@ public:
 		levelobjects.push_back(new Platform(phys_world, 20.0, 40.0, 40.0, 0));
 		levelobjects.push_back(new Platform(phys_world, 5.0, 20.0, 15.0, 20.0));
 		levelobjects.push_back(new BigBall(phys_world, 6.0, 15.0));
-		for (size_t i = 0; i<10; i++)
-		{
-			levelobjects.push_back(new Domino(phys_world, 25.0f+i*2.5f, 38.0f));
-		}
+		
 		levelobjects.push_back(new BouncingBall(phys_world, 50.0f, 10.0f));
 		levelobjects.push_back(new Chain(phys_world));
 	
@@ -80,8 +77,12 @@ public:
 		//Load a "bare minimum" playable level:
 
 		levelobjects.push_back(new Platform(phys_world, 20.0, 40.0, 40.0, 0));
+		for (size_t i = 0; i<10; i++)
+		{
+			levelobjects.push_back(new Domino(phys_world, 25.0f+i*2.5f, 38.0f));
+		}
 		levelobjects.push_back(new BigBall(phys_world, 6.0, 15.0));
-		winconditions.push_back(new IsNearPoint(levelobjects.back(), 60.0f, 40.0f, 5.0f));
+		winconditions.push_back(new IsNearPoint(levelobjects.back(), 6.0f, 40.0f, 5.0f));
 		available["Platform"]=1;
 		available["Wall"]=1;
     }
