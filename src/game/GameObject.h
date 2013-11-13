@@ -24,6 +24,7 @@ public:
 		body_ptr->SetTransform(original_pos, original_rot);
 		body_ptr->SetLinearVelocity(b2Vec2(0,0));
 		body_ptr->SetAngularVelocity(0);
+		body_ptr->SetAwake(true);
 	}
 
 	virtual void move(float x, float y) {

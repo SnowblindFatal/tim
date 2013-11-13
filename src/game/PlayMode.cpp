@@ -25,11 +25,21 @@ GameState::StateSelect PlayMode::run()
                 retval = GameState::StateSelect::Exit;
                 done = true;
             }
+			
+			// If we are simulating, don't respond to anything else than resetting:
+			if (simulate) {
+				if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R) {
+					simulate=0;
+					level.reset();
+				}
+				continue;
+			}
+
             else if (event.type == sf::Event::KeyPressed)
             {
                 if (event.key.code == sf::Keyboard::S) {
-                    set_simulate();
-                }
+                	simulate=1;
+				}
                 if (event.key.code == sf::Keyboard::D) {
                     set_drawdebug();
                 }

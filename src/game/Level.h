@@ -81,7 +81,7 @@ public:
 
 		levelobjects.push_back(new Platform(phys_world, 20.0, 40.0, 40.0, 0));
 		levelobjects.push_back(new BigBall(phys_world, 6.0, 15.0));
-		winconditions.push_back(new IsNearPoint(levelobjects.back(), 60.0f, 30.0f, 20.0f));
+		winconditions.push_back(new IsNearPoint(levelobjects.back(), 60.0f, 40.0f, 5.0f));
 		available["Platform"]=1;
 		available["Wall"]=1;
     }

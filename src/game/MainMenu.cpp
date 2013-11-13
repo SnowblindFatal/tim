@@ -15,7 +15,7 @@ GameState::StateSelect MainMenu::run()
     {
         return GameState::StateSelect::Exit;
     }
-    sf::Text welcomeText("Eat shit and die", coolFont, 30);
+    sf::Text welcomeText("Get the ball to the right side of the big platform\nYou have one Platform [press 1] and one Wall [press 2]\n[Press S] to simulate and [press R] to reset", coolFont, 20);
     welcomeText.setPosition((App.getSize().x - welcomeText.getLocalBounds().width) / 2, (App.getSize().y - welcomeText.getLocalBounds().height) / 2);
     while (!done)
     {
