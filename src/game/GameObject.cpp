@@ -87,42 +87,59 @@ BowlingBall::BowlingBall(b2World& world, float x, float y) : Ball(world, x, y, 0
 
 BigBall::BigBall(b2World& world, float x, float y) : Ball(world, x, y, 2.0, 0.1, 0.4) {}
 
-/*
+
 Chain::Chain(b2World& world) : GameObject(10,10) {
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(10, 10);
 	body_ptr = world.CreateBody(&bodyDef);
+	b2CircleShape circleShape;
+	circleShape.m_p.Set(0, 0);
+	circleShape.m_radius = 1;
+b2FixtureDef fixtureDef;
+	fixtureDef.shape = &circleShape;
+	fixtureDef.density = 1;
+	fixtureDef.friction = 0.3f;
+	fixtureDef.restitution = 0;
+	body_ptr->CreateFixture(&fixtureDef);
+	b2Body* first = body_ptr;
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(10, 10);
+	body_ptr = world.CreateBody(&bodyDef);
 	b2PolygonShape chainShape;
-	chainShape.SetAsBox(0.5, 0.25);
-	b2FixtureDef fixtureDef;
+	chainShape.SetAsBox(0.25, 0.1);
+	
 	fixtureDef.shape = &chainShape;
-	fixtureDef.density = 1.0f;
+	fixtureDef.density = 0.1f;
 	body_ptr->CreateFixture(&fixtureDef);
 	b2RevoluteJointDef jointDef;
-	jointDef.localAnchorA.Set(0.5, 0);
-	jointDef.localAnchorB.Set(-0.5, 0);
+	jointDef.localAnchorA.Set(0.2, 0);
+	jointDef.localAnchorB.Set(-0.2, 0);
+	jointDef.bodyA = first;
+	jointDef.bodyB = body_ptr;
+	world.CreateJoint(&jointDef);
+	b2Body* last = body_ptr;	
 	for (int i=0; i<40; i++) {
-		bodyDef.position.Set(10 + i*1, 10);
+		bodyDef.position.Set(10 + i*0.5, 10);
 		b2Body* link = world.CreateBody(&bodyDef);
 		link->CreateFixture(&fixtureDef);
 		jointDef.bodyA = body_ptr;
 		jointDef.bodyB = link;
 		world.CreateJoint(&jointDef);
 		body_ptr = link;
+		last = link;
 	}
-	bodyDef.position.Set(10 + 41, 10);
+	bodyDef.position.Set(10 + 20, 10);
 	body_ptr = world.CreateBody(&bodyDef);
-	b2CircleShape circleShape;
 	circleShape.m_p.Set(0, 0);
 	circleShape.m_radius = 1;
 	fixtureDef.shape = &circleShape;
-	fixtureDef.density = 5;
+	fixtureDef.density = 1;
 	fixtureDef.friction = 0.3f;
 	fixtureDef.restitution = 0;
 	body_ptr->CreateFixture(&fixtureDef);
 	jointDef.bodyA = body_ptr;
-	jointDef.bodyB = link;
+	jointDef.bodyB = last;
 	world.CreateJoint(&jointDef);
 }
-*/
+
