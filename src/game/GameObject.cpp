@@ -87,7 +87,7 @@ BowlingBall::BowlingBall(b2World& world, float x, float y) : Ball(world, x, y, 0
 
 BigBall::BigBall(b2World& world, float x, float y) : Ball(world, x, y, 2.0, 0.1, 0.4) {}
 
-
+/*
 Chain::Chain(b2World& world) : GameObject(10,10) {
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
@@ -142,4 +142,4 @@ b2FixtureDef fixtureDef;
 	jointDef.bodyB = last;
 	world.CreateJoint(&jointDef);
 }
-
+*/
