@@ -47,6 +47,11 @@ public:
             delete iter;
         }
     }
+    
+    void addLevelObject(GameObject*);
+    
+    void addPlayerObject(GameObject*);
+    
 	void loadlevel();
     
     bool checkWin() {

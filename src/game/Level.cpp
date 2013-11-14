@@ -1,5 +1,13 @@
 #include "Level.h"
 
+void LevelData::addLevelObject(GameObject* obj) {
+	levelobjects.push_back(obj);
+}
+
+void LevelData::addPlayerObject(GameObject* obj) {
+	playerobjects.push_back(obj);	
+}
+
 void LevelData::loadlevel() {
   //Load a demo level:
 /*
