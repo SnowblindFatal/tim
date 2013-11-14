@@ -67,11 +67,11 @@ public:
 };
 
 
-
-/* HorizontalBlock:
+/* TO BE REMOVED
+ HorizontalBlock:
 	A static block that can be of any length.
 	It can be rotated to 45 degree angle. (Unimplemented)
-*/
+
 
 
 class HorizontalBlockDrawable : public Drawable
@@ -130,9 +130,9 @@ private:
 };	
 
 
-/* DroppingSquare:
+DroppingSquare:
 	A dynamic square of varying size.
-*/
+
 
 class DroppingSquareDrawable : public Drawable
 {
@@ -194,11 +194,11 @@ private:
 	DroppingSquareDrawable drawable;
 };
 
-/*
+
 Now drawing is separated from everything else.
 ExampleSquare: DroppingSquare without the drawing.
 You can still see it in the with the debug draw (press D).
-*/
+
 
 class ExampleSquare : public GameObject
 {
@@ -218,131 +218,55 @@ public:
 	}
 	~ExampleSquare() {};
 };
+*/
 
 class Domino : public GameObject
 {
 	public:
-		Domino(b2World& world, float x, float y) : GameObject(x,y) {
-			b2BodyDef bodyDef;
-			bodyDef.type = b2_dynamicBody;
-			bodyDef.position.Set(x, y);
-			body_ptr = world.CreateBody(&bodyDef);
-			b2PolygonShape dominoShape;
-			dominoShape.SetAsBox(0.4, 1.5);
-			b2FixtureDef fixtureDef;
-			fixtureDef.shape = &dominoShape;
-			fixtureDef.density = 3.0f;
-			fixtureDef.friction = 0.5f;
-			body_ptr->CreateFixture(&fixtureDef);
-		}
+		Domino(b2World& world, float x, float y);
 };
 
 
 class Ball : public GameObject
 {
 	public:
-		Ball(b2World& world, float x, float y, float r, float restitution = 0, float density = 1.0) : GameObject(x,y) {
-			b2BodyDef bodyDef;
-			bodyDef.type = b2_dynamicBody;
-			bodyDef.position.Set(x, y);
-			body_ptr = world.CreateBody(&bodyDef);	
-			b2CircleShape circleShape;
-  			circleShape.m_p.Set(0, 0);
-  			circleShape.m_radius = r;
-			b2FixtureDef fixtureDef;
-			fixtureDef.shape = &circleShape;
-			fixtureDef.density = density;
-			fixtureDef.friction = 0.3f;
-			fixtureDef.restitution = restitution;
-			body_ptr->CreateFixture(&fixtureDef);
-		}
+		Ball(b2World& world, float x, float y, float r, float restitution, float density);
 };
 
 class BouncingBall : public Ball
 {
 	public:
-		BouncingBall(b2World& world, float x, float y) : Ball(world, x, y, 0.5, 0.5, 1.0) {}
+		BouncingBall(b2World& world, float x, float y);
 };
 
 class BowlingBall : public Ball
 {
 	public:
-		BowlingBall(b2World& world, float x, float y) : Ball(world, x, y, 0.8, 0.1, 3.0) {}
+		BowlingBall(b2World& world, float x, float y);
 };
 
 class BigBall : public Ball
 {
 	public:
-		BigBall(b2World& world, float x, float y) : Ball(world, x, y, 2.0, 0.1, 0.4) {}
+		BigBall(b2World& world, float x, float y);
 };
 class Platform : public GameObject
 {
 	public:
-		Platform(b2World& world, float x, float y, float width, float heigth) : GameObject(x,y) {
-			b2BodyDef bodyDef;
-			bodyDef.position.Set(x, y);
-			body_ptr = world.CreateBody(&bodyDef);
-			b2Vec2 vertices[4];
-			vertices[0].Set(0, 0);
-			vertices[1].Set(0, 2);
-			vertices[2].Set(width, heigth);
-			vertices[3].Set(width, heigth + 2);
-			b2PolygonShape polygonShape;
-			polygonShape.Set(vertices, 4);
-			b2FixtureDef fixtureDef;
-			fixtureDef.shape = &polygonShape;
-			body_ptr->CreateFixture(&fixtureDef);
-		}
+		Platform(b2World& world, float x, float y, float width, float heigth);
 };
 
 class Wall : public GameObject
 {
 	public:
-		Wall(b2World& world, float x, float y, float width, float heigth) :GameObject(x,y) {
-			b2BodyDef bodyDef;
-			bodyDef.position.Set(x, y);
-			body_ptr = world.CreateBody(&bodyDef);
-			b2Vec2 vertices[4];
-			vertices[0].Set(0, 0);
-			vertices[1].Set(2, 0);
-			vertices[2].Set(width, heigth);
-			vertices[3].Set(width +2, heigth);
-			b2PolygonShape polygonShape;
-			polygonShape.Set(vertices, 4);
-			b2FixtureDef fixtureDef;
-			fixtureDef.shape = &polygonShape;
-			body_ptr->CreateFixture(&fixtureDef);		
-		}
+		Wall(b2World& world, float x, float y, float width, float heigth);
 };
 
 
 class Chain : public GameObject
 {
 	public:
-		Chain(b2World& world) : GameObject(10,10) { //This class seems to be incomplete. Had to put 10,10 here.
-			b2BodyDef bodyDef;
-			bodyDef.type = b2_dynamicBody;
-			bodyDef.position.Set(10, 10);
-			body_ptr = world.CreateBody(&bodyDef);
-			b2PolygonShape chainShape;
-			chainShape.SetAsBox(0.5, 0.25);
-			b2FixtureDef fixtureDef;
-			fixtureDef.shape = &chainShape;
-			fixtureDef.density = 1.0f;
-			body_ptr->CreateFixture(&fixtureDef);
-			b2RevoluteJointDef jointDef;
-			jointDef.localAnchorA.Set(0.25, 0);
-			jointDef.localAnchorB.Set(-0.25, 0);
-			for (int i=0; i<40; i++) {
-				bodyDef.position.Set(10 + i*0.5, 10);
-				b2Body* link = world.CreateBody(&bodyDef);
-				link->CreateFixture(&fixtureDef);
-				jointDef.bodyA = body_ptr;
-				jointDef.bodyB = link;
-				world.CreateJoint(&jointDef);
-				body_ptr = link;
-			}
-		}
+		Chain(b2World& world);
 };
 
 
