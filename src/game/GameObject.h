@@ -5,17 +5,18 @@
 #include <Box2D/Box2D.h>
 #include <SFML/Graphics.hpp>
 #include <iostream>
-
+#include "Drawable.h"
 
 //A Base type, that also defines the interface for drawing.
 class GameObject
 {
 
 public:
-    GameObject(float x, float y, float rotation=0.0f) : original_pos(x,y), original_rot(rotation), local_mouse(0,0) {};
-	virtual ~GameObject() {};
-    virtual void update_drawable() {};
-    virtual void draw(sf::RenderWindow&) const {};
+    GameObject(float x, float y, float rotation=0.0f) : can_place(false), original_pos(x,y), original_rot(rotation), local_mouse(0,0) {};
+	virtual ~GameObject() {}
+    virtual void update_drawable() {}
+    virtual void draw(sf::RenderWindow&) {}
+	virtual void setHighlight(std::string ) {}
 
 	virtual b2Vec2  getPos() const;
 	
@@ -23,12 +24,14 @@ public:
 	
 	//Returns true if the body is not overlapping and false otherwise. 
 	virtual bool noOverlaps() const;
-	
+	bool can_place;	//This is just so we don't always have to calculate noOverlaps(). Returns the same.
+
 	virtual void move(float x, float y);
 
 	//Checking wether a point is inside the GameObject
 	//It will also change the local_transform so that dragging looks better.
 	virtual bool isInside(float x, float y);
+
 
 protected:
 
@@ -44,15 +47,6 @@ protected:
 //corresponding name, at location x, y
 GameObject* GameObjectFactory(b2World& world, std::string name, float x, float y);
 
-//An abstract base type, defines the interface.
-class Drawable
-{
-public:
-	Drawable() {};
-	virtual ~Drawable() {};
-	virtual void draw(sf::RenderWindow&) const =0;
-	virtual void update(b2Body*) =0;
-};
 
 
 /* TO BE REMOVED
@@ -242,6 +236,11 @@ class Platform : public GameObject
 {
 	public:
 		Platform(b2World& world, float x, float y, float width, float heigth);
+		void update_drawable();
+		void draw(sf::RenderWindow&) ;
+		void setHighlight(std::string type);
+	private:
+		PlatformDrawable drawable;
 };
 
 class Wall : public GameObject

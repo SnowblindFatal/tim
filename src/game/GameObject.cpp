@@ -3,6 +3,7 @@
 #include <string>
 
 
+
 b2Vec2 GameObject::getPos() const {
 	return body_ptr->GetPosition();
 }
@@ -39,27 +40,15 @@ bool GameObject::noOverlaps() const {
 
 
 void GameObject::move(float x, float y) {
-	//move separately along x and y, so that dragging doesn't look so glitchy
 
-	//x-axis:
-	body_ptr->SetTransform(b2Vec2(x,original_pos.y) - b2Vec2(local_mouse.x,0), body_ptr->GetAngle());
+	body_ptr->SetTransform(b2Vec2(x,y) - local_mouse, body_ptr->GetAngle());
 	if (noOverlaps()) {
-		original_pos=b2Vec2(x,original_pos.y) - b2Vec2(local_mouse.x,0);
+		can_place=true;
 	}
 	else {
-		body_ptr->SetTransform(original_pos, original_rot);
+		can_place=false;
 	}
-
-	//y-axis:
-	body_ptr->SetTransform(b2Vec2(original_pos.x,y) - b2Vec2(0,local_mouse.y), body_ptr->GetAngle());
-	if (noOverlaps()) {
-		original_pos=b2Vec2(original_pos.x,y) - b2Vec2(0,local_mouse.y);
-	}
-	else {
-		body_ptr->SetTransform(original_pos, original_rot);
-	}
-	local_mouse = body_ptr->GetLocalPoint(b2Vec2(x,y));	// So that dragging along a surface doesn't look glitchy
-	return;
+	original_pos=b2Vec2(x,y) - local_mouse;
 }
 
 bool GameObject::isInside(float x, float y) {
@@ -110,21 +99,32 @@ Domino::Domino(b2World& world, float x, float y) : GameObject(x,y) {
     body_ptr->CreateFixture(&fixtureDef);
 }
 
-Platform::Platform(b2World& world, float x, float y, float width, float heigth) : GameObject(x,y) {
+Platform::Platform(b2World& world, float x, float y, float width, float heigth) : GameObject(x,y), drawable(x,y,width,heigth) { //BTW it should be height, not heigth.
+
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
 	body_ptr = world.CreateBody(&bodyDef);
 	b2Vec2 vertices[4];
 	vertices[0].Set(0, 0);
-	vertices[1].Set(0, 2);
-	vertices[2].Set(width, heigth);
-	vertices[3].Set(width, heigth + 2);
+	vertices[3].Set(0, 2);
+	vertices[1].Set(width, heigth);
+	vertices[2].Set(width, heigth + 2);
 	b2PolygonShape polygonShape;
 	polygonShape.Set(vertices, 4);
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &polygonShape;
 	body_ptr->CreateFixture(&fixtureDef);
 }
+void Platform::update_drawable() {
+	drawable.update(body_ptr);
+}
+void Platform::draw(sf::RenderWindow& win) {
+	drawable.draw(win);
+}
+void Platform::setHighlight(std::string type) {
+	drawable.setHighlight(type,can_place);
+}
+
 
 Wall::Wall(b2World& world, float x, float y, float width, float heigth) : GameObject(x,y) {
 	b2BodyDef bodyDef;
@@ -132,9 +132,9 @@ Wall::Wall(b2World& world, float x, float y, float width, float heigth) : GameOb
 	body_ptr = world.CreateBody(&bodyDef);
 	b2Vec2 vertices[4];
 	vertices[0].Set(0, 0);
-	vertices[1].Set(2, 0);
-	vertices[2].Set(width, heigth);
-	vertices[3].Set(width +2, heigth);
+	vertices[3].Set(2, 0);
+	vertices[1].Set(width, heigth);
+	vertices[2].Set(width +2, heigth);
 	b2PolygonShape polygonShape;
 	polygonShape.Set(vertices, 4);
 	b2FixtureDef fixtureDef;

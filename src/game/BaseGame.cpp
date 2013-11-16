@@ -49,7 +49,9 @@ void BaseGame::start()
 
 void BaseGame::initialise()
 {
-    App.create(sf::VideoMode(800, 600, 32), "The Incredibly Violent Machine");
+	sf::ContextSettings sf_settings;
+	sf_settings.antialiasingLevel=8;
+    App.create(sf::VideoMode(800, 600, 32), "The Incredibly Violent Machine",sf::Style::Default,sf_settings);
     App.setFramerateLimit(60); // Limit to 60 frames per second
 }
 

@@ -37,8 +37,10 @@ GameState::StateSelect PlayMode::run()
 
             else if (event.type == sf::Event::KeyPressed)
             {
-                if (event.key.code == sf::Keyboard::S) {
+                if (event.key.code == sf::Keyboard::S && dragged_object==NULL) {
                 	simulate=1;
+					active_object=NULL;
+
 				}
                 if (event.key.code == sf::Keyboard::D) {
                     set_drawdebug();
@@ -89,10 +91,25 @@ GameState::StateSelect PlayMode::run()
 
 			else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
 				
-				//If we were dragging something, stop.
-				if (dragged_object!=NULL) {
+				//If we were dragging something, stop if we can place it here.
+				if (dragged_object!=NULL && dragged_object->can_place) {
 					dragged_object=NULL;
 				}
+			}
+		}
+		//If not simulating, take care of highlighting
+		if (!simulate) {
+			//Notify whomever we are hovering over.
+			GameObject* hover = level.isInsidePlayerObject(0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+			if (hover!=NULL) {
+				hover->setHighlight("hover");
+			}
+			//Notify the active/dragged object about highlighting
+			if (dragged_object!=NULL) {
+				dragged_object->setHighlight("dragged");
+			}
+			else if (active_object!=NULL) {
+				active_object->setHighlight("active");
 			}
 		}
 

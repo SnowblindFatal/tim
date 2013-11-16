@@ -74,7 +74,7 @@ void LevelData::loadlevel() {
 
 	//Load a "bare minimum" playable level:
 
-	levelobjects.push_back(new Platform(phys_world, 20.0, 40.0, 40.0, 0));
+	levelobjects.push_back(new Platform(phys_world, 20.0, 40.0, 40.0, 10.0f));
 	for (size_t i = 0; i<10; i++)
 	{
 		levelobjects.push_back(new Domino(phys_world, 25.0f+i*2.5f, 38.0f));
@@ -86,7 +86,7 @@ void LevelData::loadlevel() {
 	*/
 	levelobjects.push_back(new BigBall(phys_world, 6.0, 15.0));
 	winconditions.push_back(new IsNearPoint(levelobjects.back(), 40.0f, 40.0f, 5.0f));
-	available["Platform"]=1;
+	available["Platform"]=5;
 	available["Wall"]=1;
 
 }
@@ -125,8 +125,12 @@ void LevelData::draw(bool debug, bool drawsfml) {
       
       if (drawsfml) {
       	for (auto &iter : levelobjects) {
-		iter->update_drawable();
-		iter->draw(App);
+			iter->update_drawable();
+			iter->draw(App);
+      	}
+      	for (auto &iter : playerobjects) {
+			iter->update_drawable();
+			iter->draw(App);
       	}
 	}
 }
