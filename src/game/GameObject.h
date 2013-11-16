@@ -17,31 +17,18 @@ public:
     virtual void update_drawable() {};
     virtual void draw(sf::RenderWindow&) const {};
 
-	virtual b2Vec2  getPos() const {
-		return body_ptr->GetPosition();
-	}
-	virtual void reset() {
-		body_ptr->SetTransform(original_pos, original_rot);
-		body_ptr->SetLinearVelocity(b2Vec2(0,0));
-		body_ptr->SetAngularVelocity(0);
-		body_ptr->SetAwake(true);
-	}
+	virtual b2Vec2  getPos() const;
+	
+	virtual void reset();
+	
+	//Returns true if the body is not overlapping and false otherwise. 
+	virtual bool noOverlaps() const;
+	
+	virtual void move(float x, float y);
 
-	virtual void move(float x, float y) {
-		body_ptr->SetTransform(b2Vec2(x,y) - local_mouse, body_ptr->GetAngle());
-		original_pos=b2Vec2(x,y) - local_mouse;
-	}
-	//Checking wheter a point is inside the GameObject
-	//It will also change the local_transform so that dragging looks better. (Unimplemented)
-	virtual bool isInside(float x, float y) {
-		for (b2Fixture* f = body_ptr->GetFixtureList(); f!=NULL; f=f->GetNext()) {
-			if (f->TestPoint(b2Vec2(x,y))) {
-				local_mouse = body_ptr->GetLocalPoint(b2Vec2(x,y));
-				return true;
-			}
-		}
-		return false;
-	}
+	//Checking wether a point is inside the GameObject
+	//It will also change the local_transform so that dragging looks better.
+	virtual bool isInside(float x, float y);
 
 protected:
 
@@ -49,8 +36,9 @@ protected:
 	b2Vec2 original_pos;
 	float original_rot;
 	b2Vec2 local_mouse;
-
 };	
+
+	
 
 //A Function that returns a pointer to a dynamically allocated GameObject of
 //corresponding name, at location x, y

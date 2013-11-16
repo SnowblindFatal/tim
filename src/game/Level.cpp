@@ -1,5 +1,42 @@
 #include "Level.h"
 
+namespace {
+    b2Vec2 default_gravity(0.0f, 9.8f);
+    float32 timestep = 1.0f/60.0f;
+    int32 velocityIterations = 6;
+    int32 positionIterations = 2;
+}
+
+LevelData::LevelData(sf::RenderWindow& _App) : phys_world(default_gravity), App(_App), DebugDrawInstance(_App), level_loaded(false)
+	{
+        phys_world.SetDebugDraw(&DebugDrawInstance);
+        DebugDrawInstance.SetFlags(b2Draw::e_shapeBit);
+		DebugDrawInstance.AppendFlags(b2Draw::e_centerOfMassBit);
+
+		//List the various GameObjects, there will of course be 0 available by default:
+		available["Platform"] = 0;
+		available["Wall"] = 0;
+		available["BouncingBall"] = 0;
+		available["BigBall"] = 0;
+		available["BowlingBall"] = 0;
+		available["Domino"] = 0;
+		available["Chain"] = 0;
+
+}
+LevelData::~LevelData() {
+        for (auto iter : levelobjects) {
+            delete iter;
+        }
+		for (auto iter : playerobjects) {
+            delete iter;
+        }
+        for (auto iter : winconditions) {
+            delete iter;
+        }
+}
+
+
+
 void LevelData::addLevelObject(GameObject* obj) {
 	levelobjects.push_back(obj);
 }
@@ -53,3 +90,81 @@ void LevelData::loadlevel() {
 	available["Wall"]=1;
 
 }
+
+bool LevelData::checkWin() const {
+		for (auto it : winconditions) {
+			if (!it->check())
+				return false;
+		}
+		return true;
+}
+	
+	
+GameObject* LevelData::createObject(std::string name, float x, float y) {
+		if (available[name]==0) {
+			return NULL; //Denoting failed creation.
+		}
+		else {
+			available[name]--;
+			playerobjects.push_back(GameObjectFactory(phys_world,name,x,y));
+			return playerobjects.back();
+		}
+}
+
+GameObject* LevelData::isInsidePlayerObject(float x, float y) const {
+		for (auto it : playerobjects) {
+			if (it->isInside(x,y))
+				return it;
+		}
+		return NULL;
+}
+
+void LevelData::draw(bool debug, bool drawsfml) {
+      if (debug)
+		phys_world.DrawDebugData();
+      
+      if (drawsfml) {
+      	for (auto &iter : levelobjects) {
+		iter->update_drawable();
+		iter->draw(App);
+      	}
+	}
+}
+
+void LevelData::reset() {
+		for (auto it : levelobjects) {
+			it->reset();
+		}
+		for (auto it : playerobjects) {
+			it->reset();
+		}
+		for (auto it : winconditions) {
+			it->reset();
+		}
+}
+
+
+
+void LevelData::simulate() {
+      phys_world.Step(timestep, velocityIterations, positionIterations);
+}
+    
+bool LevelData::loaded(void) const {
+      return level_loaded;
+}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

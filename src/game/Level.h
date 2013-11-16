@@ -14,39 +14,14 @@
 #include <string>
 
 
-namespace {
-    b2Vec2 default_gravity(0.0f, 9.8f);
-    float32 timestep = 1.0f/60.0f;
-    int32 velocityIterations = 6;
-    int32 positionIterations = 2;
-}
 
 
 
 class LevelData
 {
 public:
-	LevelData(sf::RenderWindow& _App) : phys_world(default_gravity), App(_App), DebugDrawInstance(_App), level_loaded(false)
-	{
-        phys_world.SetDebugDraw(&DebugDrawInstance);
-        DebugDrawInstance.SetFlags(b2Draw::e_shapeBit);
-		DebugDrawInstance.AppendFlags(b2Draw::e_centerOfMassBit);
-
-		//List the various GameObjects, there will of course be 0 available by default:
-		available["Platform"] = 0;
-		available["Wall"] = 0;
-		available["BouncingBall"] = 0;
-		available["BigBall"] = 0;
-		available["BowlingBall"] = 0;
-		available["Domino"] = 0;
-		available["Chain"] = 0;
-
-    }
-    ~LevelData() {
-        for (auto &iter : levelobjects) {
-            delete iter;
-        }
-    }
+	LevelData(sf::RenderWindow& _App);
+    ~LevelData();
     
     void addLevelObject(GameObject*);
     
@@ -54,70 +29,31 @@ public:
     
 	void loadlevel();
     
-    bool checkWin() {
-		for (auto it : winconditions) {
-			if (!it->check())
-				return false;
-		}
-		return true;
-	}
+    //Iterate over winconditions, if all return true, return true, else 
+    bool checkWin() const;
 
 	/*
 	Create a new GameObject, if available. It is placed in playerobjects.
 	A pointer to the created GameObject is also returned, so that it is possible for
 	the object to follow the mouse until a suitable position is found.
 	*/
-	GameObject* createObject(std::string name, float x, float y) {
-		if (available[name]==0) {
-			return NULL; //Denoting failed creation.
-		}
-		else {
-			available[name]--;
-			playerobjects.push_back(GameObjectFactory(phys_world,name,x,y));
-			return playerobjects.back();
-		}
-	}
+	GameObject* createObject(std::string name, float x, float y);
 	
 	//Return the first found playerobject that the point is inside of.
-	GameObject* isInsidePlayerObject(float x, float y) {
-		for (auto it : playerobjects) {
-			if (it->isInside(x,y))
-				return it;
-		}
-		return NULL;
-	}
+	GameObject* isInsidePlayerObject(float x, float y) const;
 
-    void draw(bool debug=false, bool drawsfml=true) {
-      if (debug)
-		phys_world.DrawDebugData();
-      
-      if (drawsfml) {
-      	for (auto &iter : levelobjects) {
-		iter->update_drawable();
-		iter->draw(App);
-      	}
-      }
-    }
 
-   	void reset() {
-		for (auto it : levelobjects) {
-			it->reset();
-		}
-		for (auto it : playerobjects) {
-			it->reset();
-		}
-		for (auto it : winconditions) {
-			it->reset();
-		}
-	}
+
+    void draw(bool debug=false, bool drawsfml=true); //Cannot be const, because no DrawDebugData() const exists, for whatever reason
+
+
+	//Reset the level to where it was before simulation.
+   	void reset() ;
+	
     //One Box2D step:
-    void simulate() {
-      phys_world.Step(timestep, velocityIterations, positionIterations);
-    }
+    void simulate() ;
     
-    bool loaded(void) const {
-      return level_loaded;
-    }
+    bool loaded(void) const;
  private:
     
     b2World phys_world;
@@ -132,4 +68,6 @@ public:
     std::map<std::string, size_t> available; //The objects available to be placed
     
 };
+
+
 #endif //LEVEL_H

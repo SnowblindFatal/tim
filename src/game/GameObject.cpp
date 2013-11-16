@@ -2,6 +2,83 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
+
+b2Vec2 GameObject::getPos() const {
+	return body_ptr->GetPosition();
+}
+void GameObject::reset() {
+	body_ptr->SetTransform(original_pos, original_rot);
+	body_ptr->SetLinearVelocity(b2Vec2(0,0));
+	body_ptr->SetAngularVelocity(0);
+	body_ptr->SetAwake(true);
+}
+
+/*
+Three nested for loops might look bad but with the small amount of shapes we have,
+it should not be a problem. The algorithm's O notation speed is O(M*N), where
+M=amount of shapes on the body.
+N=amount of all other shapes.
+*/
+bool GameObject::noOverlaps() const {
+	b2Body* body_list = body_ptr->GetWorld()->GetBodyList();
+	for (;body_list!=NULL;body_list=body_list->GetNext()) {
+		if (body_list==body_ptr) continue;
+
+		b2Fixture* my_fixtures=body_ptr->GetFixtureList();
+		b2Fixture* other_fixtures=body_list->GetFixtureList();
+		for (;my_fixtures!=NULL;my_fixtures=my_fixtures->GetNext()) {
+			for (;other_fixtures!=NULL;other_fixtures=other_fixtures->GetNext()) {
+				if (b2TestOverlap(my_fixtures->GetShape(),0,other_fixtures->GetShape(),0,body_ptr->GetTransform(),body_list->GetTransform())) {
+					return false;
+				}
+			}
+		}
+	}
+	return true;
+}
+
+
+void GameObject::move(float x, float y) {
+	//move separately along x and y, so that dragging doesn't look so glitchy
+
+	//x-axis:
+	body_ptr->SetTransform(b2Vec2(x,original_pos.y) - b2Vec2(local_mouse.x,0), body_ptr->GetAngle());
+	if (noOverlaps()) {
+		original_pos=b2Vec2(x,original_pos.y) - b2Vec2(local_mouse.x,0);
+	}
+	else {
+		body_ptr->SetTransform(original_pos, original_rot);
+	}
+
+	//y-axis:
+	body_ptr->SetTransform(b2Vec2(original_pos.x,y) - b2Vec2(0,local_mouse.y), body_ptr->GetAngle());
+	if (noOverlaps()) {
+		original_pos=b2Vec2(original_pos.x,y) - b2Vec2(0,local_mouse.y);
+	}
+	else {
+		body_ptr->SetTransform(original_pos, original_rot);
+	}
+	local_mouse = body_ptr->GetLocalPoint(b2Vec2(x,y));	// So that dragging along a surface doesn't look glitchy
+	return;
+}
+
+bool GameObject::isInside(float x, float y) {
+	for (b2Fixture* f = body_ptr->GetFixtureList(); f!=NULL; f=f->GetNext()) {
+		if (f->TestPoint(b2Vec2(x,y))) {
+			local_mouse = body_ptr->GetLocalPoint(b2Vec2(x,y));
+			return true;
+		}
+	}
+	return false;
+}
+
+	
+
+
+
+
+
+
 GameObject* GameObjectFactory(b2World& world, std::string name, float x, float y) {
 	if (name=="Platform")
 		return new Platform(world, x,y, 20.0f, 0.0f);
