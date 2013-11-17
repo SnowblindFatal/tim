@@ -29,5 +29,5 @@ Usage example:
 		errorMessage(fh.getError());
 		// Return to level selection screen
 	}
-		
+*/
 #endif

@@ -99,11 +99,13 @@ GameState::StateSelect PlayMode::run()
 		}
 		//If not simulating, take care of highlighting
 		if (!simulate) {
-			//Notify whomever we are hovering over.
-			GameObject* hover = level.isInsidePlayerObject(0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
-			if (hover!=NULL) {
-				hover->setHighlight("hover");
-			}
+			//Notify whomever we are hovering over, if not dragging.
+            if (dragged_object==NULL) {
+                GameObject* hover = level.isInsidePlayerObject(0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+                if (hover!=NULL) {
+                    hover->setHighlight("hover");
+                }
+            }
 			//Notify the active/dragged object about highlighting
 			if (dragged_object!=NULL) {
 				dragged_object->setHighlight("dragged");

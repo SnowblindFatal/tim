@@ -1,6 +1,6 @@
 #ifndef WINCONDITION_H
 #define WINCONDITION_H
-#include <math.h>
+#include <cmath>
 #include <Box2D/Box2D.h>
 #include "GameObject.h"
 //An abstract class that represents the various win conditions
