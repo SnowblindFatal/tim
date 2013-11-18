@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <SFML/System.hpp>
-
+#include <cmath>
 
 b2Vec2 GameObject::getPos() const {
 	return body_ptr->GetPosition();
@@ -140,7 +140,14 @@ void Platform::highlightDelta(sf::Vector2i point) {
 	}
 	vertices[0]+=delta_convert;
 	vertices[1]+=delta_convert;
-	shape_ptr->Set(vertices, 4);
+	if (std::abs(vertices[1].y-vertices[2].y)/std::abs(vertices[1].x-vertices[2].x) < 1) {
+		shape_ptr->Set(vertices, 4);
+	}
+	if (!noOverlaps()) {
+		vertices[0]-=delta_convert;
+		vertices[1]-=delta_convert;
+		shape_ptr->Set(vertices,4);
+	}
 }
 
 
