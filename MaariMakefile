@@ -1,8 +1,9 @@
 SFML=$(CURDIR)/SFML-2.1
 B2D=$(CURDIR)/B2D
+TGUI=$(CURDIR)/TGUI
 CC=g++
-CFLAGS=-c -g -std=c++0x -Wall -Wextra -pedantic -I $(SFML)/include -I $(B2D)
-LDFLAGS=-lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lBox2D -L $(SFML)/lib -Wl,-rpath=$(SFML)/lib -Wl,-rpath-link=$(SFML)/lib -L $(B2D)/Box2D
+CFLAGS=-c -g -std=c++0x -Wall -Wextra -pedantic -I $(SFML)/include -I $(B2D) -I $(TGUI)/include
+LDFLAGS=-lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lBox2D -ltgui -L $(SFML)/lib -Wl,-rpath=$(SFML)/lib -Wl,-rpath-link=$(SFML)/lib -L $(B2D)/Box2D -L $(TGUI)/lib -Wl,-rpath=$(TGUI)/lib -Wl,-rpath-link=$(TGUI)/lib
 SOURCES=src/main.cpp src/game/BaseGame.cpp src/game/EditMode.cpp src/game/PlayMode.cpp src/game/GameState.cpp src/game/MainMenu.cpp src/game/PlayingField.cpp src/game/DebugDraw.cpp src/game/Level.cpp src/game/GameObject.cpp src/game/WinCondition.cpp src/game/Drawable.cpp src/game/Highlight.cpp src/general/Resources.cpp src/general/Settings.cpp 
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=machine
