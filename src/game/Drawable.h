@@ -13,13 +13,15 @@
 class Drawable
 {
 public:
-	Drawable() {};
-	virtual ~Drawable() {};
+	Drawable(Highlight* highlight_ptr=NULL) : highlight(highlight_ptr)  {};
+	virtual ~Drawable() {
+		delete highlight;	
+	};
 	virtual void draw(sf::RenderWindow&) =0;
 	virtual void update(b2Body*) =0;
 	virtual void setHighlight(std::string, bool);
 protected:
-    Highlight highlight;
+    Highlight* highlight;
 };
 
 class PlatformDrawable : public Drawable {
@@ -27,6 +29,8 @@ public:
 	PlatformDrawable(float x, float y, float width, float height);
 	void draw(sf::RenderWindow& win) ;
 	void update(b2Body* ptr);
+	bool highlightPoint(sf::Vector2i);
+	sf::Vector2i highlightDelta(sf::Vector2i);
 private:
 	sf::ConvexShape polygon;
 	bool highlighted;

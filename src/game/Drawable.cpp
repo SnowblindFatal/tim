@@ -1,10 +1,10 @@
 #include "Drawable.h"
 
 void Drawable::setHighlight(std::string type, bool can_place){
-    highlight.set(type,can_place);
+    highlight->set(type,can_place);
 }
 
-PlatformDrawable::PlatformDrawable(float x, float y, float width, float height) : highlighted(false) {
+PlatformDrawable::PlatformDrawable(float x, float y, float width, float height) : Drawable(new PlatformHighlight), highlighted(false) {
 	x*=10;
 	y*=10;
 	width*=10;
@@ -20,7 +20,7 @@ PlatformDrawable::PlatformDrawable(float x, float y, float width, float height) 
 
 void PlatformDrawable::draw(sf::RenderWindow& win) {
 	win.draw(polygon);
-    highlight.draw(win);
+    highlight->draw(win);
 }
 
 void PlatformDrawable::update(b2Body* ptr) {
@@ -34,6 +34,12 @@ void PlatformDrawable::update(b2Body* ptr) {
 			polygon.setPoint(index, sf::Vector2f(pos.x*10 + vert.x*10, pos.y*10 + vert.y*10 ));
 		}
 	}
-	highlight.update_rect(polygon.getGlobalBounds());
+	highlight->update_rect(polygon.getGlobalBounds());
 	
+}
+bool PlatformDrawable::highlightPoint(sf::Vector2i point) {
+	return highlight->checkPoint(point);
+}
+sf::Vector2i PlatformDrawable::highlightDelta(sf::Vector2i point){
+	return highlight->getDelta(point);
 }

@@ -37,7 +37,7 @@ GameState::StateSelect PlayMode::run()
 
             else if (event.type == sf::Event::KeyPressed)
             {
-                if (event.key.code == sf::Keyboard::S && dragged_object==NULL) {
+                if (event.key.code == sf::Keyboard::S && dragged_object==NULL && !highlight_active) {
                 	simulate=1;
 					active_object=NULL;
 
@@ -78,14 +78,23 @@ GameState::StateSelect PlayMode::run()
 				if (dragged_object!=NULL) {
 					dragged_object->move((float)event.mouseMove.x/10.0f, (float)event.mouseMove.y/10.0f);
 				}
+				else if (highlight_active) {
+					active_object->highlightDelta(sf::Mouse::getPosition(App));
+				}
+					
 			}
 			else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-				
+				if (active_object && active_object->highlight_extras && active_object->highlightPoint(sf::Mouse::getPosition(App))) {
+						highlight_active=true;
+				}
+
+
 				//Set active and dragging when pressed over some playerobject and not dragging:
-				if (dragged_object==NULL) {
+				else if (dragged_object==NULL) {
 					active_object = level.isInsidePlayerObject(0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
 					dragged_object = active_object;
 				}
+				
 
 			}
 
@@ -95,12 +104,14 @@ GameState::StateSelect PlayMode::run()
 				if (dragged_object!=NULL && dragged_object->can_place) {
 					dragged_object=NULL;
 				}
+				else if (highlight_active)
+					highlight_active=false;
 			}
 		}
 		//If not simulating, take care of highlighting
 		if (!simulate) {
-			//Notify whomever we are hovering over, if not dragging.
-            if (dragged_object==NULL) {
+			//Notify whomever we are hovering over, if not dragging or resizing, etc.
+            if (dragged_object==NULL && !highlight_active) {
                 GameObject* hover = level.isInsidePlayerObject(0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
                 if (hover!=NULL) {
                     hover->setHighlight("hover");

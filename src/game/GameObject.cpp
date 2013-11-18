@@ -1,7 +1,7 @@
 #include "GameObject.h"
 #include <SFML/Graphics.hpp>
 #include <string>
-
+#include <SFML/System.hpp>
 
 
 b2Vec2 GameObject::getPos() const {
@@ -106,14 +106,16 @@ Platform::Platform(b2World& world, float x, float y, float width, float heigth) 
 	body_ptr = world.CreateBody(&bodyDef);
 	b2Vec2 vertices[4];
 	vertices[0].Set(0, 0);
-	vertices[3].Set(0, 2);
 	vertices[1].Set(width, heigth);
 	vertices[2].Set(width, heigth + 2);
+	vertices[3].Set(0, 2);
 	b2PolygonShape polygonShape;
 	polygonShape.Set(vertices, 4);
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &polygonShape;
 	body_ptr->CreateFixture(&fixtureDef);
+
+	highlight_extras=true;
 }
 void Platform::update_drawable() {
 	drawable.update(body_ptr);
@@ -123,6 +125,22 @@ void Platform::draw(sf::RenderWindow& win) {
 }
 void Platform::setHighlight(std::string type) {
 	drawable.setHighlight(type,can_place);
+}
+bool Platform::highlightPoint(sf::Vector2i point) {
+	return (drawable.highlightPoint(point));
+}
+void Platform::highlightDelta(sf::Vector2i point) {
+	sf::Vector2i delta = drawable.highlightDelta(point);
+	b2Vec2 delta_convert((float)delta.x/10.0f,(float)delta.y/10.0f);
+	b2PolygonShape* shape_ptr = dynamic_cast<b2PolygonShape*>(body_ptr->GetFixtureList()->GetShape());
+
+	b2Vec2 vertices[4];
+	for (int index=0;index<4;index++) {
+		vertices[index]=shape_ptr->GetVertex(index);
+	}
+	vertices[0]+=delta_convert;
+	vertices[1]+=delta_convert;
+	shape_ptr->Set(vertices, 4);
 }
 
 
