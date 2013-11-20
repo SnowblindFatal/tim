@@ -103,6 +103,13 @@ class Wall : public GameObject
 {
 	public:
 		Wall(b2World& world, float x, float y, float width, float heigth);
+		void update_drawable();
+		void draw(sf::RenderWindow&) ;
+		void setHighlight(std::string type);
+		bool highlightPoint(sf::Vector2i point);
+		void highlightDelta(sf::Vector2i point);
+	private:
+		PlatformDrawable drawable;
 };
 
 

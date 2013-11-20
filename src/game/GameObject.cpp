@@ -140,7 +140,8 @@ void Platform::highlightDelta(sf::Vector2i point) {
 	}
 	vertices[0]+=delta_convert;
 	vertices[1]+=delta_convert;
-	if (std::abs(vertices[1].y-vertices[2].y)/std::abs(vertices[1].x-vertices[2].x) < 1) {
+	if (std::abs(vertices[1].y-vertices[2].y)/std::abs(vertices[1].x-vertices[2].x) < 1
+		&& std::abs(vertices[1].x-vertices[2].x) > 3.0f && std::abs(vertices[1].x-vertices[2].x) < 40.0f) {
 		shape_ptr->Set(vertices, 4);
 	}
 	if (!noOverlaps()) {
@@ -151,7 +152,7 @@ void Platform::highlightDelta(sf::Vector2i point) {
 }
 
 
-Wall::Wall(b2World& world, float x, float y, float width, float heigth) : GameObject(x,y) {
+Wall::Wall(b2World& world, float x, float y, float width, float heigth) : GameObject(x,y), drawable(x,y,width,heigth) {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
 	body_ptr = world.CreateBody(&bodyDef);
@@ -165,6 +166,41 @@ Wall::Wall(b2World& world, float x, float y, float width, float heigth) : GameOb
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &polygonShape;
 	body_ptr->CreateFixture(&fixtureDef);		
+
+	highlight_extras=true;
+}
+void Wall::update_drawable() {
+	drawable.update(body_ptr);
+}
+void Wall::draw(sf::RenderWindow& win) {
+	drawable.draw(win);
+}
+void Wall::setHighlight(std::string type) {
+	drawable.setHighlight(type,can_place);
+}
+bool Wall::highlightPoint(sf::Vector2i point) {
+	return (drawable.highlightPoint(point));
+}
+void Wall::highlightDelta(sf::Vector2i point) {
+	sf::Vector2i delta = drawable.highlightDelta(point);
+	b2Vec2 delta_convert((float)delta.x/10.0f,(float)delta.y/10.0f);
+	b2PolygonShape* shape_ptr = dynamic_cast<b2PolygonShape*>(body_ptr->GetFixtureList()->GetShape());
+
+	b2Vec2 vertices[4];
+	for (int index=0;index<4;index++) {
+		vertices[index]=shape_ptr->GetVertex(index);
+	}
+	vertices[2]+=delta_convert;
+	vertices[1]+=delta_convert;
+	if (std::abs(vertices[0].y-vertices[1].y)/std::abs(vertices[0].x-vertices[1].x) < 1
+		&& std::abs(vertices[0].y-vertices[1].y) > 3.0f && std::abs(vertices[0].y-vertices[1].y) < 40.0f) {
+		shape_ptr->Set(vertices, 4);
+	}
+	if (!noOverlaps()) {
+		vertices[1]-=delta_convert;
+		vertices[2]-=delta_convert;
+		shape_ptr->Set(vertices,4);
+	}
 }
 
 Ball::Ball(b2World& world, float x, float y, float r, float restitution = 0, float density = 1.0) : GameObject(x,y) {

@@ -37,9 +37,9 @@ public:
 
 protected:
 	sf::RectangleShape delta_height;
-	//sf::RectangleShape rezise;
+	sf::RectangleShape delta_width;
 	bool height_active;
-	//bool size_active;
+	bool width_active;
 	sf::Vector2i local_mouse;
 };
 
