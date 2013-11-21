@@ -140,6 +140,13 @@ void Platform::highlightDelta(sf::Vector2i point) {
 	}
 	vertices[0]+=delta_convert;
 	vertices[1]+=delta_convert;
+    
+    //A small notch close to zero, you have to use a little more velocity:
+    if (std::abs(vertices[1].y-vertices[2].y) < 0.2f) {
+        vertices[0].y=0;
+        vertices[1].y=2;
+    }
+    
 	if (std::abs(vertices[1].y-vertices[2].y)/std::abs(vertices[1].x-vertices[2].x) < 1
 		&& std::abs(vertices[1].x-vertices[2].x) > 3.0f && std::abs(vertices[1].x-vertices[2].x) < 40.0f) {
 		shape_ptr->Set(vertices, 4);
@@ -190,15 +197,30 @@ void Wall::highlightDelta(sf::Vector2i point) {
 	for (int index=0;index<4;index++) {
 		vertices[index]=shape_ptr->GetVertex(index);
 	}
-	vertices[2]+=delta_convert;
-	vertices[1]+=delta_convert;
-	if (std::abs(vertices[0].y-vertices[1].y)/std::abs(vertices[0].x-vertices[1].x) < 1
-		&& std::abs(vertices[0].y-vertices[1].y) > 3.0f && std::abs(vertices[0].y-vertices[1].y) < 40.0f) {
+    
+    //Because of the way B2D handles vertices, we have to check here which ones we want.
+    size_t wanted_index;
+    if (vertices[0].y < vertices[1].y) wanted_index=1;
+    else wanted_index=0;
+    
+    
+	vertices[wanted_index]+=delta_convert;
+	vertices[wanted_index+1]+=delta_convert;
+    
+    //A small notch close to zero:
+    if (std::abs(vertices[wanted_index+1].x-vertices[wanted_index+2].x) < 0.2f) {
+        vertices[wanted_index].x=2;
+        vertices[wanted_index+1].x=0;
+    }
+    
+	if (std::abs(vertices[wanted_index+1].x-vertices[wanted_index+2].x)/std::abs(vertices[wanted_index+1].y-vertices[wanted_index+2].y) < 1
+		&& std::abs(vertices[wanted_index +1].y-vertices[wanted_index +2].y) > 3.0f && std::abs(vertices[wanted_index +1].y-vertices[wanted_index +2].y) < 40.0f) {
 		shape_ptr->Set(vertices, 4);
 	}
+    
 	if (!noOverlaps()) {
-		vertices[1]-=delta_convert;
-		vertices[2]-=delta_convert;
+		vertices[wanted_index]-=delta_convert;
+		vertices[wanted_index+1]-=delta_convert;
 		shape_ptr->Set(vertices,4);
 	}
 }
