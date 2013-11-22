@@ -225,6 +225,106 @@ void Wall::highlightDelta(sf::Vector2i point) {
 	}
 }
 
+Catapult::Catapult(b2World& world, float x, float y) : GameObject(x,y) {
+	b2BodyDef bodyDef;
+	bodyDef.position.Set(x, y);
+	body_ptr = world.CreateBody(&bodyDef);
+	
+	b2Vec2 vertices[3];
+	vertices[0].Set(0, 0);
+	vertices[1].Set(-1, 2);
+	vertices[2].Set(1,2);
+	b2PolygonShape polygonShape;
+	polygonShape.Set(vertices, 3);
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &polygonShape;
+	body_ptr->CreateFixture(&fixtureDef);
+	
+	
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(x, y);
+	bodyDef.angle = 0;
+	original_rot = 0;
+	body_ptr2 =world.CreateBody(&bodyDef);
+	b2PolygonShape boxShape;
+	boxShape.SetAsBox(5,0.2);
+	b2FixtureDef fixtureDef2;
+	fixtureDef2.shape = &boxShape;
+	fixtureDef2.density = 1;
+	fixtureDef2.friction = 1;
+	fixtureDef2.restitution = 0;
+	body_ptr2->CreateFixture(&fixtureDef2);
+
+	boxShape.SetAsBox(0.2,1, b2Vec2(4.8,-1.2),0);
+	fixtureDef2.shape = &boxShape;
+	fixtureDef2.density = 1;
+	fixtureDef2.friction = 1;
+	fixtureDef2.restitution = 0;
+	body_ptr2->CreateFixture(&fixtureDef2);
+
+	b2RevoluteJointDef jointDef;
+	jointDef.localAnchorA.Set(0, 0);
+	jointDef.localAnchorB.Set(0, 0);
+	jointDef.bodyA = body_ptr;
+	jointDef.bodyB = body_ptr2;
+	jointDef.enableLimit = true;
+	jointDef.lowerAngle = -0.4;
+	jointDef.upperAngle =  0.4;
+	world.CreateJoint(&jointDef);
+}
+
+Seesaw::Seesaw(b2World& world, float x, float y) : GameObject(x,y) {
+	b2BodyDef bodyDef;
+	bodyDef.position.Set(x, y);
+	body_ptr = world.CreateBody(&bodyDef);
+	
+	b2Vec2 vertices[3];
+	vertices[0].Set(0, 0);
+	vertices[1].Set(-1, 2);
+	vertices[2].Set(1,2);
+	b2PolygonShape polygonShape;
+	polygonShape.Set(vertices, 3);
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &polygonShape;
+	body_ptr->CreateFixture(&fixtureDef);
+	
+	
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(x, y);
+	bodyDef.angle = 0.4;
+	original_rot = 0.4;
+	body_ptr2 =world.CreateBody(&bodyDef);
+	b2PolygonShape boxShape;
+	boxShape.SetAsBox(5,0.2);
+	b2FixtureDef fixtureDef2;
+	fixtureDef2.shape = &boxShape;
+	fixtureDef2.density = 1;
+	fixtureDef2.friction = 1;
+	fixtureDef2.restitution = 0;
+	body_ptr2->CreateFixture(&fixtureDef2);
+
+	b2RevoluteJointDef jointDef;
+	jointDef.localAnchorA.Set(0, 0);
+	jointDef.localAnchorB.Set(0, 0);
+	jointDef.bodyA = body_ptr;
+	jointDef.bodyB = body_ptr2;
+	jointDef.enableLimit = true;
+	jointDef.lowerAngle = -0.4;
+	jointDef.upperAngle =  0.4;
+	world.CreateJoint(&jointDef);
+}
+
+void Seesaw::reset() {
+	body_ptr->SetTransform(original_pos, 0);
+	body_ptr->SetLinearVelocity(b2Vec2(0,0));
+	body_ptr->SetAngularVelocity(0);
+	body_ptr->SetAwake(true);
+	body_ptr2->SetTransform(original_pos, original_rot);
+	body_ptr2->SetLinearVelocity(b2Vec2(0,0));
+	body_ptr2->SetAngularVelocity(0);
+	body_ptr2->SetAwake(true);
+}
+
 Ball::Ball(b2World& world, float x, float y, float r, float restitution = 0, float density = 1.0) : GameObject(x,y) {
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
@@ -236,7 +336,7 @@ Ball::Ball(b2World& world, float x, float y, float r, float restitution = 0, flo
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &circleShape;
 	fixtureDef.density = density;
-	fixtureDef.friction = 0.3f;
+	fixtureDef.friction = 0.5;
 	fixtureDef.restitution = restitution;
 	body_ptr->CreateFixture(&fixtureDef);
 }

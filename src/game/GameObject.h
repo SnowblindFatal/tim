@@ -112,6 +112,24 @@ class Wall : public GameObject
 		PlatformDrawable drawable;
 };
 
+class Seesaw : public GameObject
+{
+	public:	
+		Seesaw(b2World& world, float x, float y);
+		void reset();
+	private:
+		b2Body* body_ptr2;
+};
+
+class Catapult : public GameObject
+{
+	public:
+		Catapult(b2World& world, float x, float y);
+	private:
+		b2Body* body_ptr2;
+		b2Body* body_ptr3;		
+
+};
 
 class Chain : public GameObject
 {
