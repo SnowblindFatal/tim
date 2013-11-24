@@ -5,6 +5,5 @@ OSX_*
 *.DS_Store
 *.exe
 Makefile
-tests/
 /src/tests.cpp
 MakeTests
