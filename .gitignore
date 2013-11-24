@@ -7,3 +7,4 @@ OSX_*
 Makefile
 /src/tests.cpp
 MakeTests
+tests/
