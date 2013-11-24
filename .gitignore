@@ -6,3 +6,5 @@ OSX_*
 *.exe
 Makefile
 tests/
+/src/tests.cpp
+MakeTests
