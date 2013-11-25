@@ -8,7 +8,9 @@
 
 GameObject::~GameObject() {
 	body_ptr->GetWorld()->DestroyBody(body_ptr);
+	body_ptr=NULL;
 	delete drawable;
+	drawable=NULL;
 }
 
 b2Vec2 GameObject::getPos() const {
@@ -123,7 +125,7 @@ Domino::Domino(b2World& world, float x, float y) : GameObject(world,x,y,"Domino"
     body_ptr->CreateFixture(&fixtureDef);
 }
 
-Platform::Platform(b2World& world, float x, float y, float width, float heigth) : GameObject(world,x,y,"Platform", new PlatformDrawable(x,y,width,heigth)) { //BTW it should be height, not heigth.
+Platform::Platform(b2World& world, float x, float y, float width, float height) : GameObject(world,x,y,"Platform", new PlatformDrawable(x,y,width,height)) { //BTW it should be height, not heigth.
 
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
@@ -171,7 +173,7 @@ void Platform::highlightDelta(sf::Vector2i point) {
 }
 
 
-Wall::Wall(b2World& world, float x, float y, float width, float heigth) : GameObject(world,x,y,"Wall", new PlatformDrawable(x,y,width,heigth)) {
+Wall::Wall(b2World& world, float x, float y, float width, float height) : GameObject(world,x,y,"Wall", new PlatformDrawable(x,y,width,height)) {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
 	body_ptr = world.CreateBody(&bodyDef);

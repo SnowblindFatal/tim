@@ -16,6 +16,7 @@ public:
 	Drawable(Highlight* highlight_ptr=new Highlight) : highlight(highlight_ptr)  {};
 	virtual ~Drawable() {
 		delete highlight;	
+		highlight=NULL;
 	};
 	virtual void draw(sf::RenderWindow&) {} 
 	virtual void update(b2Body*) {} 

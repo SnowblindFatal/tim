@@ -10,7 +10,7 @@
 #include <SFML/System.hpp>
 #include "DebugDraw.h"
 #include "WinCondition.h"
-#include "CollisionDetection.h"
+//#include "CollisionDetection.h" //This inclusion was forgotten when committing.
 #include <map>
 #include <string>
 #include <iostream>
@@ -64,7 +64,7 @@ public:
     b2World phys_world;
     sf::RenderWindow& App;
     DebugDraw DebugDrawInstance;
-    CollisionDetection collisions;
+    //CollisionDetection collisions;
 	
     bool level_loaded;
     std::list<GameObject* > levelobjects;	//The level itself

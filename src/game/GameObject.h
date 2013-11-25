@@ -51,7 +51,7 @@ public:
 protected:
 
 	b2Body* body_ptr;
-	b2World world;
+	b2World& world;
 	b2Vec2 original_pos;
 	float original_rot;
 	b2Vec2 local_mouse;
