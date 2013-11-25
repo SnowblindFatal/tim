@@ -9,14 +9,16 @@ namespace {
 
 LevelData::LevelData(sf::RenderWindow& _App) : phys_world(default_gravity), App(_App), DebugDrawInstance(_App), level_loaded(false)
 	{
-        phys_world.SetDebugDraw(&DebugDrawInstance);
+        
+		phys_world.SetContactListener(&collisions);
+		phys_world.SetDebugDraw(&DebugDrawInstance);
         DebugDrawInstance.SetFlags(b2Draw::e_shapeBit);
 		DebugDrawInstance.AppendFlags(b2Draw::e_centerOfMassBit);
 
 		//List the various GameObjects, there will of course be 0 available by default:
 		available["Platform"] = 0;
 		available["Wall"] = 0;
-		available["BouncingBall"] = 0;
+		//available["BouncingBall"] = 0;
 		available["BigBall"] = 0;
 		available["BowlingBall"] = 0;
 		available["Domino"] = 0;
@@ -46,6 +48,8 @@ void LevelData::addPlayerObject(GameObject* obj) {
 }
 
 void LevelData::loadlevel() {
+
+	std::cout << "load level\n";
   //Load a demo level:
 /*
 	levelobjects.push_back(new HorizontalBlock(phys_world,12.0f, 40.0f));
@@ -73,8 +77,8 @@ void LevelData::loadlevel() {
 
 
 	//Load a "bare minimum" playable level:
+	//levelobjects.push_back(new Bomb(phys_world, 30, 35));
 
-	levelobjects.push_back(new Platform(phys_world, 20.0, 40.0, 40.0, 10.0f));
 	/*	
 	for (size_t i = 0; i<10; i++)
 	{
@@ -86,13 +90,36 @@ void LevelData::loadlevel() {
 	levelobjects.push_back(new Platform(phys_world, 15.0, 15.0, 2.0, 0));
 	levelobjects.push_back(new Platform(phys_world, 25.0, 15.0, 2.0, 0));
 	*/
-	levelobjects.push_back(new Catapult(phys_world, 9, 40));
-	levelobjects.push_back(new BouncingBall(phys_world, 13.0, 35.0));
-	levelobjects.push_back(new BigBall(phys_world, 5.0, 5.0));
-	winconditions.push_back(new IsNearPoint(levelobjects.back(), 40.0f, 40.0f, 5.0f));
+	
+	for (size_t i = 0; i<7; i++)
+	{
+		for (size_t j=0; j<4; j++)
+		{		
+			if (i%2 != 1)
+			{
+				levelobjects.push_back(new Seesaw(phys_world, 5+j*19, 10+i*4));
+			}
+			else
+			{
+				if (j==3)
+					break;
+				levelobjects.push_back(new Seesaw(phys_world, 14.5+j*19, 10+i*4));
+			}
+		}
+	}
+	//levelobjects.push_back(new Platform(phys_world, 15.0, 15.0, 100.0, 0));
+	levelobjects.push_back(new BouncingBall(phys_world, 40, 0.0f));
+	levelobjects.push_back(new BouncingBall(phys_world, 42, 0.0f));
+	levelobjects.push_back(new BouncingBall(phys_world, 44, 0.0f));
+	levelobjects.push_back(new BouncingBall(phys_world, 46, 0.0f));
+	levelobjects.push_back(new BouncingBall(phys_world, 50, 0.0f));
+	levelobjects.push_back(new BouncingBall(phys_world, 52, 0.0f));
+	levelobjects.push_back(new Bomb (phys_world, 48.0f, 0.0f));
+	winconditions.push_back(new IsNearPoint(levelobjects.back(), 80.0f, 40.0f, 5.0f));
 	available["Platform"]=5;
 	available["Wall"]=1;
-
+	available["BouncingBall"] = 4;
+	available["Seesaw"] = 2;
 }
 
 bool LevelData::checkWin() const {
@@ -144,7 +171,7 @@ void LevelData::reset() {
 			it->reset();
 		}
 		for (auto it : playerobjects) {
-			it->reset();
+			it->reset(); 
 		}
 		for (auto it : winconditions) {
 			it->reset();
@@ -154,11 +181,15 @@ void LevelData::reset() {
 
 
 void LevelData::simulate() {
-      phys_world.Step(timestep, velocityIterations, positionIterations);
+	phys_world.Step(timestep, velocityIterations, positionIterations);
+	if (levelobjects.back()->contactStatus() == true && levelobjects.back()->explodeStatus() == false) {
+		std::cout << "EXPLODE!!!\n";
+		levelobjects.back()->explode();
+	}
 }
     
 bool LevelData::loaded(void) const {
-      return level_loaded;
+	return level_loaded;
 }
 
 	

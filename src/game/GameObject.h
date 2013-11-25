@@ -12,7 +12,7 @@ class GameObject
 {
 
 public:
-    GameObject(float x, float y, float rotation=0.0f) : can_place(false), highlight_extras(false), original_pos(x,y), original_rot(rotation), local_mouse(0,0) {};
+    GameObject(b2World& world, float x, float y, float rotation=0.0f) : can_place(false), highlight_extras(false), world(world), original_pos(x,y), original_rot(rotation), local_mouse(0,0) {};
 	virtual ~GameObject() {}
     virtual void update_drawable() {}
     virtual void draw(sf::RenderWindow&) {}
@@ -21,6 +21,10 @@ public:
 	virtual b2Vec2  getPos() const;
 	
 	virtual void reset();
+
+	virtual void explode() {}
+	virtual bool contactStatus() { return false;}
+	virtual bool explodeStatus() { return false;}
 	
 	//Returns true if the body is not overlapping and false otherwise. 
 	virtual bool noOverlaps() const;
@@ -35,6 +39,7 @@ public:
 	//Wether there are options like rezise, etc.
 	//GameObjects that have this as true should also implement highlightPoint() and highlightDelta()
 	bool highlight_extras; 
+	
 
 	//Interface functions for stuff like resize, etc.
 	virtual bool highlightPoint(sf::Vector2i) {return false;}
@@ -42,9 +47,11 @@ public:
 protected:
 
 	b2Body* body_ptr;
+	b2World world;
 	b2Vec2 original_pos;
 	float original_rot;
 	b2Vec2 local_mouse;
+	
 	
 };	
 
@@ -86,6 +93,24 @@ class BigBall : public Ball
 	public:
 		BigBall(b2World& world, float x, float y);
 };
+
+
+class Bomb : public Ball
+{
+	public:
+		Bomb(b2World& world, float x, float y);
+		void applyImpulse(b2Body* body, b2Vec2 blastCenter, b2Vec2 applyPoint, float blastPower);
+		void explode();
+		void startContact();
+  		void endContact();
+		bool contactStatus();
+		bool explodeStatus();
+		void reset();
+	private:
+		bool contacting;
+		bool exploded;
+};
+
 class Platform : public GameObject
 {
 	public:
@@ -131,12 +156,36 @@ class Catapult : public GameObject
 
 };
 
+class Teleport : public GameObject
+{
+	public:
+		Teleport(b2World& world, float x1, float y1, float x2, float y2);
+		//void startContact();
+  		//void endContact();
+		//bool contactStatus();
+		//bool reset();
+	private:
+		b2Body* body_ptr2;
+		//bool contacting;
+};
+
+
 class Chain : public GameObject
 {
 	public:
 		Chain(b2World& world);
 };
 
+class MyQueryCallback : public b2QueryCallback {
+	public:
+		std::vector<b2Body*> foundBodies;
+
+		bool ReportFixture(b2Fixture* fixture) {
+			foundBodies.push_back( fixture->GetBody() );
+			std::cout << "object\n";
+			return true;//keep going to find all fixtures in the query area
+		}
+};
 
 #endif //GAMEOBJECT_H
 
