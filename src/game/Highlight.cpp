@@ -4,11 +4,22 @@
 
 Highlight::Highlight() {
     rect.setFillColor(sf::Color::Transparent);
+	del1.setFillColor(sf::Color::Transparent);
+	del2.setFillColor(sf::Color::Transparent);
+	del2.setSize(sf::Vector2f(13.0f,5.0f));
+	del1.setSize(sf::Vector2f(13.0f,5.0f));
+	delete_active=false;	
+	rect.setPosition(sf::Vector2f(-400,-400));
+	del1.setPosition(sf::Vector2f(-400,-400));
+	del2.setPosition(sf::Vector2f(-400,-400));
+	
 }
 
 void Highlight::set(std::string type, bool can_place) {
 	if (type=="active") {
 		rect.setFillColor(sf::Color(255,255,0,80)); //Yellow
+		del1.setFillColor(sf::Color(255,0,0,255)); //RED
+		del2.setFillColor(sf::Color(255,0,0,255)); //YEAH
 	}
 	if (type=="hover") {
 		rect.setFillColor(sf::Color(255,255,255,80)); //White
@@ -24,14 +35,44 @@ void Highlight::set(std::string type, bool can_place) {
 void Highlight::update_rect(sf::FloatRect polygon_bounds) {
     rect.setSize(sf::Vector2f(polygon_bounds.width+10, polygon_bounds.height+10));
 	rect.setPosition(sf::Vector2f(polygon_bounds.left-5,polygon_bounds.top-5));
+	del1.setRotation(0.0f);
+	del2.setRotation(0.0f);
+	del1.setOrigin(6.5f,2.5f);
+	del2.setOrigin(6.5f,2.5f);
+	del1.setPosition(sf::Vector2f(polygon_bounds.left-20,polygon_bounds.top-10));
+	del2.setPosition(sf::Vector2f(polygon_bounds.left-20,polygon_bounds.top-10));
+	del1.setRotation(45.0f);
+	del2.setRotation(-45.0f);
+	
 }
 
 void Highlight::draw(sf::RenderWindow& win) {
     win.draw(rect);
+	win.draw(del1);
+	win.draw(del2);
     rect.setFillColor(sf::Color::Transparent);
+	del1.setFillColor(sf::Color::Transparent);
+	del2.setFillColor(sf::Color::Transparent);
 }
 
+std::string Highlight::clicked(sf::Vector2i point) {
+	if (delete_active) {
 
+		sf::FloatRect box=del1.getGlobalBounds();
+		box.left-=2;
+		box.width-=2;
+		box.top-=2;
+		box.height-=2;
+		if (box.contains(point.x,point.y)) {
+			return "delete";
+		}
+		else {
+			delete_active=false;
+			return "nothing";
+		}
+	}
+	else return "nothing";
+}
 
 //PlatformHighlight:
 PlatformHighlight::PlatformHighlight() : Highlight() {
@@ -43,11 +84,10 @@ PlatformHighlight::PlatformHighlight() : Highlight() {
 
 void PlatformHighlight::set(std::string type, bool can_place) {
 	if (type=="active") {
-		rect.setFillColor(sf::Color(255,255,0,80)); //Yellow
 		delta_height.setFillColor(sf::Color(0,0,255,150)); //Blue
 		delta_width.setFillColor(sf::Color(0,0,255,150));
 	}
-	else Highlight::set(type, can_place);
+	Highlight::set(type, can_place);
 }
 
 void PlatformHighlight::update_rect(sf::FloatRect polygon_bounds) {
@@ -67,16 +107,31 @@ bool PlatformHighlight::checkPoint(sf::Vector2i point) {
 	if (delta_height.getGlobalBounds().contains(point.x, point.y)) {
 		local_mouse=point;
 		width_active=false;
+		delete_active=false;
 		height_active=true;
 		return true;
 	}
 	else if (delta_width.getGlobalBounds().contains(point.x, point.y)) {
 		local_mouse=point;
 		width_active=true;
+		delete_active=false;
 		height_active=false;
 		return true;
 	}
-	else return false;
+	else {
+		sf::FloatRect box=del1.getGlobalBounds();
+		box.left-=2;
+		box.width-=2;
+		box.top-=2;
+		box.height-=2;
+		if (box.contains(point.x,point.y)) {
+			delete_active=true;
+			width_active=false;
+			height_active=false;
+			return true; 
+		}
+	}
+	return false;
 }
 
 sf::Vector2i PlatformHighlight::getDelta(sf::Vector2i point) {

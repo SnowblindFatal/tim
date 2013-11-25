@@ -104,8 +104,14 @@ GameState::StateSelect PlayMode::run()
 				if (dragged_object!=NULL && dragged_object->can_place) {
 					dragged_object=NULL;
 				}
-				else if (highlight_active)
+				else if (highlight_active) {
+					std::string action = active_object->highlightClicked(sf::Mouse::getPosition(App));
+					if (action=="delete") {
+						level.deletePlayerObject(active_object);
+						active_object=NULL;
+					}
 					highlight_active=false;
+				}
 			}
 		}
 		//If not simulating, take care of highlighting

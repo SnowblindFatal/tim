@@ -50,6 +50,9 @@ public:
 	//Reset the level to where it was before simulation.
    	void reset() ;
 	
+	//Delete and place in available.
+	void deletePlayerObject(GameObject* obj);
+	
     //One Box2D step:
     void simulate() ;
     

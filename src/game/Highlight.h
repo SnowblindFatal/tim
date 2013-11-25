@@ -17,8 +17,12 @@ public:
     virtual void draw(sf::RenderWindow& win);
 	virtual bool checkPoint(sf::Vector2i) {return false;}
 	virtual sf::Vector2i getDelta(sf::Vector2i) {return sf::Vector2i(0,0);}
+	virtual std::string clicked(sf::Vector2i);
 protected:
     sf::RectangleShape rect;
+	sf::RectangleShape del1;
+	sf::RectangleShape del2;
+	bool delete_active;
 };
 
 class PlatformHighlight : public Highlight {

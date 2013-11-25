@@ -12,13 +12,15 @@ class GameObject
 {
 
 public:
-    GameObject(float x, float y, float rotation=0.0f) : can_place(false), highlight_extras(false), original_pos(x,y), original_rot(rotation), local_mouse(0,0) {};
-	virtual ~GameObject() {}
-    virtual void update_drawable() {}
-    virtual void draw(sf::RenderWindow&) {}
-	virtual void setHighlight(std::string ) {}
+    GameObject(float x, float y, std::string name, Drawable* drawable= new Drawable, float rotation=0.0f) : can_place(false), highlight_extras(false), original_pos(x,y), original_rot(rotation), local_mouse(0,0), name(name), drawable(drawable) {};
+	virtual ~GameObject(); 
+    virtual void update_drawable(); 
+    virtual void draw(sf::RenderWindow&);
+	virtual void setHighlight(std::string );
 
 	virtual b2Vec2  getPos() const;
+	virtual std::string getName(void) const;
+	
 	
 	virtual void reset();
 	
@@ -33,18 +35,22 @@ public:
 	virtual bool isInside(float x, float y);
 
 	//Wether there are options like rezise, etc.
-	//GameObjects that have this as true should also implement highlightPoint() and highlightDelta()
+	//GameObjects that have this as true should also implement highlightDelta etc, probably. 
 	bool highlight_extras; 
 
 	//Interface functions for stuff like resize, etc.
-	virtual bool highlightPoint(sf::Vector2i) {return false;}
-	virtual void highlightDelta(sf::Vector2i) {}
+	virtual bool highlightPoint(sf::Vector2i); 
+	virtual void highlightDelta(sf::Vector2i);
+	virtual std::string highlightClicked(sf::Vector2i); 
+
 protected:
 
 	b2Body* body_ptr;
 	b2Vec2 original_pos;
 	float original_rot;
 	b2Vec2 local_mouse;
+	std::string name; //Needed for at least LevelData::deletePlayerObject
+	Drawable* drawable;
 	
 };	
 
@@ -66,7 +72,7 @@ class Domino : public GameObject
 class Ball : public GameObject
 {
 	public:
-		Ball(b2World& world, float x, float y, float r, float restitution, float density);
+		Ball(b2World& world, float x, float y, std::string name, float r, float restitution, float density);
 };
 
 class BouncingBall : public Ball
@@ -90,26 +96,14 @@ class Platform : public GameObject
 {
 	public:
 		Platform(b2World& world, float x, float y, float width, float heigth);
-		void update_drawable();
-		void draw(sf::RenderWindow&) ;
-		void setHighlight(std::string type);
-		bool highlightPoint(sf::Vector2i point);
-		void highlightDelta(sf::Vector2i point);
-	private:
-		PlatformDrawable drawable;
+		void highlightDelta(sf::Vector2i);
 };
 
 class Wall : public GameObject
 {
 	public:
 		Wall(b2World& world, float x, float y, float width, float heigth);
-		void update_drawable();
-		void draw(sf::RenderWindow&) ;
-		void setHighlight(std::string type);
-		bool highlightPoint(sf::Vector2i point);
-		void highlightDelta(sf::Vector2i point);
-	private:
-		PlatformDrawable drawable;
+		void highlightDelta(sf::Vector2i);
 };
 
 

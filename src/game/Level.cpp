@@ -157,8 +157,18 @@ bool LevelData::loaded(void) const {
       return level_loaded;
 }
 
+void LevelData::deletePlayerObject(GameObject* obj) {
+	//Basically, it should always be found. I dunno why I did this if:
+	if (available.find(obj->getName())!=available.end()) {
+		available[obj->getName()]++;
+	}
+	delete obj;
+	playerobjects.remove(obj);
+}
 	
-	
+
+
+
 	
 	
 	

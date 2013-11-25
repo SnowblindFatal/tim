@@ -4,8 +4,17 @@
 #include <SFML/System.hpp>
 #include <cmath>
 
+
+GameObject::~GameObject() {
+	body_ptr->GetWorld()->DestroyBody(body_ptr);
+	delete drawable;
+}
+
 b2Vec2 GameObject::getPos() const {
 	return body_ptr->GetPosition();
+}
+std::string GameObject::getName(void) const {
+	return name;
 }
 void GameObject::reset() {
 	body_ptr->SetTransform(original_pos, original_rot);
@@ -13,6 +22,7 @@ void GameObject::reset() {
 	body_ptr->SetAngularVelocity(0);
 	body_ptr->SetAwake(true);
 }
+
 
 /*
 Three nested for loops might look bad but with the small amount of shapes we have,
@@ -75,17 +85,26 @@ GameObject* GameObjectFactory(b2World& world, std::string name, float x, float y
 		return new Wall(world, x,y, 0.0f, 20.0f);
 	return NULL; //Name not found!
 }
-/* TO BE REMOVED
-void HorizontalBlock::update_drawable() {
-	drawable.update(body_ptr);
-}
 
-void DroppingSquare::update_drawable() {
-	drawable.update(body_ptr);
-}
-*/
 
-Domino::Domino(b2World& world, float x, float y) : GameObject(x,y) {
+void GameObject::update_drawable() {
+	drawable->update(body_ptr);
+}
+void GameObject::draw(sf::RenderWindow& win) {
+	drawable->draw(win);
+}
+void GameObject::setHighlight(std::string type) {
+	drawable->setHighlight(type,can_place);
+}
+bool GameObject::highlightPoint(sf::Vector2i point) {
+	return (drawable->highlightPoint(point));
+}
+std::string GameObject::highlightClicked(sf::Vector2i point) {
+	return drawable->highlightClicked(point);
+}
+void GameObject::highlightDelta(sf::Vector2i) {}
+
+Domino::Domino(b2World& world, float x, float y) : GameObject(x,y,"Domino") {
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
     bodyDef.position.Set(x, y);
@@ -99,7 +118,7 @@ Domino::Domino(b2World& world, float x, float y) : GameObject(x,y) {
     body_ptr->CreateFixture(&fixtureDef);
 }
 
-Platform::Platform(b2World& world, float x, float y, float width, float heigth) : GameObject(x,y), drawable(x,y,width,heigth) { //BTW it should be height, not heigth.
+Platform::Platform(b2World& world, float x, float y, float width, float heigth) : GameObject(x,y,"Platform", new PlatformDrawable(x,y,width,heigth)) { //BTW it should be height, not heigth.
 
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
@@ -117,20 +136,8 @@ Platform::Platform(b2World& world, float x, float y, float width, float heigth) 
 
 	highlight_extras=true;
 }
-void Platform::update_drawable() {
-	drawable.update(body_ptr);
-}
-void Platform::draw(sf::RenderWindow& win) {
-	drawable.draw(win);
-}
-void Platform::setHighlight(std::string type) {
-	drawable.setHighlight(type,can_place);
-}
-bool Platform::highlightPoint(sf::Vector2i point) {
-	return (drawable.highlightPoint(point));
-}
 void Platform::highlightDelta(sf::Vector2i point) {
-	sf::Vector2i delta = drawable.highlightDelta(point);
+	sf::Vector2i delta = drawable->highlightDelta(point);
 	b2Vec2 delta_convert((float)delta.x/10.0f,(float)delta.y/10.0f);
 	b2PolygonShape* shape_ptr = dynamic_cast<b2PolygonShape*>(body_ptr->GetFixtureList()->GetShape());
 
@@ -159,7 +166,7 @@ void Platform::highlightDelta(sf::Vector2i point) {
 }
 
 
-Wall::Wall(b2World& world, float x, float y, float width, float heigth) : GameObject(x,y), drawable(x,y,width,heigth) {
+Wall::Wall(b2World& world, float x, float y, float width, float heigth) : GameObject(x,y,"Wall", new PlatformDrawable(x,y,width,heigth)) {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
 	body_ptr = world.CreateBody(&bodyDef);
@@ -176,20 +183,8 @@ Wall::Wall(b2World& world, float x, float y, float width, float heigth) : GameOb
 
 	highlight_extras=true;
 }
-void Wall::update_drawable() {
-	drawable.update(body_ptr);
-}
-void Wall::draw(sf::RenderWindow& win) {
-	drawable.draw(win);
-}
-void Wall::setHighlight(std::string type) {
-	drawable.setHighlight(type,can_place);
-}
-bool Wall::highlightPoint(sf::Vector2i point) {
-	return (drawable.highlightPoint(point));
-}
 void Wall::highlightDelta(sf::Vector2i point) {
-	sf::Vector2i delta = drawable.highlightDelta(point);
+	sf::Vector2i delta = drawable->highlightDelta(point);
 	b2Vec2 delta_convert((float)delta.x/10.0f,(float)delta.y/10.0f);
 	b2PolygonShape* shape_ptr = dynamic_cast<b2PolygonShape*>(body_ptr->GetFixtureList()->GetShape());
 
@@ -225,7 +220,7 @@ void Wall::highlightDelta(sf::Vector2i point) {
 	}
 }
 
-Ball::Ball(b2World& world, float x, float y, float r, float restitution = 0, float density = 1.0) : GameObject(x,y) {
+Ball::Ball(b2World& world, float x, float y, std::string name, float r, float restitution = 0, float density = 1.0) : GameObject(x,y,name) {
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(x, y);
@@ -241,11 +236,11 @@ Ball::Ball(b2World& world, float x, float y, float r, float restitution = 0, flo
 	body_ptr->CreateFixture(&fixtureDef);
 }
 
-BouncingBall::BouncingBall(b2World& world, float x, float y) : Ball(world, x, y, 0.5, 0.5, 1.0) {}
+BouncingBall::BouncingBall(b2World& world, float x, float y) : Ball(world, x, y,"BouncingBall", 0.5, 0.5, 1.0) {}
 
-BowlingBall::BowlingBall(b2World& world, float x, float y) : Ball(world, x, y, 0.8, 0.1, 3.0) {}
+BowlingBall::BowlingBall(b2World& world, float x, float y) : Ball(world, x, y,"BowlingBall", 0.8, 0.1, 3.0) {}
 
-BigBall::BigBall(b2World& world, float x, float y) : Ball(world, x, y, 2.0, 0.1, 0.4) {}
+BigBall::BigBall(b2World& world, float x, float y) : Ball(world, x, y,"BigBall", 2.0, 0.1, 0.4) {}
 
 /*
 Chain::Chain(b2World& world) : GameObject(10,10) {

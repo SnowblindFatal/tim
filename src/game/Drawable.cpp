@@ -1,10 +1,20 @@
 #include "Drawable.h"
+#include <string>
 
 void Drawable::setHighlight(std::string type, bool can_place){
     highlight->set(type,can_place);
 }
+std::string Drawable::highlightClicked(sf::Vector2i point) {
+	return highlight->clicked(point);
+}
+bool Drawable::highlightPoint(sf::Vector2i point) {
+	return highlight->checkPoint(point);
+}
+sf::Vector2i Drawable::highlightDelta(sf::Vector2i point){
+	return highlight->getDelta(point);
+}
 
-PlatformDrawable::PlatformDrawable(float x, float y, float width, float height) : Drawable(new PlatformHighlight), highlighted(false) {
+PlatformDrawable::PlatformDrawable(float x, float y, float width, float height) : Drawable(new PlatformHighlight) {
 	x*=10;
 	y*=10;
 	width*=10;
@@ -27,19 +37,8 @@ void PlatformDrawable::update(b2Body* ptr) {
 	b2Vec2 pos = ptr->GetPosition();
 	for (int index=0;index<4;index++) {
 		b2Vec2 vert = dynamic_cast<b2PolygonShape*>(ptr->GetFixtureList()->GetShape())->GetVertex(index);
-		if (index < 1) {
-			polygon.setPoint(index, sf::Vector2f(pos.x*10 + vert.x*10, pos.y*10 + vert.y*10));
-		}
-		else {
-			polygon.setPoint(index, sf::Vector2f(pos.x*10 + vert.x*10, pos.y*10 + vert.y*10 ));
-		}
+		polygon.setPoint(index, sf::Vector2f(pos.x*10 + vert.x*10, pos.y*10 + vert.y*10));
 	}
 	highlight->update_rect(polygon.getGlobalBounds());
 	
-}
-bool PlatformDrawable::highlightPoint(sf::Vector2i point) {
-	return highlight->checkPoint(point);
-}
-sf::Vector2i PlatformDrawable::highlightDelta(sf::Vector2i point){
-	return highlight->getDelta(point);
 }

@@ -9,17 +9,20 @@
 
 
 
-//An abstract base type, defines the interface.
+//A base type, defines the interface.
 class Drawable
 {
 public:
-	Drawable(Highlight* highlight_ptr=NULL) : highlight(highlight_ptr)  {};
+	Drawable(Highlight* highlight_ptr=new Highlight) : highlight(highlight_ptr)  {};
 	virtual ~Drawable() {
 		delete highlight;	
 	};
-	virtual void draw(sf::RenderWindow&) =0;
-	virtual void update(b2Body*) =0;
+	virtual void draw(sf::RenderWindow&) {} 
+	virtual void update(b2Body*) {} 
 	virtual void setHighlight(std::string, bool);
+	virtual std::string highlightClicked(sf::Vector2i);
+	virtual sf::Vector2i highlightDelta(sf::Vector2i);
+	bool highlightPoint(sf::Vector2i);
 protected:
     Highlight* highlight;
 };
@@ -29,11 +32,8 @@ public:
 	PlatformDrawable(float x, float y, float width, float height);
 	void draw(sf::RenderWindow& win) ;
 	void update(b2Body* ptr);
-	bool highlightPoint(sf::Vector2i);
-	sf::Vector2i highlightDelta(sf::Vector2i);
 private:
 	sf::ConvexShape polygon;
-	bool highlighted;
 };
 
 
