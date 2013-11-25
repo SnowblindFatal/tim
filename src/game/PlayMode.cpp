@@ -66,8 +66,18 @@ GameState::StateSelect PlayMode::run()
 					if (active_object==NULL)
 						std::cout << "No Walls available\n";
 				}
-				
-				
+				if (event.key.code == sf::Keyboard::Num3) {
+					active_object = level.createObject("BouncingBall", 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+					dragged_object = active_object;
+					if (active_object==NULL)
+						std::cout << "No Bouncing Balls available\n";
+				}
+				if (event.key.code == sf::Keyboard::Num4) {
+					active_object = level.createObject("Seesaw", 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+					dragged_object = active_object;
+					if (active_object==NULL)
+						std::cout << "No Seesaws available\n";
+				}
 
                 else handleKeyPress(event);
             }
@@ -136,7 +146,9 @@ GameState::StateSelect PlayMode::run()
 
         App.clear();
         if (simulate) {
+			
             level.simulate();
+			
 			if (level.checkWin()) {
 				set_simulate();
 				std::cout << "You win!\n";

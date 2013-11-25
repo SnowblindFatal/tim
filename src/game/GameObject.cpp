@@ -3,6 +3,7 @@
 #include <string>
 #include <SFML/System.hpp>
 #include <cmath>
+#include <iostream>
 
 
 GameObject::~GameObject() {
@@ -83,6 +84,10 @@ GameObject* GameObjectFactory(b2World& world, std::string name, float x, float y
 		return new Platform(world, x,y, 20.0f, 0.0f);
 	if (name=="Wall")
 		return new Wall(world, x,y, 0.0f, 20.0f);
+	if (name=="BouncingBall")
+		return new BouncingBall(world, x, y);
+	if (name=="Seesaw")
+		return new Seesaw(world, x, y);
 	return NULL; //Name not found!
 }
 
@@ -104,7 +109,7 @@ std::string GameObject::highlightClicked(sf::Vector2i point) {
 }
 void GameObject::highlightDelta(sf::Vector2i) {}
 
-Domino::Domino(b2World& world, float x, float y) : GameObject(x,y,"Domino") {
+Domino::Domino(b2World& world, float x, float y) : GameObject(world,x,y,"Domino") {
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
     bodyDef.position.Set(x, y);
@@ -118,15 +123,15 @@ Domino::Domino(b2World& world, float x, float y) : GameObject(x,y,"Domino") {
     body_ptr->CreateFixture(&fixtureDef);
 }
 
-Platform::Platform(b2World& world, float x, float y, float width, float heigth) : GameObject(x,y,"Platform", new PlatformDrawable(x,y,width,heigth)) { //BTW it should be height, not heigth.
+Platform::Platform(b2World& world, float x, float y, float width, float heigth) : GameObject(world,x,y,"Platform", new PlatformDrawable(x,y,width,heigth)) { //BTW it should be height, not heigth.
 
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
 	body_ptr = world.CreateBody(&bodyDef);
 	b2Vec2 vertices[4];
 	vertices[0].Set(0, 0);
-	vertices[1].Set(width, heigth);
-	vertices[2].Set(width, heigth + 2);
+	vertices[1].Set(width, height);
+	vertices[2].Set(width, height + 2);
 	vertices[3].Set(0, 2);
 	b2PolygonShape polygonShape;
 	polygonShape.Set(vertices, 4);
@@ -166,15 +171,15 @@ void Platform::highlightDelta(sf::Vector2i point) {
 }
 
 
-Wall::Wall(b2World& world, float x, float y, float width, float heigth) : GameObject(x,y,"Wall", new PlatformDrawable(x,y,width,heigth)) {
+Wall::Wall(b2World& world, float x, float y, float width, float heigth) : GameObject(world,x,y,"Wall", new PlatformDrawable(x,y,width,heigth)) {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
 	body_ptr = world.CreateBody(&bodyDef);
 	b2Vec2 vertices[4];
 	vertices[0].Set(0, 0);
 	vertices[3].Set(2, 0);
-	vertices[1].Set(width, heigth);
-	vertices[2].Set(width +2, heigth);
+	vertices[1].Set(width, height);
+	vertices[2].Set(width +2, height);
 	b2PolygonShape polygonShape;
 	polygonShape.Set(vertices, 4);
 	b2FixtureDef fixtureDef;
@@ -220,7 +225,107 @@ void Wall::highlightDelta(sf::Vector2i point) {
 	}
 }
 
-Ball::Ball(b2World& world, float x, float y, std::string name, float r, float restitution = 0, float density = 1.0) : GameObject(x,y,name) {
+Catapult::Catapult(b2World& world, float x, float y) : GameObject(world, x,y,"Catapult") {
+	b2BodyDef bodyDef;
+	bodyDef.position.Set(x, y);
+	body_ptr = world.CreateBody(&bodyDef);
+	
+	b2Vec2 vertices[3];
+	vertices[0].Set(0, 0);
+	vertices[1].Set(-1, 2);
+	vertices[2].Set(1,2);
+	b2PolygonShape polygonShape;
+	polygonShape.Set(vertices, 3);
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &polygonShape;
+	body_ptr->CreateFixture(&fixtureDef);
+	
+	
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(x, y);
+	bodyDef.angle = 0;
+	original_rot = 0;
+	body_ptr2 =world.CreateBody(&bodyDef);
+	b2PolygonShape boxShape;
+	boxShape.SetAsBox(5,0.2);
+	b2FixtureDef fixtureDef2;
+	fixtureDef2.shape = &boxShape;
+	fixtureDef2.density = 1;
+	fixtureDef2.friction = 1;
+	fixtureDef2.restitution = 0;
+	body_ptr2->CreateFixture(&fixtureDef2);
+
+	boxShape.SetAsBox(0.2,1, b2Vec2(4.8,-1.2),0);
+	fixtureDef2.shape = &boxShape;
+	fixtureDef2.density = 1;
+	fixtureDef2.friction = 1;
+	fixtureDef2.restitution = 0;
+	body_ptr2->CreateFixture(&fixtureDef2);
+
+	b2RevoluteJointDef jointDef;
+	jointDef.localAnchorA.Set(0, 0);
+	jointDef.localAnchorB.Set(0, 0);
+	jointDef.bodyA = body_ptr;
+	jointDef.bodyB = body_ptr2;
+	jointDef.enableLimit = true;
+	jointDef.lowerAngle = -0.4;
+	jointDef.upperAngle =  0.4;
+	world.CreateJoint(&jointDef);
+}
+
+Seesaw::Seesaw(b2World& world, float x, float y) : GameObject(world, x,y,"Seesaw") {
+	b2BodyDef bodyDef;
+	bodyDef.position.Set(x, y);
+	body_ptr = world.CreateBody(&bodyDef);
+	
+	b2Vec2 vertices[3];
+	vertices[0].Set(0, 0);
+	vertices[1].Set(-1, 2);
+	vertices[2].Set(1,2);
+	b2PolygonShape polygonShape;
+	polygonShape.Set(vertices, 3);
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &polygonShape;
+	body_ptr->CreateFixture(&fixtureDef);
+	
+	
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(x, y);
+	bodyDef.angle = 0.4;
+	original_rot = 0.4;
+	body_ptr2 =world.CreateBody(&bodyDef);
+	b2PolygonShape boxShape;
+	boxShape.SetAsBox(5,0.2);
+	b2FixtureDef fixtureDef2;
+	fixtureDef2.shape = &boxShape;
+	fixtureDef2.density = 1;
+	fixtureDef2.friction = 1;
+	fixtureDef2.restitution = 0;
+	body_ptr2->CreateFixture(&fixtureDef2);
+
+	b2RevoluteJointDef jointDef;
+	jointDef.localAnchorA.Set(0, 0);
+	jointDef.localAnchorB.Set(0, 0);
+	jointDef.bodyA = body_ptr;
+	jointDef.bodyB = body_ptr2;
+	jointDef.enableLimit = true;
+	jointDef.lowerAngle = -0.4;
+	jointDef.upperAngle =  0.4;
+	world.CreateJoint(&jointDef);
+}
+
+void Seesaw::reset() {
+	body_ptr->SetTransform(original_pos, 0);
+	body_ptr->SetLinearVelocity(b2Vec2(0,0));
+	body_ptr->SetAngularVelocity(0);
+	body_ptr->SetAwake(true);
+	body_ptr2->SetTransform(original_pos, original_rot);
+	body_ptr2->SetLinearVelocity(b2Vec2(0,0));
+	body_ptr2->SetAngularVelocity(0);
+	body_ptr2->SetAwake(true);
+}
+
+Ball::Ball(b2World& world, float x, float y,std::string name, float r, float restitution = 0, float density = 1.0) : GameObject(world, x,y,name) {
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(x, y);
@@ -231,7 +336,7 @@ Ball::Ball(b2World& world, float x, float y, std::string name, float r, float re
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &circleShape;
 	fixtureDef.density = density;
-	fixtureDef.friction = 0.3f;
+	fixtureDef.friction = 0.5;
 	fixtureDef.restitution = restitution;
 	body_ptr->CreateFixture(&fixtureDef);
 }
@@ -241,6 +346,94 @@ BouncingBall::BouncingBall(b2World& world, float x, float y) : Ball(world, x, y,
 BowlingBall::BowlingBall(b2World& world, float x, float y) : Ball(world, x, y,"BowlingBall", 0.8, 0.1, 3.0) {}
 
 BigBall::BigBall(b2World& world, float x, float y) : Ball(world, x, y,"BigBall", 2.0, 0.1, 0.4) {}
+
+
+Bomb::Bomb(b2World& world, float x, float y) : Ball(world, x, y,"Bomb", 0.5, 0, 5.0) {
+	contacting = false;
+	exploded = false;
+	body_ptr->SetUserData(this);
+}
+
+void Bomb::startContact() {
+	std::cout << "startcontact\n";
+	contacting = true;
+}
+void Bomb::endContact() {
+	std::cout << "endcontact\n";
+	contacting = false; 
+}
+
+bool Bomb::contactStatus() {
+	return contacting;
+}
+
+bool Bomb::explodeStatus() {
+	return exploded;
+}
+
+void Bomb::applyImpulse(b2Body* body, b2Vec2 center, b2Vec2 applyPoint, float power) {
+	std::cout << "applyimpulse\n";
+      b2Vec2 blastDir = applyPoint - center;
+      float distance = blastDir.Normalize();
+      //Ignores the bomb
+      if ( distance == 0 )
+          return;
+      float invDistance = 1 / distance;
+      float impulseMag = power * invDistance * invDistance;
+      body->ApplyLinearImpulse(impulseMag * blastDir, applyPoint, true);
+}
+
+void Bomb::explode() {
+	std::cout << "bomb explode\n";
+	exploded = true;
+	b2Vec2 center = body_ptr->GetPosition();
+    //find all fixtures within blast radius AABB
+    MyQueryCallback queryCallback;
+    b2AABB aabb;
+	float blast_radius = 300;
+    aabb.lowerBound = center - b2Vec2(blast_radius, blast_radius);
+    aabb.upperBound = center + b2Vec2(blast_radius, blast_radius);
+   	world.QueryAABB(&queryCallback, aabb);
+	float power = 300;
+    //apply impulse to bodies
+    for (size_t i = 0; i < queryCallback.foundBodies.size(); i++) {
+        b2Body* body = queryCallback.foundBodies[i];
+        b2Vec2 body_pos = body->GetWorldCenter();
+        //ignore bodies outside the blast range
+        if ((body_pos - center).Length() >= blast_radius)
+            continue;
+        applyImpulse(body, center, body_pos, power * 0.5f );
+    }
+} 
+
+void Bomb::reset() {
+	body_ptr->SetTransform(original_pos, original_rot);
+	body_ptr->SetLinearVelocity(b2Vec2(0,0));
+	body_ptr->SetAngularVelocity(0);
+	body_ptr->SetAwake(true);
+	exploded = false;
+	contacting = false;
+}
+/*
+Teleport::Teleport(b2World& world, float x1, float y1, float x2, float y2) : GameObject(world, x1, y1) {
+	//contacting = false;
+	body_ptr->SetUserData(this);
+
+	b2BodyDef bodyDef;
+	bodyDef.position.Set(x1, y1);
+	body_ptr = world.CreateBody(&bodyDef);
+	b2PolygonShape boxShape;
+	boxShape.SetAsBox(2,0.2);
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &boxShape;
+	body_ptr->CreateFixture(&fixtureDef);
+
+	bodyDef.position.Set(x2, y2);
+	body_ptr2 = world.CreateBody(&bodyDef);
+	body_ptr2->CreateFixture(&fixtureDef);
+}
+
+*/
 
 /*
 Chain::Chain(b2World& world) : GameObject(10,10) {
