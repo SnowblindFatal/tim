@@ -18,8 +18,19 @@ void BaseGame::start()
 {
     initialise();
     
-    Settings::loadSettings("cfg/config.txt");
-    Resources resources("res/");
+    //No settings to load so far.
+    //Settings::loadSettings("cfg/config.txt");
+    
+    Resources resources;
+    try
+    {
+        resources.loadResources();
+    }
+    catch (const std::string& e)
+    {
+        std::cout << e;
+        return;
+    }
     
     MainMenu menu(App, resources);
     EditMode edit(App, resources);
