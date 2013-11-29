@@ -31,7 +31,7 @@ void BaseGame::start()
         return;
     }
 
-    Resources::getInstance().getMusic("MAP01.ogg").play();
+    //Resources::getInstance().getMusic("MAP01.ogg").play();
     
     MainMenu menu(App);
     EditMode edit(App);

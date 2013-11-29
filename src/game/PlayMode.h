@@ -17,7 +17,10 @@ public:
     PlayMode(sf::RenderWindow& _App) : PlayingField(_App), simulate(false), level(_App), drawDebug(true), drawLevel(true), active_object(NULL), dragged_object(NULL), highlight_active(false) {}
     PlayMode(const PlayMode& orig) = delete;
     PlayMode operator=(const PlayMode& orig) = delete;
-    virtual ~PlayMode(){}
+    virtual ~PlayMode(){
+		active_object=NULL;
+		dragged_object=NULL;
+	}
     GameState::StateSelect run();
     void set_simulate(); // Sets the Box2D Simulation on/off.
     void set_drawdebug(); // Sets the Box2D Debug drawing on/off.

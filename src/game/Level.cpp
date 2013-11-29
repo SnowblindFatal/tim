@@ -26,6 +26,7 @@ LevelData::LevelData(sf::RenderWindow& _App) : phys_world(default_gravity), App(
 
 }
 LevelData::~LevelData() {
+	
         for (auto& iter : levelobjects) {
             delete iter;
 			iter=NULL;
