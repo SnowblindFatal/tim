@@ -14,7 +14,7 @@
 
 class PlayMode : public PlayingField {
 public:
-    PlayMode(sf::RenderWindow& _App, Resources& res) : PlayingField(_App, res), simulate(false), level(_App), drawDebug(true), drawLevel(true), active_object(NULL), dragged_object(NULL), highlight_active(false) {}
+    PlayMode(sf::RenderWindow& _App) : PlayingField(_App), simulate(false), level(_App), drawDebug(true), drawLevel(true), active_object(NULL), dragged_object(NULL), highlight_active(false) {}
     PlayMode(const PlayMode& orig) = delete;
     PlayMode operator=(const PlayMode& orig) = delete;
     virtual ~PlayMode(){}

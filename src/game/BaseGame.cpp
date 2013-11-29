@@ -21,20 +21,21 @@ void BaseGame::start()
     //No settings to load so far.
     //Settings::loadSettings("cfg/config.txt");
     
-    Resources resources;
     try
     {
-        resources.loadResources();
+        Resources::getInstance().loadResources();
     }
     catch (const std::string& e)
     {
         std::cout << e;
         return;
     }
+
+    Resources::getInstance().getMusic("MAP01.ogg").play();
     
-    MainMenu menu(App, resources);
-    EditMode edit(App, resources);
-    PlayMode play(App, resources);
+    MainMenu menu(App);
+    EditMode edit(App);
+    PlayMode play(App);
     
     
     
