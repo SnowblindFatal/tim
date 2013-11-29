@@ -154,7 +154,7 @@ GameState::StateSelect PlayMode::run()
 				std::cout << "You win!\n";
 			}
 		}
-        level.draw(drawDebug, drawLevel);
+        level.draw(active_object, drawDebug, drawLevel);
         App.display();
     }
     return retval;

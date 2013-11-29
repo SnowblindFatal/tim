@@ -7,6 +7,8 @@
 
 #include "MainMenu.h"
 #include "GameState.h"
+#include <TGUI/TGUI.hpp>
+
 GameState::StateSelect MainMenu::run()
 {
     done = false;
@@ -15,8 +17,7 @@ GameState::StateSelect MainMenu::run()
     {
         return GameState::StateSelect::Exit;
     }
-    sf::Text welcomeText("Get the ball to the right side of the big platform\nYou have one Platform [press 1] and one Wall [press 2]\n[Press S] to simulate and [press R] to reset", coolFont, 20);
-    welcomeText.setPosition((App.getSize().x - welcomeText.getLocalBounds().width) / 2, (App.getSize().y - welcomeText.getLocalBounds().height) / 2);
+	
     while (!done)
     {
         sf::Event event;
@@ -34,7 +35,6 @@ GameState::StateSelect MainMenu::run()
             }
         }
         App.clear();
-        App.draw(welcomeText); //!!Temp shit I can't wait to delete.
         drawStuff(); //do the actual drawing here!
         App.display();
     }

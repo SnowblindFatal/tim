@@ -46,7 +46,7 @@ public:
 
 
 
-    void draw(bool debug=false, bool drawsfml=true); //Cannot be const, because no DrawDebugData() const exists, for whatever reason
+    void draw(GameObject* priority, bool debug=false, bool drawsfml=true); //Cannot be const, because no DrawDebugData() const exists, for whatever reason
 
 
 	//Reset the level to where it was before simulation.

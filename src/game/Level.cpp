@@ -116,7 +116,7 @@ GameObject* LevelData::isInsidePlayerObject(float x, float y) const {
 		return NULL;
 }
 
-void LevelData::draw(bool debug, bool drawsfml) {
+void LevelData::draw(GameObject* priority, bool debug, bool drawsfml) {
       if (debug)
 		phys_world.DrawDebugData();
       
@@ -126,9 +126,15 @@ void LevelData::draw(bool debug, bool drawsfml) {
 			iter->draw(App);
       	}
       	for (auto &iter : playerobjects) {
-			iter->update_drawable();
-			iter->draw(App);
-      	}
+			if (iter!=priority) {
+				iter->update_drawable();
+				iter->draw(App);
+      		}
+		}
+		if (priority!=NULL) {
+			priority->update_drawable();
+			priority->draw(App);
+		}
 	}
 }
 
