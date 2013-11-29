@@ -12,12 +12,12 @@ class Highlight {
 public:
     Highlight();
 	virtual ~Highlight() {}
-    virtual void set(std::string, bool);
-    virtual void update_rect(sf::FloatRect);
+    virtual void set(const std::string&, bool);
+    virtual void update_rect(const sf::FloatRect&);
     virtual void draw(sf::RenderWindow& win);
 	virtual bool checkPoint(sf::Vector2i) {return false;}
 	virtual sf::Vector2i getDelta(sf::Vector2i) {return sf::Vector2i(0,0);}
-	virtual std::string clicked(sf::Vector2i);
+	virtual std::string clicked(const sf::Vector2i&);
 protected:
     sf::RectangleShape rect;
 	sf::RectangleShape del1;
@@ -28,14 +28,14 @@ protected:
 class PlatformHighlight : public Highlight {
 public:
 	PlatformHighlight();
-    void set(std::string, bool);
-    void update_rect(sf::FloatRect);
+    void set(const std::string&, bool);
+    void update_rect(const sf::FloatRect&);
     void draw(sf::RenderWindow& win);
 
 	//Check wether the clicked position is an active spot. True if it is, also set the corresponding bool and local_mouse.
 	bool checkPoint(sf::Vector2i point);
 	//Calculate the amount that we wanted to change.
-	sf::Vector2i getDelta(sf::Vector2i point);
+	sf::Vector2i getDelta(const sf::Vector2i point);
 	
 
 
