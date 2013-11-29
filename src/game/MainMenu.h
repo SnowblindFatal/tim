@@ -18,7 +18,7 @@ private:
     
     
 public:
-    explicit MainMenu(sf::RenderWindow& _App, Resources& res) : GameState(_App, res), gui(_App)  {}
+    explicit MainMenu(sf::RenderWindow& _App) : GameState(_App), gui(_App)  {}
     MainMenu(const MainMenu& orig) = delete;
     MainMenu operator=(const MainMenu& orig) = delete;
     virtual ~MainMenu(){}

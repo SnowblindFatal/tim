@@ -23,14 +23,13 @@ public:
         Exit
     };
     
-    explicit GameState(sf::RenderWindow& _App, Resources& res) : App(_App), resources(res), retval(GameState::StateSelect::Exit) {}
+    explicit GameState(sf::RenderWindow& _App) : App(_App), retval(GameState::StateSelect::Exit) {}
     virtual ~GameState(){}
     virtual StateSelect run() = 0;
     
     friend class LevelData;
 protected:
     sf::RenderWindow& App;
-    Resources& resources;
     bool done;
     GameState::StateSelect retval;
     
