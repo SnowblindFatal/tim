@@ -64,6 +64,7 @@ void Resources::loadResources()
         {
             throw "Did not find texture file: " + fileName;
         }
+        texturePtr->setRepeated(true);
     }
     
     for (const std::string& fileName : soundFileNames) 
@@ -98,9 +99,10 @@ void Resources::loadResources()
 }
 
 
-const sf::Texture& Resources::getTexture(const std::string &fileName) const
+const sf::Texture* Resources::getTexture(const std::string &fileName) const
 {
-    return *textures.at(fileName);
+    //TODO: Error handling
+    return textures.at(fileName);
 }
 
 const sf::SoundBuffer& Resources::getSoundBuffer(const std::string &fileName) const

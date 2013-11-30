@@ -1,4 +1,5 @@
 #include "Drawable.h"
+#include "../general/Resources.h"
 #include <string>
 
 void Drawable::setHighlight(std::string type, bool can_place){
@@ -24,7 +25,8 @@ PlatformDrawable::PlatformDrawable(float x, float y, float width, float height) 
 	polygon.setPoint(1, sf::Vector2f(x+width, y+height));
 	polygon.setPoint(2, sf::Vector2f(x+width, y+height+20.0f));
 	polygon.setPoint(3, sf::Vector2f(x, y+20.0f));
-	polygon.setFillColor(sf::Color::White); //This should be replaced with a texture.
+    
+	polygon.setTexture(Resources::getInstance().getTexture("whitebrick.jpg"));
     
 } 
 
@@ -39,6 +41,8 @@ void PlatformDrawable::update(b2Body* ptr) {
 		b2Vec2 vert = dynamic_cast<b2PolygonShape*>(ptr->GetFixtureList()->GetShape())->GetVertex(index);
 		polygon.setPoint(index, sf::Vector2f(pos.x*10 + vert.x*10, pos.y*10 + vert.y*10));
 	}
-	highlight->update_rect(polygon.getGlobalBounds());
+    const sf::FloatRect rect = polygon.getGlobalBounds();
+    polygon.setTextureRect(sf::IntRect(0, 0, rect.width, rect.height));
+	highlight->update_rect(rect);
 	
 }

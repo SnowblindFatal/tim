@@ -15,7 +15,7 @@ Highlight::Highlight() {
 	
 }
 
-void Highlight::set(std::string type, bool can_place) {
+void Highlight::set(const std::string& type, bool can_place) {
 	if (type=="active") {
 		rect.setFillColor(sf::Color(255,255,0,80)); //Yellow
 		del1.setFillColor(sf::Color(255,0,0,255)); //RED
@@ -32,7 +32,7 @@ void Highlight::set(std::string type, bool can_place) {
 	}
 }
 
-void Highlight::update_rect(sf::FloatRect polygon_bounds) {
+void Highlight::update_rect(const sf::FloatRect& polygon_bounds) {
     rect.setSize(sf::Vector2f(polygon_bounds.width+10, polygon_bounds.height+10));
 	rect.setPosition(sf::Vector2f(polygon_bounds.left-5,polygon_bounds.top-5));
 	del1.setRotation(0.0f);
@@ -55,7 +55,7 @@ void Highlight::draw(sf::RenderWindow& win) {
 	del2.setFillColor(sf::Color::Transparent);
 }
 
-std::string Highlight::clicked(sf::Vector2i point) {
+std::string Highlight::clicked(const sf::Vector2i& point) {
 	if (delete_active) {
 
 		sf::FloatRect box=del1.getGlobalBounds();
@@ -82,7 +82,7 @@ PlatformHighlight::PlatformHighlight() : Highlight() {
 	delta_width.setSize(sf::Vector2f(16.0f, 8.0f));
 }
 
-void PlatformHighlight::set(std::string type, bool can_place) {
+void PlatformHighlight::set(const std::string& type, bool can_place) {
 	if (type=="active") {
 		delta_height.setFillColor(sf::Color(0,0,255,150)); //Blue
 		delta_width.setFillColor(sf::Color(0,0,255,150));
@@ -90,7 +90,7 @@ void PlatformHighlight::set(std::string type, bool can_place) {
 	Highlight::set(type, can_place);
 }
 
-void PlatformHighlight::update_rect(sf::FloatRect polygon_bounds) {
+void PlatformHighlight::update_rect(const sf::FloatRect& polygon_bounds) {
 	delta_height.setPosition(sf::Vector2f(polygon_bounds.left+polygon_bounds.width+10,polygon_bounds.top - 10));
 	delta_width.setPosition(sf::Vector2f(polygon_bounds.left+polygon_bounds.width+10,polygon_bounds.top+polygon_bounds.height + 2));
 	Highlight::update_rect(polygon_bounds);
@@ -134,7 +134,7 @@ bool PlatformHighlight::checkPoint(sf::Vector2i point) {
 	return false;
 }
 
-sf::Vector2i PlatformHighlight::getDelta(sf::Vector2i point) {
+sf::Vector2i PlatformHighlight::getDelta(const sf::Vector2i point) {
 	sf::Vector2i result(0,0);
 
 	if (height_active) {
