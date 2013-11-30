@@ -6,13 +6,15 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Drawable.h"
+#include <vector>
+#include "PhysBody.h"
 
 //A Base type, that also defines the interface for drawing.
 class GameObject
 {
 
 public:
-    GameObject(b2World& world, float x, float y, std::string name, Drawable* drawable= new Drawable, float rotation=0.0f) : can_place(false), highlight_extras(false), world(world), original_pos(x,y), original_rot(rotation), local_mouse(0,0), name(name), drawable(drawable) {};
+    GameObject(b2World& world, float x, float y, std::string name, Drawable* drawable= new Drawable, float rotation=0.0f) : can_place(false), highlight_extras(false), local_mouse(0,0), world(world), name(name), drawable(drawable) {};
 	virtual ~GameObject(); 
     virtual void update_drawable(); 
     virtual void draw(sf::RenderWindow&);
@@ -48,13 +50,12 @@ public:
 	virtual void highlightDelta(sf::Vector2i);
 	virtual std::string highlightClicked(sf::Vector2i); 
 
+
 protected:
 
-	b2Body* body_ptr;
-	b2World& world;
-	b2Vec2 original_pos;
-	float original_rot;
+	std::vector<PhysBody> bodies;
 	b2Vec2 local_mouse;
+	b2World& world;
 	std::string name; //Needed for at least LevelData::deletePlayerObject
 	Drawable* drawable;
 	
@@ -75,7 +76,7 @@ class Domino : public GameObject
 		Domino(b2World& world, float x, float y);
 };
 
-
+/*
 class Ball : public GameObject
 {
 	public:
@@ -100,7 +101,6 @@ class BigBall : public Ball
 		BigBall(b2World& world, float x, float y);
 };
 
-
 class Bomb : public GameObject
 {
 	public:
@@ -112,6 +112,7 @@ class Bomb : public GameObject
 		bool exploded;
 };
 
+*/
 class Platform : public GameObject
 {
 	public:
@@ -130,21 +131,16 @@ class Seesaw : public GameObject
 {
 	public:	
 		Seesaw(b2World& world, float x, float y);
-		void reset();
-	private:
-		b2Body* body_ptr2;
+		//void reset();
 };
 
 class Catapult : public GameObject
 {
 	public:
 		Catapult(b2World& world, float x, float y);
-	private:
-		b2Body* body_ptr2;
-		b2Body* body_ptr3;		
 
 };
-
+/*
 class Teleport : public GameObject
 {
 	public:
@@ -153,8 +149,6 @@ class Teleport : public GameObject
   		//void endContact();
 		//bool contactStatus();
 		//bool reset();
-	private:
-		b2Body* body_ptr2;
 		//bool contacting;
 };
 
@@ -163,8 +157,6 @@ class Lift : public GameObject
 	public:
 		Lift(b2World& world, float x1, float y1, float x2, float y2);
 		void reset();
-	private:
-		b2Body* body_ptr2;
 };
 
 class Chain : public GameObject
@@ -179,7 +171,6 @@ class GravityChanger : public GameObject
 		GravityChanger(b2World& world, float x, float y);
 		void buttonCheck(b2Fixture*, b2Fixture*);	
 	private:
-		b2Body* button_ptr;
 		b2Fixture* check1;
 		b2Fixture* check2;
 };
@@ -194,7 +185,7 @@ class MyQueryCallback : public b2QueryCallback {
 			return true;//keep going to find all fixtures in the query area
 		}
 };
-
+*/
 #endif //GAMEOBJECT_H
 
 

@@ -9,20 +9,23 @@ class CollisionDetection : public b2ContactListener {
 			if ( objectA->getName()=="Bomb") {
 				objectA->explode();
 			}
-			if ( objectA->getName()=="GravityChanger" ) {
+			/*if ( objectA->getName()=="GravityChanger" ) {
 				GravityChanger* GravityObjectA=dynamic_cast<GravityChanger*>(objectA);
 				GravityObjectA->buttonCheck(contact->GetFixtureA(),contact->GetFixtureB());
 			}
+			*/
 		}
 		if (contact->GetFixtureB()->GetBody()->GetUserData() !=NULL) {
 			GameObject* objectB = static_cast<GameObject*>(contact->GetFixtureB()->GetBody()->GetUserData());
 			if ( objectB->getName()=="Bomb") {
 				objectB->explode();
 			}
+			/*
 			if ( objectB->getName()=="GravityChanger" ) {
 				GravityChanger* GravityObjectB=dynamic_cast<GravityChanger*>(objectB);
 				GravityObjectB->buttonCheck(contact->GetFixtureA(),contact->GetFixtureB());
 			}
+			*/
 		}
 	}
 /*

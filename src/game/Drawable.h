@@ -6,6 +6,8 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Highlight.h"
+#include <vector>
+#include "PhysBody.h"
 
 
 
@@ -19,7 +21,7 @@ public:
 		highlight=NULL;
 	};
 	virtual void draw(sf::RenderWindow&) {} 
-	virtual void update(b2Body*) {} 
+	virtual void update(const std::vector<PhysBody>&) {} 
 	virtual void setHighlight(std::string, bool);
 	virtual std::string highlightClicked(sf::Vector2i);
 	virtual sf::Vector2i highlightDelta(sf::Vector2i);
@@ -32,7 +34,7 @@ class PlatformDrawable : public Drawable {
 public:
 	PlatformDrawable(float x, float y, float width, float height);
 	void draw(sf::RenderWindow& win);
-	void update(b2Body* ptr);
+	void update(const std::vector<PhysBody>&);
 private:
 	sf::ConvexShape polygon;
 };
@@ -41,7 +43,7 @@ class BombDrawable : public Drawable {
 public:
 	BombDrawable(float x, float y);
 	void draw(sf::RenderWindow& win);
-	void update(b2Body* ptr);
+	void update(const std::vector<PhysBody>&);
 private:
 	sf::ConvexShape polygon;
 

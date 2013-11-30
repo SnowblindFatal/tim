@@ -35,7 +35,8 @@ void PlatformDrawable::draw(sf::RenderWindow& win) {
     highlight->draw(win);
 }
 
-void PlatformDrawable::update(b2Body* ptr) {
+void PlatformDrawable::update(const std::vector<PhysBody>& bodies) {
+	b2Body* ptr= bodies[0].body_ptr;
 	b2Vec2 pos = ptr->GetPosition();
 	for (int index=0;index<4;index++) {
 		b2Vec2 vert = dynamic_cast<b2PolygonShape*>(ptr->GetFixtureList()->GetShape())->GetVertex(index);
@@ -62,7 +63,8 @@ void BombDrawable::draw(sf::RenderWindow& win) {
     highlight->draw(win);
 }
 
-void BombDrawable::update(b2Body* ptr) {
+void BombDrawable::update(const std::vector<PhysBody>& bodies) {
+	b2Body* ptr = bodies[0].body_ptr;
 	b2Vec2 pos = ptr->GetPosition();
 	for (int index=0;index<4;index++) {
 		b2Vec2 vert = dynamic_cast<b2PolygonShape*>(ptr->GetFixtureList()->GetShape())->GetVertex(index);

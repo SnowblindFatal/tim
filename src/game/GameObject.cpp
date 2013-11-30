@@ -4,26 +4,31 @@
 #include <SFML/System.hpp>
 #include <cmath>
 #include <iostream>
+#include "PhysBody.h"
 
 
 GameObject::~GameObject() {
-	body_ptr->GetWorld()->DestroyBody(body_ptr);
-	body_ptr=NULL;
+	for (auto& body : bodies) {
+		body.body_ptr->GetWorld()->DestroyBody(body.body_ptr);
+		body.body_ptr=NULL;
+	}
 	delete drawable;
 	drawable=NULL;
 }
 
 b2Vec2 GameObject::getPos() const {
-	return body_ptr->GetPosition();
+	return bodies[0].body_ptr->GetPosition();
 }
 std::string GameObject::getName(void) const {
 	return name;
 }
 void GameObject::reset() {
-	body_ptr->SetTransform(original_pos, original_rot);
-	body_ptr->SetLinearVelocity(b2Vec2(0,0));
-	body_ptr->SetAngularVelocity(0);
-	body_ptr->SetAwake(true);
+	for (auto& body : bodies) {
+		body.body_ptr->SetTransform(body.original_pos, body.original_rot);
+		body.body_ptr->SetLinearVelocity(b2Vec2(0,0));
+		body.body_ptr->SetAngularVelocity(0);
+		body.body_ptr->SetAwake(true);
+	}
 }
 
 
@@ -34,19 +39,30 @@ M=amount of shapes on the body.
 N=amount of all other shapes.
 */
 bool GameObject::noOverlaps() const {
-	b2Body* body_list = body_ptr->GetWorld()->GetBodyList();
+	b2Body* body_list = bodies[0].body_ptr->GetWorld()->GetBodyList();
 	for (;body_list!=NULL;body_list=body_list->GetNext()) {
-		if (body_list==body_ptr) continue;
+		bool on_the_same=false;
+		bool found=false;
+		for (auto& body : bodies) {
+			if (body_list==body.body_ptr) {
+				on_the_same=true;
+				break;
+			}
+			if (found) continue;
 
-		b2Fixture* my_fixtures=body_ptr->GetFixtureList();
-		b2Fixture* other_fixtures=body_list->GetFixtureList();
-		for (;my_fixtures!=NULL;my_fixtures=my_fixtures->GetNext()) {
-			for (;other_fixtures!=NULL;other_fixtures=other_fixtures->GetNext()) {
-				if (b2TestOverlap(my_fixtures->GetShape(),0,other_fixtures->GetShape(),0,body_ptr->GetTransform(),body_list->GetTransform())) {
-					return false;
+			b2Fixture* my_fixtures=body.body_ptr->GetFixtureList();
+			b2Fixture* other_fixtures=body_list->GetFixtureList();
+			for (;my_fixtures!=NULL;my_fixtures=my_fixtures->GetNext()) {
+				for (;other_fixtures!=NULL;other_fixtures=other_fixtures->GetNext()) {
+					if (b2TestOverlap(my_fixtures->GetShape(),0,other_fixtures->GetShape(),0,body.body_ptr->GetTransform(),body_list->GetTransform())) {
+						found=true;
+						break;
+					}
 				}
+				if (found) break;
 			}
 		}
+		if (found && !on_the_same) return false;
 	}
 	return true;
 }
@@ -54,24 +70,31 @@ bool GameObject::noOverlaps() const {
 
 void GameObject::move(float x, float y) {
 
-	body_ptr->SetTransform(b2Vec2(x,y) - local_mouse, body_ptr->GetAngle());
+	for (auto& body : bodies) {
+		body.body_ptr->SetTransform(b2Vec2(x,y) - local_mouse, body.body_ptr->GetAngle());
+		body.original_pos=b2Vec2(x,y) - local_mouse;
+	}
 	if (noOverlaps()) {
 		can_place=true;
 	}
 	else {
 		can_place=false;
 	}
-	original_pos=b2Vec2(x,y) - local_mouse;
 }
 
 bool GameObject::isInside(float x, float y) {
-	for (b2Fixture* f = body_ptr->GetFixtureList(); f!=NULL; f=f->GetNext()) {
-		if (f->TestPoint(b2Vec2(x,y))) {
-			local_mouse = body_ptr->GetLocalPoint(b2Vec2(x,y));
-			return true;
+	bool result=false;
+	for (auto& body : bodies) {
+		local_mouse = body.body_ptr->GetLocalPoint(b2Vec2(x,y));
+		if (result) continue;
+		for (b2Fixture* f = body.body_ptr->GetFixtureList(); f!=NULL; f=f->GetNext()) {
+			if (f->TestPoint(b2Vec2(x,y))) {
+				result=true;
+				//break;
+			}
 		}
 	}
-	return false;
+	return result;
 }
 
 	
@@ -86,18 +109,18 @@ GameObject* GameObjectFactory(b2World& world, std::string name, float x, float y
 		return new Platform(world, x,y, 20.0f, 0.0f);
 	if (name=="Wall")
 		return new Wall(world, x,y, 0.0f, 20.0f);
-	if (name=="BouncingBall")
-		return new BouncingBall(world, x, y);
+	//if (name=="BouncingBall")
+//		return new BouncingBall(world, x, y);
 	if (name=="Seesaw")
 		return new Seesaw(world, x, y);
-	if (name=="Bomb")
-		return new Bomb(world, x, y);
+//	if (name=="Bomb")
+//		return new Bomb(world, x, y);
 	return NULL; //Name not found!
 }
 
 
 void GameObject::update_drawable() {
-	drawable->update(body_ptr);
+	drawable->update(bodies);
 }
 void GameObject::draw(sf::RenderWindow& win) {
 	drawable->draw(win);
@@ -117,7 +140,7 @@ Domino::Domino(b2World& world, float x, float y) : GameObject(world,x,y,"Domino"
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
     bodyDef.position.Set(x, y);
-    body_ptr = world.CreateBody(&bodyDef);
+    b2Body* body_ptr = world.CreateBody(&bodyDef);
     b2PolygonShape dominoShape;
     dominoShape.SetAsBox(0.4, 1.5);
     b2FixtureDef fixtureDef;
@@ -125,13 +148,14 @@ Domino::Domino(b2World& world, float x, float y) : GameObject(world,x,y,"Domino"
     fixtureDef.density = 3.0f;
     fixtureDef.friction = 0.5f;
     body_ptr->CreateFixture(&fixtureDef);
+	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition()));
 }
 
 Platform::Platform(b2World& world, float x, float y, float width, float height) : GameObject(world,x,y,"Platform", new PlatformDrawable(x,y,width,height)) { 
 
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
-	body_ptr = world.CreateBody(&bodyDef);
+	b2Body* body_ptr = world.CreateBody(&bodyDef);
 	b2Vec2 vertices[4];
 	vertices[0].Set(0, 0);
 	vertices[1].Set(width, height);
@@ -142,13 +166,14 @@ Platform::Platform(b2World& world, float x, float y, float width, float height) 
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &polygonShape;
 	body_ptr->CreateFixture(&fixtureDef);
+	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition()));
 
 	highlight_extras=true;
 }
 void Platform::highlightDelta(sf::Vector2i point) {
 	sf::Vector2i delta = drawable->highlightDelta(point);
 	b2Vec2 delta_convert((float)delta.x/10.0f,(float)delta.y/10.0f);
-	b2PolygonShape* shape_ptr = dynamic_cast<b2PolygonShape*>(body_ptr->GetFixtureList()->GetShape());
+	b2PolygonShape* shape_ptr = dynamic_cast<b2PolygonShape*>(bodies[0].body_ptr->GetFixtureList()->GetShape());
 
 	b2Vec2 vertices[4];
 	for (int index=0;index<4;index++) {
@@ -178,7 +203,7 @@ void Platform::highlightDelta(sf::Vector2i point) {
 Wall::Wall(b2World& world, float x, float y, float width, float height) : GameObject(world,x,y,"Wall", new PlatformDrawable(x,y,width,height)) {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
-	body_ptr = world.CreateBody(&bodyDef);
+	b2Body* body_ptr = world.CreateBody(&bodyDef);
 	b2Vec2 vertices[4];
 	vertices[0].Set(0, 0);
 	vertices[3].Set(2, 0);
@@ -189,13 +214,14 @@ Wall::Wall(b2World& world, float x, float y, float width, float height) : GameOb
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &polygonShape;
 	body_ptr->CreateFixture(&fixtureDef);		
+	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition()));
 
 	highlight_extras=true;
 }
 void Wall::highlightDelta(sf::Vector2i point) {
 	sf::Vector2i delta = drawable->highlightDelta(point);
 	b2Vec2 delta_convert((float)delta.x/10.0f,(float)delta.y/10.0f);
-	b2PolygonShape* shape_ptr = dynamic_cast<b2PolygonShape*>(body_ptr->GetFixtureList()->GetShape());
+	b2PolygonShape* shape_ptr = dynamic_cast<b2PolygonShape*>(bodies[0].body_ptr->GetFixtureList()->GetShape());
 
 	b2Vec2 vertices[4];
 	for (int index=0;index<4;index++) {
@@ -232,7 +258,7 @@ void Wall::highlightDelta(sf::Vector2i point) {
 Catapult::Catapult(b2World& world, float x, float y) : GameObject(world, x,y,"Catapult") {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
-	body_ptr = world.CreateBody(&bodyDef);
+	b2Body* body_ptr = world.CreateBody(&bodyDef);
 	
 	b2Vec2 vertices[3];
 	vertices[0].Set(0, 0);
@@ -242,14 +268,14 @@ Catapult::Catapult(b2World& world, float x, float y) : GameObject(world, x,y,"Ca
 	polygonShape.Set(vertices, 3);
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &polygonShape;
-	body_ptr->CreateFixture(&fixtureDef);
+	body_ptr->CreateFixture(&fixtureDef);	
+	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition()));
 	
 	
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(x, y);
 	bodyDef.angle = 0;
-	original_rot = 0;
-	body_ptr2 =world.CreateBody(&bodyDef);
+	b2Body* body_ptr2 =world.CreateBody(&bodyDef);
 	b2PolygonShape boxShape;
 	boxShape.SetAsBox(5,0.2);
 	b2FixtureDef fixtureDef2;
@@ -258,6 +284,7 @@ Catapult::Catapult(b2World& world, float x, float y) : GameObject(world, x,y,"Ca
 	fixtureDef2.friction = 1;
 	fixtureDef2.restitution = 0;
 	body_ptr2->CreateFixture(&fixtureDef2);
+	bodies.push_back(PhysBody(body_ptr2, body_ptr2->GetPosition()));
 
 	boxShape.SetAsBox(0.2,1, b2Vec2(4.8,-1.2),0);
 	fixtureDef2.shape = &boxShape;
@@ -280,7 +307,7 @@ Catapult::Catapult(b2World& world, float x, float y) : GameObject(world, x,y,"Ca
 Seesaw::Seesaw(b2World& world, float x, float y) : GameObject(world, x,y,"Seesaw") {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
-	body_ptr = world.CreateBody(&bodyDef);
+	b2Body* body_ptr = world.CreateBody(&bodyDef);
 	
 	b2Vec2 vertices[3];
 	vertices[0].Set(0, 0);
@@ -291,13 +318,13 @@ Seesaw::Seesaw(b2World& world, float x, float y) : GameObject(world, x,y,"Seesaw
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &polygonShape;
 	body_ptr->CreateFixture(&fixtureDef);
+	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition()));
 	
 	
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(x, y);
 	bodyDef.angle = 0.4;
-	original_rot = 0.4;
-	body_ptr2 =world.CreateBody(&bodyDef);
+	b2Body* body_ptr2 =world.CreateBody(&bodyDef);
 	b2PolygonShape boxShape;
 	boxShape.SetAsBox(5,0.2);
 	b2FixtureDef fixtureDef2;
@@ -306,6 +333,7 @@ Seesaw::Seesaw(b2World& world, float x, float y) : GameObject(world, x,y,"Seesaw
 	fixtureDef2.friction = 1;
 	fixtureDef2.restitution = 0;
 	body_ptr2->CreateFixture(&fixtureDef2);
+	bodies.push_back(PhysBody(body_ptr2, body_ptr2->GetPosition(), body_ptr2->GetAngle()));
 
 	b2RevoluteJointDef jointDef;
 	jointDef.localAnchorA.Set(0, 0);
@@ -317,7 +345,7 @@ Seesaw::Seesaw(b2World& world, float x, float y) : GameObject(world, x,y,"Seesaw
 	jointDef.upperAngle =  0.4;
 	world.CreateJoint(&jointDef);
 }
-
+/*
 void Seesaw::reset() {
 	body_ptr->SetTransform(original_pos, 0);
 	body_ptr->SetLinearVelocity(b2Vec2(0,0));
@@ -502,7 +530,7 @@ void GravityChanger::buttonCheck(b2Fixture* fixA, b2Fixture* fixB) {
 		std::cout << "Button!\n";
 	}
 }
-
+*/
 /*
 Teleport::Teleport(b2World& world, float x1, float y1, float x2, float y2) : GameObject(world, x1, y1) {
 	//contacting = false;
