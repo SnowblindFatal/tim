@@ -203,7 +203,7 @@ void Wall::highlightDelta(sf::Vector2i point) {
     //Because of the way B2D handles vertices, we have to check here which ones we want.
     size_t wanted_index;
     if (vertices[0].y < vertices[1].y) wanted_index=1;
-    else wanted_index=0;
+    else wanted_index=0; 
     
     
 	vertices[wanted_index]+=delta_convert;
@@ -350,27 +350,9 @@ BowlingBall::BowlingBall(b2World& world, float x, float y) : Ball(world, x, y,"B
 BigBall::BigBall(b2World& world, float x, float y) : Ball(world, x, y,"BigBall", 2.0, 0.1, 0.4) {}
 
 
-Bomb::Bomb(b2World& world, float x, float y) : Ball(world, x, y,"Bomb", 0.5, 0, 5.0) {
-	contacting = false;
+Bomb::Bomb(b2World& world, float x, float y) : Ball(world, x, y,"Bomb", 0.8, 0, 5.0) {
 	exploded = false;
 	body_ptr->SetUserData(this);
-}
-
-void Bomb::startContact() {
-	std::cout << "startcontact\n";
-	contacting = true;
-}
-void Bomb::endContact() {
-	std::cout << "endcontact\n";
-	contacting = false; 
-}
-
-bool Bomb::contactStatus() {
-	return contacting;
-}
-
-bool Bomb::explodeStatus() {
-	return exploded;
 }
 
 void Bomb::applyImpulse(b2Body* body, b2Vec2 center, b2Vec2 applyPoint, float power) {
@@ -386,26 +368,28 @@ void Bomb::applyImpulse(b2Body* body, b2Vec2 center, b2Vec2 applyPoint, float po
 }
 
 void Bomb::explode() {
-	std::cout << "bomb explode\n";
-	exploded = true;
-	b2Vec2 center = body_ptr->GetPosition();
-    //find all fixtures within blast radius AABB
-    MyQueryCallback queryCallback;
-    b2AABB aabb;
-	float blast_radius = 300;
-    aabb.lowerBound = center - b2Vec2(blast_radius, blast_radius);
-    aabb.upperBound = center + b2Vec2(blast_radius, blast_radius);
-   	world.QueryAABB(&queryCallback, aabb);
-	float power = 300;
-    //apply impulse to bodies
-    for (size_t i = 0; i < queryCallback.foundBodies.size(); i++) {
-        b2Body* body = queryCallback.foundBodies[i];
-        b2Vec2 body_pos = body->GetWorldCenter();
-        //ignore bodies outside the blast range
-        if ((body_pos - center).Length() >= blast_radius)
-            continue;
-        applyImpulse(body, center, body_pos, power * 0.5f );
-    }
+	if (exploded == false) {
+		std::cout << "bomb explode\n";
+		exploded = true;
+		b2Vec2 center = body_ptr->GetPosition();
+		//find all fixtures within blast radius AABB
+		MyQueryCallback queryCallback;
+		b2AABB aabb;
+		float blast_radius = 300;
+		aabb.lowerBound = center - b2Vec2(blast_radius, blast_radius);
+		aabb.upperBound = center + b2Vec2(blast_radius, blast_radius);
+	   	world.QueryAABB(&queryCallback, aabb);
+		float power = 300;
+		//apply impulse to bodies
+		for (size_t i = 0; i < queryCallback.foundBodies.size(); i++) {
+		    b2Body* body = queryCallback.foundBodies[i];
+		    b2Vec2 body_pos = body->GetWorldCenter();
+		    //ignore bodies outside the blast range
+		    if ((body_pos - center).Length() >= blast_radius)
+		        continue;
+		    applyImpulse(body, center, body_pos, power * 0.5f );
+		}
+	}
 } 
 
 void Bomb::reset() {
@@ -414,8 +398,35 @@ void Bomb::reset() {
 	body_ptr->SetAngularVelocity(0);
 	body_ptr->SetAwake(true);
 	exploded = false;
-	contacting = false;
 }
+
+Lift::Lift(b2World& world, float x1, float y1, float x2, float y2) : GameObject(world, x1, y1, "Lift") {
+	b2BodyDef bodyDef;
+	bodyDef.position.Set(x1, y1);
+	bodyDef.type = b2_dynamicBody;
+	body_ptr = world.CreateBody(&bodyDef);
+	b2PolygonShape boxShape;
+	boxShape.SetAsBox(2,0.3);
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &boxShape;
+	fixtureDef.density = 1;
+	fixtureDef.friction = 1;
+	fixtureDef.restitution = 0;
+	body_ptr->CreateFixture(&fixtureDef);
+
+	bodyDef.position.Set(x2, y2);
+	body_ptr2 = world.CreateBody(&bodyDef);
+	body_ptr2->CreateFixture(&fixtureDef);
+
+	b2Vec2 anchor1 = body_ptr->GetWorldCenter();
+	b2Vec2 anchor2 = body_ptr2->GetWorldCenter();
+	b2Vec2 groundAnchor1(x1, y1 - 15.0f);
+	b2Vec2 groundAnchor2(x2, y2 - 15.0f);
+	float32 ratio = 1.0f;
+	b2PulleyJointDef jointDef;
+	jointDef.Initialize(body_ptr, body_ptr2, groundAnchor1, groundAnchor2, anchor1, anchor2, ratio);
+}
+
 /*
 Teleport::Teleport(b2World& world, float x1, float y1, float x2, float y2) : GameObject(world, x1, y1) {
 	//contacting = false;

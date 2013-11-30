@@ -107,13 +107,8 @@ class Bomb : public Ball
 		Bomb(b2World& world, float x, float y);
 		void applyImpulse(b2Body* body, b2Vec2 blastCenter, b2Vec2 applyPoint, float blastPower);
 		void explode();
-		void startContact();
-  		void endContact();
-		bool contactStatus();
-		bool explodeStatus();
 		void reset();
 	private:
-		bool contacting;
 		bool exploded;
 };
 
@@ -163,6 +158,13 @@ class Teleport : public GameObject
 		//bool contacting;
 };
 
+class Lift : public GameObject
+{
+	public:
+		Lift(b2World& world, float x1, float y1, float x2, float y2);
+	private:
+		b2Body* body_ptr2;
+};
 
 class Chain : public GameObject
 {
