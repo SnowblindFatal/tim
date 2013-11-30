@@ -177,9 +177,11 @@ class GravityChanger : public GameObject
 {
 	public:
 		GravityChanger(b2World& world, float x, float y);
-		
+		void buttonCheck(b2Fixture*, b2Fixture*);	
 	private:
 		b2Body* button_ptr;
+		b2Fixture* check1;
+		b2Fixture* check2;
 };
 
 class MyQueryCallback : public b2QueryCallback {
@@ -194,4 +196,5 @@ class MyQueryCallback : public b2QueryCallback {
 };
 
 #endif //GAMEOBJECT_H
+
 

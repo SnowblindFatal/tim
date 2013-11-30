@@ -10,7 +10,7 @@
 #include <SFML/System.hpp>
 #include "DebugDraw.h"
 #include "WinCondition.h"
-#include "CollisionDetection.h" //This inclusion was forgotten when committing.
+#include "CollisionDetection.h" 
 #include <map>
 #include <string>
 #include <iostream>

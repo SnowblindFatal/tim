@@ -85,6 +85,10 @@ void LevelData::loadlevel() {
 	levelobjects.push_back(new Bomb (phys_world, 48.0f, 0.0f));
 	levelobjects.push_back(new Bomb (phys_world, 40.0f, 0.0f));
 	winconditions.push_back(new IsNearPoint(levelobjects.back(), 80.0f, 40.0f, 5.0f));
+	//levelobjects.push_back(new Bomb (phys_world, 48.0f, 0.0f));
+	//winconditions.push_back(new IsNearPoint(levelobjects.back(), 80.0f, 40.0f, 5.0f));
+	levelobjects.push_back(new GravityChanger(phys_world, 20.0f, 20.0f));
+
 	available["Platform"]=5;
 	available["Wall"]=1;
 	available["BouncingBall"] = 4;
@@ -93,6 +97,7 @@ void LevelData::loadlevel() {
 }
 
 bool LevelData::checkWin() const {
+		if (winconditions.begin()==winconditions.end()) return false;
 		for (auto it : winconditions) {
 			if (!it->check())
 				return false;
@@ -152,6 +157,7 @@ void LevelData::reset() {
 		for (auto it : winconditions) {
 			it->reset();
 		}
+		phys_world.SetGravity(default_gravity);
 }
 
 

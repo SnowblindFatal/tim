@@ -458,7 +458,7 @@ GravityChanger::GravityChanger(b2World& world, float x, float y) : GameObject(wo
 	body_ptr=world.CreateBody(&bodyDef);
 	b2PolygonShape shape1;
 	shape1.SetAsBox(1.0f, 0.5f);
-	body_ptr->CreateFixture(&shape1,0.0f);
+	check1=body_ptr->CreateFixture(&shape1,0.0f);
 	b2PolygonShape shape2;
 	shape2.SetAsBox(0.4f, 1.0f, b2Vec2(-1,-0.5f), 0);
 	b2PolygonShape shape3;
@@ -476,7 +476,8 @@ GravityChanger::GravityChanger(b2World& world, float x, float y) : GameObject(wo
 	button_ptr->SetGravityScale(0);
 	b2PolygonShape buttonshape;
 	buttonshape.SetAsBox(0.5f,0.5f);
-	button_ptr->CreateFixture(&buttonshape, 0);
+	check2=button_ptr->CreateFixture(&buttonshape, 0);
+	button_ptr->SetUserData(this);
 
 	b2PrismaticJointDef prismDef;
 	prismDef.bodyA = body_ptr;
@@ -493,6 +494,13 @@ GravityChanger::GravityChanger(b2World& world, float x, float y) : GameObject(wo
 	prismDef.motorSpeed=-3;
 	world.CreateJoint(&prismDef);
 
+}
+
+void GravityChanger::buttonCheck(b2Fixture* fixA, b2Fixture* fixB) {
+	if ((fixA==check2 && fixB==check1) || (fixA==check1 && fixB==check2)) {
+		world.SetGravity(-world.GetGravity());
+		std::cout << "Button!\n";
+	}
 }
 
 /*

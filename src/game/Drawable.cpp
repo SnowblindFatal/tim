@@ -47,7 +47,6 @@ void PlatformDrawable::update(b2Body* ptr) {
 }
 
 BombDrawable::BombDrawable(float x, float y) : Drawable() {
-	std::cout << "fails?\n";
 	x*=10;
 	y*=10;
 	polygon.setPointCount(4);
@@ -55,9 +54,7 @@ BombDrawable::BombDrawable(float x, float y) : Drawable() {
 	polygon.setPoint(1, sf::Vector2f(x+10, y-10));
 	polygon.setPoint(2, sf::Vector2f(x+10, y+10));
 	polygon.setPoint(3, sf::Vector2f(x+10, y+10));
-    std::cout << "fails2?\n";	
 	polygon.setTexture(Resources::getInstance().getTexture("small_tnt.jpg"));
-	std::cout << "fails3?\n";
 }
 
 void BombDrawable::draw(sf::RenderWindow& win) {
