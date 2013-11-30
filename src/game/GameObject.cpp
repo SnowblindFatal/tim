@@ -125,7 +125,7 @@ Domino::Domino(b2World& world, float x, float y) : GameObject(world,x,y,"Domino"
     body_ptr->CreateFixture(&fixtureDef);
 }
 
-Platform::Platform(b2World& world, float x, float y, float width, float height) : GameObject(world,x,y,"Platform", new PlatformDrawable(x,y,width,height)) { //BTW it should be height, not heigth.
+Platform::Platform(b2World& world, float x, float y, float width, float height) : GameObject(world,x,y,"Platform", new PlatformDrawable(x,y,width,height)) { 
 
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
@@ -400,6 +400,7 @@ void Bomb::reset() {
 	exploded = false;
 }
 
+
 Lift::Lift(b2World& world, float x1, float y1, float x2, float y2) : GameObject(world, x1, y1, "Lift") {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x1, y1);
@@ -425,6 +426,51 @@ Lift::Lift(b2World& world, float x1, float y1, float x2, float y2) : GameObject(
 	float32 ratio = 1.0f;
 	b2PulleyJointDef jointDef;
 	jointDef.Initialize(body_ptr, body_ptr2, groundAnchor1, groundAnchor2, anchor1, anchor2, ratio);
+}
+
+
+
+GravityChanger::GravityChanger(b2World& world, float x, float y) : GameObject(world, x, y, "GravityChanger") {
+	b2BodyDef bodyDef;
+	bodyDef.position.Set(x,y);
+	body_ptr=world.CreateBody(&bodyDef);
+	b2PolygonShape shape1;
+	shape1.SetAsBox(1.0f, 0.5f);
+	body_ptr->CreateFixture(&shape1,0.0f);
+	b2PolygonShape shape2;
+	shape2.SetAsBox(0.4f, 1.0f, b2Vec2(-1,-0.5f), 0);
+	b2PolygonShape shape3;
+	shape3.SetAsBox(0.4f, 1.0f, b2Vec2(1,-0.5f), 0);
+	body_ptr->CreateFixture(&shape2,0);
+	body_ptr->CreateFixture(&shape3,0);
+
+	
+
+
+	b2BodyDef bodyDef2;
+	bodyDef2.position.Set(x,y-1.5f);
+	bodyDef2.type = b2_dynamicBody;
+	button_ptr=world.CreateBody(&bodyDef2);
+	button_ptr->SetGravityScale(0);
+	b2PolygonShape buttonshape;
+	buttonshape.SetAsBox(0.5f,0.5f);
+	button_ptr->CreateFixture(&buttonshape, 0);
+
+	b2PrismaticJointDef prismDef;
+	prismDef.bodyA = body_ptr;
+	prismDef.localAnchorA = b2Vec2(0,-1);
+	prismDef.bodyB = button_ptr;
+	prismDef.localAnchorB = b2Vec2(0,0);
+	prismDef.localAxisA = b2Vec2(0,1);
+	prismDef.upperTranslation =1;
+	prismDef.lowerTranslation =-0.5f;
+	prismDef.enableLimit=true;
+	prismDef.collideConnected=true;
+	prismDef.enableMotor = true;
+	prismDef.maxMotorForce=25;
+	prismDef.motorSpeed=-3;
+	world.CreateJoint(&prismDef);
+
 }
 
 /*

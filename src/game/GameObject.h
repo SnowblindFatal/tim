@@ -172,6 +172,15 @@ class Chain : public GameObject
 		Chain(b2World& world);
 };
 
+class GravityChanger : public GameObject
+{
+	public:
+		GravityChanger(b2World& world, float x, float y);
+		
+	private:
+		b2Body* button_ptr;
+};
+
 class MyQueryCallback : public b2QueryCallback {
 	public:
 		std::vector<b2Body*> foundBodies;
