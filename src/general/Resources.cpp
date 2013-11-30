@@ -16,7 +16,9 @@ namespace {
     const std::vector<std::string> textureFileNames = {
         "brick1.jpg",
         "whitebrick.jpg",
-        "lowbrick.png"
+        "lowbrick.png",
+		"tnt.jpg",
+		"small_tnt.jpg"
     };
 
     const std::vector<std::string> soundFileNames = {

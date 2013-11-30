@@ -43,6 +43,35 @@ void PlatformDrawable::update(b2Body* ptr) {
 	}
     const sf::FloatRect rect = polygon.getGlobalBounds();
     polygon.setTextureRect(sf::IntRect(0, 0, rect.width, rect.height));
-	highlight->update_rect(rect);
-	
+	highlight->update_rect(rect);	
+}
+
+BombDrawable::BombDrawable(float x, float y) : Drawable() {
+	std::cout << "fails?\n";
+	x*=10;
+	y*=10;
+	polygon.setPointCount(4);
+	polygon.setPoint(0, sf::Vector2f(x-10, y-10));
+	polygon.setPoint(1, sf::Vector2f(x+10, y-10));
+	polygon.setPoint(2, sf::Vector2f(x+10, y+10));
+	polygon.setPoint(3, sf::Vector2f(x+10, y+10));
+    std::cout << "fails2?\n";	
+	polygon.setTexture(Resources::getInstance().getTexture("small_tnt.jpg"));
+	std::cout << "fails3?\n";
+}
+
+void BombDrawable::draw(sf::RenderWindow& win) {
+	win.draw(polygon);
+    highlight->draw(win);
+}
+
+void BombDrawable::update(b2Body* ptr) {
+	b2Vec2 pos = ptr->GetPosition();
+	for (int index=0;index<4;index++) {
+		b2Vec2 vert = dynamic_cast<b2PolygonShape*>(ptr->GetFixtureList()->GetShape())->GetVertex(index);
+		polygon.setPoint(index, sf::Vector2f(pos.x*10 + vert.x*10, pos.y*10 + vert.y*10));
+	}
+    const sf::FloatRect rect = polygon.getGlobalBounds();
+    polygon.setTextureRect(sf::IntRect(0, 0, rect.width, rect.height));
+	highlight->update_rect(rect);	
 }

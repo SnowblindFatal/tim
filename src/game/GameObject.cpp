@@ -90,6 +90,8 @@ GameObject* GameObjectFactory(b2World& world, std::string name, float x, float y
 		return new BouncingBall(world, x, y);
 	if (name=="Seesaw")
 		return new Seesaw(world, x, y);
+	if (name=="Bomb")
+		return new Bomb(world, x, y);
 	return NULL; //Name not found!
 }
 
@@ -350,7 +352,15 @@ BowlingBall::BowlingBall(b2World& world, float x, float y) : Ball(world, x, y,"B
 BigBall::BigBall(b2World& world, float x, float y) : Ball(world, x, y,"BigBall", 2.0, 0.1, 0.4) {}
 
 
-Bomb::Bomb(b2World& world, float x, float y) : Ball(world, x, y,"Bomb", 0.8, 0, 5.0) {
+Bomb::Bomb(b2World& world, float x, float y) : GameObject(world, x, y,"Bomb", new BombDrawable(x,y)) {
+	b2BodyDef bodyDef;
+	bodyDef.position.Set(x, y);
+	body_ptr = world.CreateBody(&bodyDef);
+	b2PolygonShape boxShape;
+	boxShape.SetAsBox(1.3,1.3);
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &boxShape;
+	body_ptr->CreateFixture(&fixtureDef);
 	exploded = false;
 	body_ptr->SetUserData(this);
 }
@@ -405,9 +415,10 @@ Lift::Lift(b2World& world, float x1, float y1, float x2, float y2) : GameObject(
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x1, y1);
 	bodyDef.type = b2_dynamicBody;
+	bodyDef.fixedRotation = true;
 	body_ptr = world.CreateBody(&bodyDef);
 	b2PolygonShape boxShape;
-	boxShape.SetAsBox(2,0.3);
+	boxShape.SetAsBox(3,0.3);
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &boxShape;
 	fixtureDef.density = 1;
@@ -421,13 +432,24 @@ Lift::Lift(b2World& world, float x1, float y1, float x2, float y2) : GameObject(
 
 	b2Vec2 anchor1 = body_ptr->GetWorldCenter();
 	b2Vec2 anchor2 = body_ptr2->GetWorldCenter();
-	b2Vec2 groundAnchor1(x1, y1 - 15.0f);
-	b2Vec2 groundAnchor2(x2, y2 - 15.0f);
+	b2Vec2 groundAnchor1(anchor1.x, anchor1.y - 15.0f);
+	b2Vec2 groundAnchor2(anchor2.x, anchor2.y - 15.0f);
 	float32 ratio = 1.0f;
 	b2PulleyJointDef jointDef;
 	jointDef.Initialize(body_ptr, body_ptr2, groundAnchor1, groundAnchor2, anchor1, anchor2, ratio);
+	world.CreateJoint(&jointDef);
 }
 
+void Lift::reset() {
+	body_ptr->SetTransform(original_pos, 0);
+	body_ptr->SetLinearVelocity(b2Vec2(0,0));
+	body_ptr->SetAngularVelocity(0);
+	body_ptr->SetAwake(true);
+	body_ptr2->SetTransform(original_pos, 0);
+	body_ptr2->SetLinearVelocity(b2Vec2(0,0));
+	body_ptr2->SetAngularVelocity(0);
+	body_ptr2->SetAwake(true);
+}
 
 
 GravityChanger::GravityChanger(b2World& world, float x, float y) : GameObject(world, x, y, "GravityChanger") {

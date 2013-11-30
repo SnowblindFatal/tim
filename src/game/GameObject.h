@@ -101,7 +101,7 @@ class BigBall : public Ball
 };
 
 
-class Bomb : public Ball
+class Bomb : public GameObject
 {
 	public:
 		Bomb(b2World& world, float x, float y);
@@ -162,6 +162,7 @@ class Lift : public GameObject
 {
 	public:
 		Lift(b2World& world, float x1, float y1, float x2, float y2);
+		void reset();
 	private:
 		b2Body* body_ptr2;
 };

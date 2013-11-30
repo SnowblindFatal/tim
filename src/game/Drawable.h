@@ -31,11 +31,20 @@ protected:
 class PlatformDrawable : public Drawable {
 public:
 	PlatformDrawable(float x, float y, float width, float height);
-	void draw(sf::RenderWindow& win) ;
+	void draw(sf::RenderWindow& win);
 	void update(b2Body* ptr);
 private:
 	sf::ConvexShape polygon;
 };
 
+class BombDrawable : public Drawable {
+public:
+	BombDrawable(float x, float y);
+	void draw(sf::RenderWindow& win);
+	void update(b2Body* ptr);
+private:
+	sf::ConvexShape polygon;
+
+};
 
 #endif

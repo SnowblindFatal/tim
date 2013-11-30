@@ -10,7 +10,7 @@ namespace {
 LevelData::LevelData(sf::RenderWindow& _App) : phys_world(default_gravity), App(_App), DebugDrawInstance(_App), level_loaded(false)
 	{
         
-		//phys_world.SetContactListener(&collisions);
+		phys_world.SetContactListener(&collisions);
 		phys_world.SetDebugDraw(&DebugDrawInstance);
         DebugDrawInstance.SetFlags(b2Draw::e_shapeBit);
 		DebugDrawInstance.AppendFlags(b2Draw::e_centerOfMassBit);
@@ -81,12 +81,15 @@ void LevelData::loadlevel() {
 	levelobjects.push_back(new BouncingBall(phys_world, 50, 0.0f));
 	levelobjects.push_back(new BouncingBall(phys_world, 52, 0.0f));
 	*/
-	//levelobjects.push_back(new Bomb (phys_world, 48.0f, 0.0f));
-	//winconditions.push_back(new IsNearPoint(levelobjects.back(), 80.0f, 40.0f, 5.0f));
+	levelobjects.push_back(new Lift(phys_world, 10, 30, 30, 30));
+	levelobjects.push_back(new Bomb (phys_world, 48.0f, 0.0f));
+	levelobjects.push_back(new Bomb (phys_world, 40.0f, 0.0f));
+	winconditions.push_back(new IsNearPoint(levelobjects.back(), 80.0f, 40.0f, 5.0f));
 	available["Platform"]=5;
 	available["Wall"]=1;
 	available["BouncingBall"] = 4;
 	available["Seesaw"] = 2;
+	available["Bomb"] = 10;
 }
 
 bool LevelData::checkWin() const {
@@ -155,13 +158,6 @@ void LevelData::reset() {
 
 void LevelData::simulate() {
 	phys_world.Step(timestep, velocityIterations, positionIterations);
-	/*
-	I don't think this is a good idea. -Aku
-	if (levelobjects.back()->contactStatus() == true && levelobjects.back()->explodeStatus() == false) {
-		std::cout << "EXPLODE!!!\n";
-		levelobjects.back()->explode();
-	}
-	*/
 }
     
 bool LevelData::loaded(void) const {

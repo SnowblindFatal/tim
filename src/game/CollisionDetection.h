@@ -7,12 +7,12 @@ class CollisionDetection : public b2ContactListener {
 		//check if fixture A was a bomb
 		void* bodyUserData = contact->GetFixtureA()->GetBody()->GetUserData();
 		if ( bodyUserData ) {
-			static_cast<Bomb*>( bodyUserData )->explode();
+			static_cast<GameObject*>( bodyUserData )->explode();
 		}
 		//check if fixture B was a bomb
 		bodyUserData = contact->GetFixtureB()->GetBody()->GetUserData();
 		if ( bodyUserData ) {
-			static_cast<Bomb*>( bodyUserData )->explode();
+			static_cast<GameObject*>( bodyUserData )->explode();
 		}
 	}
 /*
