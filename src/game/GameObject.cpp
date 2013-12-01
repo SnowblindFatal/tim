@@ -71,9 +71,10 @@ bool GameObject::noOverlaps() const {
 void GameObject::move(float x, float y) {
 
 	for (auto& body : bodies) {
-		body.body_ptr->SetTransform(b2Vec2(x,y) - local_mouse, body.body_ptr->GetAngle());
-		body.original_pos=b2Vec2(x,y) - local_mouse;
+		body.body_ptr->SetTransform(body.body_ptr->GetTransform().p+ (b2Vec2(x,y) - local_mouse), body.body_ptr->GetAngle());
+		body.original_pos=body.body_ptr->GetTransform().p;
 	}
+	local_mouse=b2Vec2(x,y);
 	if (noOverlaps()) {
 		can_place=true;
 	}
@@ -83,18 +84,15 @@ void GameObject::move(float x, float y) {
 }
 
 bool GameObject::isInside(float x, float y) {
-	bool result=false;
+	local_mouse = b2Vec2(x,y);
 	for (auto& body : bodies) {
-		local_mouse = body.body_ptr->GetLocalPoint(b2Vec2(x,y));
-		if (result) continue;
 		for (b2Fixture* f = body.body_ptr->GetFixtureList(); f!=NULL; f=f->GetNext()) {
 			if (f->TestPoint(b2Vec2(x,y))) {
-				result=true;
-				//break;
+				return true;
 			}
 		}
 	}
-	return result;
+	return false;
 }
 
 	
@@ -109,12 +107,21 @@ GameObject* GameObjectFactory(b2World& world, std::string name, float x, float y
 		return new Platform(world, x,y, 20.0f, 0.0f);
 	if (name=="Wall")
 		return new Wall(world, x,y, 0.0f, 20.0f);
-	//if (name=="BouncingBall")
-//		return new BouncingBall(world, x, y);
+	if (name=="BouncingBall")
+		return new BouncingBall(world, x, y);
+	if (name=="BowlingBall")
+		return new BouncingBall(world, x, y);
+	if (name=="BigBall")
+		return new BouncingBall(world, x, y);
 	if (name=="Seesaw")
 		return new Seesaw(world, x, y);
-//	if (name=="Bomb")
-//		return new Bomb(world, x, y);
+	if (name=="Bomb")
+		return new Bomb(world, x, y);
+	if (name=="GravityChanger")
+		return new GravityChanger(world,x,y);
+	if (name=="Catapult")
+		return new Catapult(world,x,y);
+	
 	return NULL; //Name not found!
 }
 
@@ -345,23 +352,12 @@ Seesaw::Seesaw(b2World& world, float x, float y) : GameObject(world, x,y,"Seesaw
 	jointDef.upperAngle =  0.4;
 	world.CreateJoint(&jointDef);
 }
-/*
-void Seesaw::reset() {
-	body_ptr->SetTransform(original_pos, 0);
-	body_ptr->SetLinearVelocity(b2Vec2(0,0));
-	body_ptr->SetAngularVelocity(0);
-	body_ptr->SetAwake(true);
-	body_ptr2->SetTransform(original_pos, original_rot);
-	body_ptr2->SetLinearVelocity(b2Vec2(0,0));
-	body_ptr2->SetAngularVelocity(0);
-	body_ptr2->SetAwake(true);
-}
 
 Ball::Ball(b2World& world, float x, float y,std::string name, float r, float restitution = 0, float density = 1.0) : GameObject(world, x,y,name) {
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(x, y);
-	body_ptr = world.CreateBody(&bodyDef);	
+	b2Body* body_ptr = world.CreateBody(&bodyDef);	
 	b2CircleShape circleShape;
 	circleShape.m_p.Set(0, 0);
 	circleShape.m_radius = r;
@@ -371,6 +367,8 @@ Ball::Ball(b2World& world, float x, float y,std::string name, float r, float res
 	fixtureDef.friction = 0.5;
 	fixtureDef.restitution = restitution;
 	body_ptr->CreateFixture(&fixtureDef);
+	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition(), body_ptr->GetAngle()));
+
 }
 
 BouncingBall::BouncingBall(b2World& world, float x, float y) : Ball(world, x, y,"BouncingBall", 0.5, 0.5, 1.0) {}
@@ -383,7 +381,7 @@ BigBall::BigBall(b2World& world, float x, float y) : Ball(world, x, y,"BigBall",
 Bomb::Bomb(b2World& world, float x, float y) : GameObject(world, x, y,"Bomb", new BombDrawable(x,y)) {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
-	body_ptr = world.CreateBody(&bodyDef);
+	b2Body* body_ptr = world.CreateBody(&bodyDef);
 	b2PolygonShape boxShape;
 	boxShape.SetAsBox(1.3,1.3);
 	b2FixtureDef fixtureDef;
@@ -391,6 +389,7 @@ Bomb::Bomb(b2World& world, float x, float y) : GameObject(world, x, y,"Bomb", ne
 	body_ptr->CreateFixture(&fixtureDef);
 	exploded = false;
 	body_ptr->SetUserData(this);
+	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition(), body_ptr->GetAngle()));
 }
 
 void Bomb::applyImpulse(b2Body* body, b2Vec2 center, b2Vec2 applyPoint, float power) {
@@ -409,7 +408,7 @@ void Bomb::explode() {
 	if (exploded == false) {
 		std::cout << "bomb explode\n";
 		exploded = true;
-		b2Vec2 center = body_ptr->GetPosition();
+		b2Vec2 center = bodies[0].body_ptr->GetPosition();
 		//find all fixtures within blast radius AABB
 		MyQueryCallback queryCallback;
 		b2AABB aabb;
@@ -431,11 +430,8 @@ void Bomb::explode() {
 } 
 
 void Bomb::reset() {
-	body_ptr->SetTransform(original_pos, original_rot);
-	body_ptr->SetLinearVelocity(b2Vec2(0,0));
-	body_ptr->SetAngularVelocity(0);
-	body_ptr->SetAwake(true);
 	exploded = false;
+	GameObject::reset();
 }
 
 
@@ -444,7 +440,7 @@ Lift::Lift(b2World& world, float x1, float y1, float x2, float y2) : GameObject(
 	bodyDef.position.Set(x1, y1);
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.fixedRotation = true;
-	body_ptr = world.CreateBody(&bodyDef);
+	b2Body* body_ptr = world.CreateBody(&bodyDef);
 	b2PolygonShape boxShape;
 	boxShape.SetAsBox(3,0.3);
 	b2FixtureDef fixtureDef;
@@ -453,10 +449,12 @@ Lift::Lift(b2World& world, float x1, float y1, float x2, float y2) : GameObject(
 	fixtureDef.friction = 1;
 	fixtureDef.restitution = 0;
 	body_ptr->CreateFixture(&fixtureDef);
+	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition(), body_ptr->GetAngle()));
 
 	bodyDef.position.Set(x2, y2);
-	body_ptr2 = world.CreateBody(&bodyDef);
+	b2Body* body_ptr2 = world.CreateBody(&bodyDef);
 	body_ptr2->CreateFixture(&fixtureDef);
+	bodies.push_back(PhysBody(body_ptr2, body_ptr2->GetPosition(), body_ptr2->GetAngle()));
 
 	b2Vec2 anchor1 = body_ptr->GetWorldCenter();
 	b2Vec2 anchor2 = body_ptr2->GetWorldCenter();
@@ -468,22 +466,10 @@ Lift::Lift(b2World& world, float x1, float y1, float x2, float y2) : GameObject(
 	world.CreateJoint(&jointDef);
 }
 
-void Lift::reset() {
-	body_ptr->SetTransform(original_pos, 0);
-	body_ptr->SetLinearVelocity(b2Vec2(0,0));
-	body_ptr->SetAngularVelocity(0);
-	body_ptr->SetAwake(true);
-	body_ptr2->SetTransform(original_pos, 0);
-	body_ptr2->SetLinearVelocity(b2Vec2(0,0));
-	body_ptr2->SetAngularVelocity(0);
-	body_ptr2->SetAwake(true);
-}
-
-
 GravityChanger::GravityChanger(b2World& world, float x, float y) : GameObject(world, x, y, "GravityChanger") {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x,y);
-	body_ptr=world.CreateBody(&bodyDef);
+	b2Body* body_ptr=world.CreateBody(&bodyDef);
 	b2PolygonShape shape1;
 	shape1.SetAsBox(1.0f, 0.5f);
 	check1=body_ptr->CreateFixture(&shape1,0.0f);
@@ -493,6 +479,7 @@ GravityChanger::GravityChanger(b2World& world, float x, float y) : GameObject(wo
 	shape3.SetAsBox(0.4f, 1.0f, b2Vec2(1,-0.5f), 0);
 	body_ptr->CreateFixture(&shape2,0);
 	body_ptr->CreateFixture(&shape3,0);
+	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition(), body_ptr->GetAngle()));
 
 	
 
@@ -500,12 +487,13 @@ GravityChanger::GravityChanger(b2World& world, float x, float y) : GameObject(wo
 	b2BodyDef bodyDef2;
 	bodyDef2.position.Set(x,y-1.5f);
 	bodyDef2.type = b2_dynamicBody;
-	button_ptr=world.CreateBody(&bodyDef2);
+	b2Body* button_ptr=world.CreateBody(&bodyDef2);
 	button_ptr->SetGravityScale(0);
 	b2PolygonShape buttonshape;
 	buttonshape.SetAsBox(0.5f,0.5f);
 	check2=button_ptr->CreateFixture(&buttonshape, 0);
 	button_ptr->SetUserData(this);
+	bodies.push_back(PhysBody(button_ptr, button_ptr->GetPosition(), button_ptr->GetAngle()));
 
 	b2PrismaticJointDef prismDef;
 	prismDef.bodyA = body_ptr;
@@ -527,10 +515,8 @@ GravityChanger::GravityChanger(b2World& world, float x, float y) : GameObject(wo
 void GravityChanger::buttonCheck(b2Fixture* fixA, b2Fixture* fixB) {
 	if ((fixA==check2 && fixB==check1) || (fixA==check1 && fixB==check2)) {
 		world.SetGravity(-world.GetGravity());
-		std::cout << "Button!\n";
 	}
 }
-*/
 /*
 Teleport::Teleport(b2World& world, float x1, float y1, float x2, float y2) : GameObject(world, x1, y1) {
 	//contacting = false;

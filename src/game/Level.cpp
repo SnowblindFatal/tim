@@ -21,8 +21,11 @@ LevelData::LevelData(sf::RenderWindow& _App) : phys_world(default_gravity), App(
 		available["BouncingBall"] = 0;
 		available["BigBall"] = 0;
 		available["BowlingBall"] = 0;
-		available["Domino"] = 0;
-		available["Chain"] = 0;
+		available["Catapult"] = 0;
+		available["Seesaw"] = 0;
+		available["GravityChanger"] = 0;
+		available["Bomb"] = 0;
+
 
 }
 LevelData::~LevelData() {
@@ -91,9 +94,11 @@ void LevelData::loadlevel() {
 
 	available["Platform"]=5;
 	available["Wall"]=1;
-	//available["BouncingBall"] = 4;
+	available["BouncingBall"] = 4;
 	available["Seesaw"] = 2;
-	//available["Bomb"] = 10;
+	available["Bomb"] = 10;
+	available["GravityChanger"] = 3;
+	level_loaded=true;
 }
 
 bool LevelData::checkWin() const {

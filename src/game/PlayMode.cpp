@@ -86,6 +86,12 @@ GameState::StateSelect PlayMode::run()
 						if (active_object==NULL)
 							std::cout << "No Bombs available\n";
 					}
+					if (event.key.code == sf::Keyboard::Num6) {
+						active_object = level.createObject("GravityChanger", 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+						dragged_object = active_object;
+						if (active_object==NULL)
+							std::cout << "No GravityChangers available\n";
+					}
 					else handleKeyPress(event);
 				}
 			}
@@ -102,7 +108,7 @@ GameState::StateSelect PlayMode::run()
 					
 			}
 			else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-				if (active_object && active_object->highlight_extras && active_object->highlightPoint(sf::Mouse::getPosition(App))) {
+				if (active_object && active_object->highlightPoint(sf::Mouse::getPosition(App))) {
 						highlight_active=true;
 				}
 

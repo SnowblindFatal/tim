@@ -12,10 +12,12 @@ Highlight::Highlight() {
 	rect.setPosition(sf::Vector2f(-400,-400));
 	del1.setPosition(sf::Vector2f(-400,-400));
 	del2.setPosition(sf::Vector2f(-400,-400));
+	real=false;
 	
 }
 
 void Highlight::set(const std::string& type, bool can_place) {
+	if (!real) return;
 	if (type=="active") {
 		rect.setFillColor(sf::Color(255,255,0,80)); //Yellow
 		del1.setFillColor(sf::Color(255,0,0,255)); //RED
@@ -43,6 +45,7 @@ void Highlight::update_rect(const sf::FloatRect& polygon_bounds) {
 	del2.setPosition(sf::Vector2f(polygon_bounds.left-20,polygon_bounds.top-10));
 	del1.setRotation(45.0f);
 	del2.setRotation(-45.0f);
+	real=true;
 	
 }
 
@@ -56,6 +59,7 @@ void Highlight::draw(sf::RenderWindow& win) {
 }
 
 std::string Highlight::clicked(const sf::Vector2i& point) {
+	if (!real) return "nothing";
 	if (delete_active) {
 
 		sf::FloatRect box=del1.getGlobalBounds();
@@ -72,6 +76,18 @@ std::string Highlight::clicked(const sf::Vector2i& point) {
 		}
 	}
 	else return "nothing";
+}
+bool Highlight::checkPoint(sf::Vector2i point) {
+	if (!real) return false;
+	sf::FloatRect box=del1.getGlobalBounds();
+	if (box.contains(point.x,point.y)) {
+		delete_active=true;
+		return true; 
+	}
+	else {
+		delete_active=false;
+		return false;
+	}
 }
 
 //PlatformHighlight:

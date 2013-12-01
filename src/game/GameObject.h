@@ -14,7 +14,7 @@ class GameObject
 {
 
 public:
-    GameObject(b2World& world, float x, float y, std::string name, Drawable* drawable= new Drawable, float rotation=0.0f) : can_place(false), highlight_extras(false), local_mouse(0,0), world(world), name(name), drawable(drawable) {};
+    GameObject(b2World& world, float x, float y, std::string name, Drawable* drawable= new Drawable) : can_place(false), highlight_extras(false), local_mouse(x,y), world(world), name(name), drawable(drawable) {};
 	virtual ~GameObject(); 
     virtual void update_drawable(); 
     virtual void draw(sf::RenderWindow&);
@@ -76,7 +76,6 @@ class Domino : public GameObject
 		Domino(b2World& world, float x, float y);
 };
 
-/*
 class Ball : public GameObject
 {
 	public:
@@ -112,7 +111,6 @@ class Bomb : public GameObject
 		bool exploded;
 };
 
-*/
 class Platform : public GameObject
 {
 	public:
@@ -131,7 +129,6 @@ class Seesaw : public GameObject
 {
 	public:	
 		Seesaw(b2World& world, float x, float y);
-		//void reset();
 };
 
 class Catapult : public GameObject
@@ -139,30 +136,6 @@ class Catapult : public GameObject
 	public:
 		Catapult(b2World& world, float x, float y);
 
-};
-/*
-class Teleport : public GameObject
-{
-	public:
-		Teleport(b2World& world, float x1, float y1, float x2, float y2);
-		//void startContact();
-  		//void endContact();
-		//bool contactStatus();
-		//bool reset();
-		//bool contacting;
-};
-
-class Lift : public GameObject
-{
-	public:
-		Lift(b2World& world, float x1, float y1, float x2, float y2);
-		void reset();
-};
-
-class Chain : public GameObject
-{
-	public:
-		Chain(b2World& world);
 };
 
 class GravityChanger : public GameObject
@@ -184,6 +157,28 @@ class MyQueryCallback : public b2QueryCallback {
 			std::cout << "object\n";
 			return true;//keep going to find all fixtures in the query area
 		}
+};
+class Lift : public GameObject
+{
+	public:
+		Lift(b2World& world, float x1, float y1, float x2, float y2);
+};
+
+/*
+class Teleport : public GameObject
+{
+	public:
+		Teleport(b2World& world, float x1, float y1, float x2, float y2);
+		//void startContact();
+  		//void endContact();
+		//bool contactStatus();
+		//bool reset();
+		//bool contacting;
+};
+class Chain : public GameObject
+{
+	public:
+		Chain(b2World& world);
 };
 */
 #endif //GAMEOBJECT_H

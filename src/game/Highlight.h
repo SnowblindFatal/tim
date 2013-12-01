@@ -15,7 +15,7 @@ public:
     virtual void set(const std::string&, bool);
     virtual void update_rect(const sf::FloatRect&);
     virtual void draw(sf::RenderWindow& win);
-	virtual bool checkPoint(sf::Vector2i) {return false;}
+	virtual bool checkPoint(sf::Vector2i);
 	virtual sf::Vector2i getDelta(sf::Vector2i) {return sf::Vector2i(0,0);}
 	virtual std::string clicked(const sf::Vector2i&);
 protected:
@@ -23,6 +23,7 @@ protected:
 	sf::RectangleShape del1;
 	sf::RectangleShape del2;
 	bool delete_active;
+	bool real; //True when the Highlight has actually been updated with a sf::FloatRect; when it is real.
 };
 
 class PlatformHighlight : public Highlight {
