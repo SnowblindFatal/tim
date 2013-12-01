@@ -18,7 +18,9 @@ namespace {
         "whitebrick.jpg",
         "lowbrick.png",
 		"tnt.jpg",
-		"small_tnt.jpg"
+		"small_tnt.jpg",
+		"gravitybutton.png",
+		"gravitybox.png"
     };
 
     const std::vector<std::string> soundFileNames = {

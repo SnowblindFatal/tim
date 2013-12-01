@@ -48,4 +48,19 @@ protected:
 	sf::Vector2i local_mouse;
 };
 
+class GravityChangerHighlight : public Highlight {
+public:
+	GravityChangerHighlight();
+	void set(const std::string&, bool);
+	void update_rect(const sf::FloatRect&);
+	void draw(sf::RenderWindow&);
+
+	bool checkPoint(sf::Vector2i);
+	virtual std::string clicked(const sf::Vector2i&);
+
+protected:
+	sf::CircleShape	rotate;
+	bool rotate_active;
+};
+
 #endif

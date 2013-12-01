@@ -466,7 +466,7 @@ Lift::Lift(b2World& world, float x1, float y1, float x2, float y2) : GameObject(
 	world.CreateJoint(&jointDef);
 }
 
-GravityChanger::GravityChanger(b2World& world, float x, float y) : GameObject(world, x, y, "GravityChanger") {
+GravityChanger::GravityChanger(b2World& world, float x, float y) : GameObject(world, x, y, "GravityChanger", new GravityChangerDrawable(x,y)) {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x,y);
 	b2Body* body_ptr=world.CreateBody(&bodyDef);
@@ -516,6 +516,29 @@ void GravityChanger::buttonCheck(b2Fixture* fixA, b2Fixture* fixB) {
 	if ((fixA==check2 && fixB==check1) || (fixA==check1 && fixB==check2)) {
 		world.SetGravity(-world.GetGravity());
 	}
+}
+std::string GravityChanger::highlightClicked(sf::Vector2i point) {
+	std::string result=drawable->highlightClicked(point);
+	if (result=="rotate") {
+		if (std::fabs(bodies[0].original_rot)<0.01f) {
+			bodies[0].body_ptr->SetTransform(bodies[0].original_pos-b2Vec2(0,1.5f), 3.14159);
+			bodies[0].original_pos=bodies[0].body_ptr->GetTransform().p;
+			bodies[0].original_rot=3.14159;
+
+			bodies[1].body_ptr->SetTransform(bodies[1].original_pos+b2Vec2(0,1.5f), bodies[1].original_rot);
+			bodies[1].original_pos=bodies[1].body_ptr->GetTransform().p;
+		}
+		else {
+			bodies[0].body_ptr->SetTransform(bodies[0].original_pos+b2Vec2(0,1.5f), 0);
+			bodies[0].original_pos=bodies[0].body_ptr->GetTransform().p;
+			bodies[0].original_rot=0;
+
+			bodies[1].body_ptr->SetTransform(bodies[1].original_pos-b2Vec2(0,1.5f), bodies[1].original_rot);
+			bodies[1].original_pos=bodies[1].body_ptr->GetTransform().p;
+		}		
+		return "nothing";
+	}
+	else return result;
 }
 /*
 Teleport::Teleport(b2World& world, float x1, float y1, float x2, float y2) : GameObject(world, x1, y1) {

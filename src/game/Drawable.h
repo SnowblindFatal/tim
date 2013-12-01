@@ -49,4 +49,13 @@ private:
 
 };
 
+class GravityChangerDrawable : public Drawable {
+public:
+	GravityChangerDrawable(float x, float y);
+	void draw(sf::RenderWindow&);
+	void update(const std::vector<PhysBody>&);
+private:
+	sf::RectangleShape box;
+	sf::RectangleShape button;
+};
 #endif

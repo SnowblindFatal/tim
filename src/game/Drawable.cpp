@@ -74,3 +74,32 @@ void BombDrawable::update(const std::vector<PhysBody>& bodies) {
     polygon.setTextureRect(sf::IntRect(0, 0, rect.width, rect.height));
 	highlight->update_rect(rect);	
 }
+
+GravityChangerDrawable::GravityChangerDrawable(float x, float y) : Drawable(new GravityChangerHighlight()) {
+	x*=10;
+	y*=10;
+	box.setSize(sf::Vector2f(28,20));
+	button.setSize(sf::Vector2f(10,10));
+	box.setOrigin(14, 15);
+	button.setOrigin(5,5);
+	box.setPosition(x,y);
+	button.setPosition(x,y-5);	
+	box.setTexture(Resources::getInstance().getTexture("gravitybox.png"));
+	button.setTexture(Resources::getInstance().getTexture("gravitybutton.png"));
+	box.setOutlineThickness(1);
+	box.setOutlineColor(sf::Color::White);
+}
+void GravityChangerDrawable::draw(sf::RenderWindow& win) {
+	win.draw(button);
+	win.draw(box);
+	highlight->draw(win);
+}
+
+void GravityChangerDrawable::update(const std::vector<PhysBody>& bodies) {
+	box.setPosition(sf::Vector2f(bodies[0].body_ptr->GetPosition().x*10,bodies[0].body_ptr->GetPosition().y*10));
+	box.setRotation(bodies[0].body_ptr->GetAngle()*180.0f/3.141592f);
+	button.setPosition(sf::Vector2f(bodies[1].body_ptr->GetPosition().x*10,bodies[1].body_ptr->GetPosition().y*10));
+	const sf::FloatRect rect=box.getGlobalBounds();
+	highlight->update_rect(rect);
+}
+	

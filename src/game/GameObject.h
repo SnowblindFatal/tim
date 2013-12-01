@@ -143,6 +143,7 @@ class GravityChanger : public GameObject
 	public:
 		GravityChanger(b2World& world, float x, float y);
 		void buttonCheck(b2Fixture*, b2Fixture*);	
+		std::string highlightClicked(sf::Vector2i);
 	private:
 		b2Fixture* check1;
 		b2Fixture* check2;

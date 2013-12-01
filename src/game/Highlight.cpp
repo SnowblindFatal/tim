@@ -63,10 +63,6 @@ std::string Highlight::clicked(const sf::Vector2i& point) {
 	if (delete_active) {
 
 		sf::FloatRect box=del1.getGlobalBounds();
-		box.left-=2;
-		box.width-=2;
-		box.top-=2;
-		box.height-=2;
 		if (box.contains(point.x,point.y)) {
 			return "delete";
 		}
@@ -136,10 +132,6 @@ bool PlatformHighlight::checkPoint(sf::Vector2i point) {
 	}
 	else {
 		sf::FloatRect box=del1.getGlobalBounds();
-		box.left-=2;
-		box.width-=2;
-		box.top-=2;
-		box.height-=2;
 		if (box.contains(point.x,point.y)) {
 			delete_active=true;
 			width_active=false;
@@ -166,6 +158,66 @@ sf::Vector2i PlatformHighlight::getDelta(const sf::Vector2i point) {
 	return result;
 }
 
+GravityChangerHighlight::GravityChangerHighlight() : Highlight() {
+	rotate.setFillColor(sf::Color::Transparent);
+	rotate.setRadius(5);
+}
+
+void GravityChangerHighlight::set(const std::string& type, bool can_place) {
+	if (type=="active") {
+		rotate.setFillColor(sf::Color::Blue);
+	}
+	Highlight::set(type,can_place);
+	return;
+}
+
+void GravityChangerHighlight::update_rect(const sf::FloatRect& rect) {
+	rotate.setPosition(rect.left+rect.width+12, rect.top + 10);
+	Highlight::update_rect(rect);
+}
+
+void GravityChangerHighlight::draw(sf::RenderWindow& win) {
+	win.draw(rotate);
+	rotate.setFillColor(sf::Color::Transparent);
+	Highlight::draw(win);
+}
+bool GravityChangerHighlight::checkPoint(sf::Vector2i point) {	
+	if (rotate.getGlobalBounds().contains(point.x, point.y)) {
+		delete_active=false;
+		rotate_active=true;
+		return true;
+	}
+	else {
+		sf::FloatRect box=del1.getGlobalBounds();
+		if (box.contains(point.x,point.y)) {
+			delete_active=true;
+			rotate_active=false;
+			return true; 
+		}
+	}
+	return false;
+}
+std::string GravityChangerHighlight::clicked(const sf::Vector2i& point) {
+	if (delete_active) {
+
+		sf::FloatRect box=del1.getGlobalBounds();
+		if (box.contains(point.x,point.y)) {
+			return "delete";
+		}
+		else {
+			delete_active=false;
+			rotate_active=false;
+			return "nothing";
+		}
+	}
+	else if (rotate_active) {
+		if (rotate.getGlobalBounds().contains(point.x, point.y)) {
+			rotate_active=false;
+			return "rotate";
+		}
+	}
+	return "nothing";
+}
 
 
 
