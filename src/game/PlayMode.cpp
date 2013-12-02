@@ -98,6 +98,12 @@ GameState::StateSelect PlayMode::run()
 						if (active_object==NULL)
 							std::cout << "No Bowling balls available\n";
 					}
+					if (event.key.code == sf::Keyboard::Num8) {
+						active_object = level.createObject("Domino", 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+						dragged_object = active_object;
+						if (active_object==NULL)
+							std::cout << "No Dominoes available\n";
+					}
 					else handleKeyPress(event);
 				}
 			}

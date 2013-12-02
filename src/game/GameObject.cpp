@@ -121,6 +121,8 @@ GameObject* GameObjectFactory(b2World& world, std::string name, float x, float y
 		return new GravityChanger(world,x,y);
 	if (name=="Catapult")
 		return new Catapult(world,x,y);
+	if (name=="Domino")
+		return new Domino(world,x,y);
 	
 	return NULL; //Name not found!
 }
@@ -143,7 +145,7 @@ std::string GameObject::highlightClicked(sf::Vector2i point) {
 }
 void GameObject::highlightDelta(sf::Vector2i) {}
 
-Domino::Domino(b2World& world, float x, float y) : GameObject(world,x,y,"Domino") {
+Domino::Domino(b2World& world, float x, float y) : GameObject(world,x,y,"Domino", new DominoDrawable(x,y)) {
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
     bodyDef.position.Set(x, y);
@@ -416,7 +418,7 @@ void Bomb::explode() {
 		aabb.lowerBound = center - b2Vec2(blast_radius, blast_radius);
 		aabb.upperBound = center + b2Vec2(blast_radius, blast_radius);
 	   	world.QueryAABB(&queryCallback, aabb);
-		float power = 300;
+		float power = 1500;
 		//apply impulse to bodies
 		for (size_t i = 0; i < queryCallback.foundBodies.size(); i++) {
 		    b2Body* body = queryCallback.foundBodies[i];

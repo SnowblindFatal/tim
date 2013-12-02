@@ -86,4 +86,14 @@ private:
 	sf::RectangleShape box;	
 	sf::ConvexShape polygon;
 };
+
+class DominoDrawable : public Drawable {
+public:
+	DominoDrawable(float x, float y);
+	void draw(sf::RenderWindow&);
+	void update(const std::vector<PhysBody>&);
+private:
+	sf::RectangleShape box;	
+};
+
 #endif

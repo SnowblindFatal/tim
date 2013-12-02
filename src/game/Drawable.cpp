@@ -187,3 +187,26 @@ void SeesawDrawable::update(const std::vector<PhysBody>& bodies) {
 	const sf::FloatRect rect =box.getGlobalBounds();
 	highlight->update_rect(rect);
 }
+
+DominoDrawable::DominoDrawable(float x, float y) : Drawable() {
+	x*=10;
+	y*=10;
+	box.setSize(sf::Vector2f(8,30));
+	box.setOrigin(4, 15);
+	box.setPosition(x,y);
+	box.setTexture(Resources::getInstance().getTexture("domino.jpg"));
+	box.setOutlineThickness(1);
+	box.setOutlineColor(sf::Color(145,145,145));
+}
+
+void DominoDrawable::draw(sf::RenderWindow& win) {
+	win.draw(box);
+    highlight->draw(win);
+}
+
+void DominoDrawable::update(const std::vector<PhysBody>& bodies) {
+	box.setPosition(sf::Vector2f(bodies[0].body_ptr->GetPosition().x*10,bodies[0].body_ptr->GetPosition().y*10));
+	box.setRotation(bodies[0].body_ptr->GetAngle()*180.0f/3.141592f);
+	const sf::FloatRect rect=box.getGlobalBounds();
+	highlight->update_rect(rect);
+}

@@ -99,6 +99,7 @@ void LevelData::loadlevel() {
 	available["Bomb"] = 10;
 	available["GravityChanger"] = 3;
 	available["BowlingBall"] = 6;
+	available["Domino"] = 20;
 	level_loaded=true;
 }
 
