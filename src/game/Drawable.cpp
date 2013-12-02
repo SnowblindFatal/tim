@@ -27,6 +27,9 @@ PlatformDrawable::PlatformDrawable(float x, float y, float width, float height) 
 	polygon.setPoint(3, sf::Vector2f(x, y+20.0f));
     
 	polygon.setTexture(Resources::getInstance().getTexture("whitebrick.jpg"));
+	polygon.setOutlineThickness(1);
+	
+	polygon.setOutlineColor(sf::Color(145,145,145));
     
 } 
 
@@ -50,29 +53,24 @@ void PlatformDrawable::update(const std::vector<PhysBody>& bodies) {
 BombDrawable::BombDrawable(float x, float y) : Drawable() {
 	x*=10;
 	y*=10;
-	polygon.setPointCount(4);
-	polygon.setPoint(0, sf::Vector2f(x-10, y-10));
-	polygon.setPoint(1, sf::Vector2f(x+10, y-10));
-	polygon.setPoint(2, sf::Vector2f(x+10, y+10));
-	polygon.setPoint(3, sf::Vector2f(x+10, y+10));
-	polygon.setTexture(Resources::getInstance().getTexture("small_tnt.jpg"));
+	box.setSize(sf::Vector2f(26,26));
+	box.setOrigin(13, 13);
+	box.setPosition(x,y);
+	box.setTexture(Resources::getInstance().getTexture("small_tnt.jpg"));
+	box.setOutlineThickness(1);
+	box.setOutlineColor(sf::Color::Yellow);
 }
 
 void BombDrawable::draw(sf::RenderWindow& win) {
-	win.draw(polygon);
+	win.draw(box);
     highlight->draw(win);
 }
 
 void BombDrawable::update(const std::vector<PhysBody>& bodies) {
-	b2Body* ptr = bodies[0].body_ptr;
-	b2Vec2 pos = ptr->GetPosition();
-	for (int index=0;index<4;index++) {
-		b2Vec2 vert = dynamic_cast<b2PolygonShape*>(ptr->GetFixtureList()->GetShape())->GetVertex(index);
-		polygon.setPoint(index, sf::Vector2f(pos.x*10 + vert.x*10, pos.y*10 + vert.y*10));
-	}
-    const sf::FloatRect rect = polygon.getGlobalBounds();
-    polygon.setTextureRect(sf::IntRect(0, 0, rect.width, rect.height));
-	highlight->update_rect(rect);	
+	box.setPosition(sf::Vector2f(bodies[0].body_ptr->GetPosition().x*10,bodies[0].body_ptr->GetPosition().y*10));
+	box.setRotation(bodies[0].body_ptr->GetAngle()*180.0f/3.141592f);
+	const sf::FloatRect rect=box.getGlobalBounds();
+	highlight->update_rect(rect);
 }
 
 GravityChangerDrawable::GravityChangerDrawable(float x, float y) : Drawable(new GravityChangerHighlight()) {
@@ -103,3 +101,89 @@ void GravityChangerDrawable::update(const std::vector<PhysBody>& bodies) {
 	highlight->update_rect(rect);
 }
 	
+
+BowlingBallDrawable::BowlingBallDrawable(float x, float y) : Drawable() {
+	x*=10;
+	y*=10;
+	ball.setRadius(10);
+	ball.setPosition(x,y);
+	ball.setOrigin(10,10);
+	ball.setTexture(Resources::getInstance().getTexture("bowlingball.png"));
+	//ball.setOutlineThickness(3);
+	//ball.setOutlineColor(sf::Color(0,0,128));
+}
+
+void BowlingBallDrawable::draw(sf::RenderWindow& win) {
+	win.draw(ball);
+	highlight->draw(win);
+}
+
+void BowlingBallDrawable::update(const std::vector<PhysBody>& bodies) {
+	ball.setPosition(sf::Vector2f(bodies[0].body_ptr->GetPosition().x*10,bodies[0].body_ptr->GetPosition().y*10));
+	ball.setRotation(bodies[0].body_ptr->GetAngle()*180.0f/3.141592f);
+	const sf::FloatRect rect=ball.getGlobalBounds();
+	highlight->update_rect(rect);
+}
+
+BouncingBallDrawable::BouncingBallDrawable(float x, float y) : Drawable() {
+	x*=10;
+	y*=10;
+	ball.setRadius(5);
+	ball.setPosition(x,y);
+	ball.setOrigin(5,5);
+	ball.setTexture(Resources::getInstance().getTexture("small_ball.png"));
+	//ball.setOutlineThickness(3);
+	//ball.setOutlineColor(sf::Color(0,0,128));
+}
+
+void BouncingBallDrawable::draw(sf::RenderWindow& win) {
+	win.draw(ball);
+	highlight->draw(win);
+}
+
+void BouncingBallDrawable::update(const std::vector<PhysBody>& bodies) {
+	ball.setPosition(sf::Vector2f(bodies[0].body_ptr->GetPosition().x*10,bodies[0].body_ptr->GetPosition().y*10));
+	ball.setRotation(bodies[0].body_ptr->GetAngle()*180.0f/3.141592f);
+	const sf::FloatRect rect=ball.getGlobalBounds();
+	highlight->update_rect(rect);
+}
+
+SeesawDrawable::SeesawDrawable(float x, float y) : Drawable() {
+	x*=10;
+	y*=10;
+	polygon.setPointCount(3);
+	polygon.setPoint(0, sf::Vector2f(x, y));
+	polygon.setPoint(1, sf::Vector2f(x+10, y+20));
+	polygon.setPoint(2, sf::Vector2f(x-10, y+20));
+	polygon.setTexture(Resources::getInstance().getTexture("block.jpg"));
+	polygon.setOutlineThickness(1);	
+	polygon.setOutlineColor(sf::Color(145,145,145));
+
+	box.setSize(sf::Vector2f(100,4));
+	box.setOrigin(50, 2);
+	box.setPosition(x,y);
+	box.setTexture(Resources::getInstance().getTexture("plank.jpg"));
+	box.setOutlineThickness(1);
+	box.setOutlineColor(sf::Color(218,165,11));
+}
+
+void SeesawDrawable::draw(sf::RenderWindow& win) {
+	win.draw(box);
+	win.draw(polygon);
+    highlight->draw(win);
+}
+
+void SeesawDrawable::update(const std::vector<PhysBody>& bodies) {
+	b2Body* ptr= bodies[0].body_ptr;
+	b2Vec2 pos = ptr->GetPosition();
+	for (int index=0;index<3;index++) {
+		b2Vec2 vert = dynamic_cast<b2PolygonShape*>(ptr->GetFixtureList()->GetShape())->GetVertex(index);
+		polygon.setPoint(index, sf::Vector2f(pos.x*10 + vert.x*10, pos.y*10 + vert.y*10));
+	}
+    //const sf::FloatRect rect = polygon.getGlobalBounds();
+   // polygon.setTextureRect(sf::IntRect(0, 0, rect.width, rect.height));
+	box.setPosition(sf::Vector2f(bodies[1].body_ptr->GetPosition().x*10,bodies[1].body_ptr->GetPosition().y*10));
+	box.setRotation(bodies[1].body_ptr->GetAngle()*180.0f/3.141592f);
+	const sf::FloatRect rect =box.getGlobalBounds();
+	highlight->update_rect(rect);
+}

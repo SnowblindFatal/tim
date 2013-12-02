@@ -95,9 +95,10 @@ void LevelData::loadlevel() {
 	available["Platform"]=5;
 	available["Wall"]=1;
 	available["BouncingBall"] = 4;
-	available["Seesaw"] = 2;
+	available["Seesaw"] = 20;
 	available["Bomb"] = 10;
 	available["GravityChanger"] = 3;
+	available["BowlingBall"] = 6;
 	level_loaded=true;
 }
 

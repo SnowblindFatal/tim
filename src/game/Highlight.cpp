@@ -41,8 +41,8 @@ void Highlight::update_rect(const sf::FloatRect& polygon_bounds) {
 	del2.setRotation(0.0f);
 	del1.setOrigin(6.5f,2.5f);
 	del2.setOrigin(6.5f,2.5f);
-	del1.setPosition(sf::Vector2f(polygon_bounds.left-20,polygon_bounds.top-10));
-	del2.setPosition(sf::Vector2f(polygon_bounds.left-20,polygon_bounds.top-10));
+	del1.setPosition(sf::Vector2f(polygon_bounds.left-10,polygon_bounds.top-10));
+	del2.setPosition(sf::Vector2f(polygon_bounds.left-10,polygon_bounds.top-10));
 	del1.setRotation(45.0f);
 	del2.setRotation(-45.0f);
 	real=true;

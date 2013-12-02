@@ -45,7 +45,7 @@ public:
 	void draw(sf::RenderWindow& win);
 	void update(const std::vector<PhysBody>&);
 private:
-	sf::ConvexShape polygon;
+	sf::RectangleShape box;
 
 };
 
@@ -57,5 +57,33 @@ public:
 private:
 	sf::RectangleShape box;
 	sf::RectangleShape button;
+};
+
+class BowlingBallDrawable : public Drawable {
+public:
+	BowlingBallDrawable(float x, float y);
+	void draw(sf::RenderWindow&);
+	void update(const std::vector<PhysBody>&);
+private:
+	sf::CircleShape ball;
+};
+
+class BouncingBallDrawable : public Drawable {
+public:
+	BouncingBallDrawable(float x, float y);
+	void draw(sf::RenderWindow&);
+	void update(const std::vector<PhysBody>&);
+private:
+	sf::CircleShape ball;	
+};
+
+class SeesawDrawable : public Drawable {
+public:
+	SeesawDrawable(float x, float y);
+	void draw(sf::RenderWindow&);
+	void update(const std::vector<PhysBody>&);
+private:
+	sf::RectangleShape box;	
+	sf::ConvexShape polygon;
 };
 #endif

@@ -79,7 +79,7 @@ class Domino : public GameObject
 class Ball : public GameObject
 {
 	public:
-		Ball(b2World& world, float x, float y, std::string name, float r, float restitution, float density);
+		Ball(b2World& world, float x, float y, std::string name, float r, float restitution, float density, Drawable* drawable);
 };
 
 class BouncingBall : public Ball

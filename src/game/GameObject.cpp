@@ -110,9 +110,9 @@ GameObject* GameObjectFactory(b2World& world, std::string name, float x, float y
 	if (name=="BouncingBall")
 		return new BouncingBall(world, x, y);
 	if (name=="BowlingBall")
-		return new BouncingBall(world, x, y);
+		return new BowlingBall(world, x, y);
 	if (name=="BigBall")
-		return new BouncingBall(world, x, y);
+		return new BigBall(world, x, y);
 	if (name=="Seesaw")
 		return new Seesaw(world, x, y);
 	if (name=="Bomb")
@@ -311,7 +311,7 @@ Catapult::Catapult(b2World& world, float x, float y) : GameObject(world, x,y,"Ca
 	world.CreateJoint(&jointDef);
 }
 
-Seesaw::Seesaw(b2World& world, float x, float y) : GameObject(world, x,y,"Seesaw") {
+Seesaw::Seesaw(b2World& world, float x, float y) : GameObject(world, x,y,"Seesaw", new SeesawDrawable(x,y)) {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
 	b2Body* body_ptr = world.CreateBody(&bodyDef);
@@ -353,7 +353,7 @@ Seesaw::Seesaw(b2World& world, float x, float y) : GameObject(world, x,y,"Seesaw
 	world.CreateJoint(&jointDef);
 }
 
-Ball::Ball(b2World& world, float x, float y,std::string name, float r, float restitution = 0, float density = 1.0) : GameObject(world, x,y,name) {
+Ball::Ball(b2World& world, float x, float y,std::string name, float r, float restitution = 0, float density = 1.0, Drawable* drawable= new Drawable) : GameObject(world, x,y,name, drawable) {
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(x, y);
@@ -371,9 +371,9 @@ Ball::Ball(b2World& world, float x, float y,std::string name, float r, float res
 
 }
 
-BouncingBall::BouncingBall(b2World& world, float x, float y) : Ball(world, x, y,"BouncingBall", 0.5, 0.5, 1.0) {}
+BouncingBall::BouncingBall(b2World& world, float x, float y) : Ball(world, x, y,"BouncingBall", 0.5, 0.5, 1.0, new BouncingBallDrawable(x,y)) {}
 
-BowlingBall::BowlingBall(b2World& world, float x, float y) : Ball(world, x, y,"BowlingBall", 0.8, 0.1, 3.0) {}
+BowlingBall::BowlingBall(b2World& world, float x, float y) : Ball(world, x, y,"BowlingBall", 1.0, 0.1, 3.0, new BowlingBallDrawable(x,y)) {}
 
 BigBall::BigBall(b2World& world, float x, float y) : Ball(world, x, y,"BigBall", 2.0, 0.1, 0.4) {}
 
@@ -424,7 +424,7 @@ void Bomb::explode() {
 		    //ignore bodies outside the blast range
 		    if ((body_pos - center).Length() >= blast_radius)
 		        continue;
-		    applyImpulse(body, center, body_pos, power * 0.5f );
+		    applyImpulse(body, center, body_pos, power);
 		}
 	}
 } 
