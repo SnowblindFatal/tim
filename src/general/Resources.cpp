@@ -27,7 +27,7 @@ namespace {
 		"plank.jpg",
 		"block.jpg",
 		"domino.jpg",
-		"Sidebar.png"
+		"Sidebar.png",
         "magic.jpg"
     };
 
