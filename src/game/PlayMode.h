@@ -41,6 +41,8 @@ private:
 	tgui::Gui gui;
 	bool gui_loaded;
 	void load_gui();
+	void update_available();
+	std::vector<std::string> object_names; //Used by TGUI.
 };
 
 #endif	/* PLAYMODE_H */

@@ -188,7 +188,9 @@ void LevelData::deletePlayerObject(GameObject* obj) {
 	playerobjects.remove(obj);
 }
 	
-
+std::map<std::string, size_t>& LevelData::get_available() {
+	return available;
+}
 
 
 	

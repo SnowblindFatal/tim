@@ -59,6 +59,9 @@ public:
     void simulate() ;
     
     bool loaded(void) const;
+	
+	//This for access
+	std::map<std::string, size_t>& get_available();
  private:
     
     b2World phys_world;
