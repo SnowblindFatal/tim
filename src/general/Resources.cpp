@@ -10,6 +10,7 @@
 #include <vector>
 #include <exception>
 #include <stdexcept>
+#include <iostream>
 namespace {
     //The file name lists are static like this since otherwise we would either 
     //require the usage of the boost library or write platform-dependant code.
@@ -118,7 +119,7 @@ const sf::Texture* Resources::getTexture(const std::string &fileName) const
         tex = textures.at(fileName);
     }    catch (const std::out_of_range& oor) {
         std::cout << "did not find a texture resource. Here's hopefully some info:\n" << oor.what() << "\n";
-        return textures.at("magic.jpg");
+        tex = textures.at("magic.jpg");
     }
     return tex;
 }
@@ -129,7 +130,7 @@ const sf::SoundBuffer& Resources::getSoundBuffer(const std::string &fileName) co
         soundBuffer = soundBuffers.at(fileName);
     } catch (const std::out_of_range& oor) {
         std::cout << "did not find a sound resource. Here's hopefully some info:\n" << oor.what() << "\n";
-        return soundBuffers.at("default.wav");
+        soundBuffer = soundBuffers.at("default.wav");
     }
     return *soundBuffer;
 }
@@ -140,7 +141,7 @@ sf::Music& Resources::getMusic(const std::string &fileName) const {
         mus = music.at(fileName);
     } catch (const std::out_of_range& oor) {
         std::cout << "did not find a music resource. Here's hopefully some info:\n" << oor.what() << "\n";
-        return music.at("default.ogg");
+        mus = music.at("default.ogg");
     }
     return *mus;
 }
@@ -151,7 +152,7 @@ const sf::Font& Resources::getFont(const std::string &fileName) const {
         font = fonts.at(fileName);
     } catch (const std::out_of_range& oor) {
         std::cout << "did not find a font resource. Here's hopefully some info:\n" << oor.what() << "\n";
-        return fonts.at("BLASTER.TTF");
+        font = fonts.at("BLASTER.TTF");
     }
-    return font;
+    return *font;
 }
