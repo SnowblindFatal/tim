@@ -14,7 +14,15 @@ class GameObject
 {
 
 public:
-    GameObject(b2World& world, float x, float y, std::string name, Drawable* drawable= new Drawable) : can_place(false), highlight_extras(false), manipulationStartLocation(0.0, 0.0), local_mouse(x,y), world(world), name(name), drawable(drawable) {};
+    GameObject(b2World& world, float x, float y, std::string name, Drawable* drawable= new Drawable) : 
+        can_place(false), 
+                highlight_extras(false), 
+                manipulationStartLocation(0.0, 0.0), 
+                local_mouse(x,y), 
+                world(world), 
+                name(name), 
+                drawable(drawable), 
+                PLATFORM_THRESHOLD (0.05){};
 	virtual ~GameObject(); 
     virtual void update_drawable(); 
     virtual void draw(sf::RenderWindow&);
@@ -62,6 +70,8 @@ protected:
 	b2World& world;
 	std::string name; //Needed for at least LevelData::deletePlayerObject
 	Drawable* drawable;
+    
+    const float PLATFORM_THRESHOLD;
 	
 	
 };	

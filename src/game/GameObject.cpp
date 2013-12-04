@@ -69,6 +69,9 @@ bool GameObject::noOverlaps() const {
 
 void GameObject::moveDiscretely(float x, float y) 
 {
+    std::cout << "originals: x: " << manipulationStartLocation.x << ", y: " << manipulationStartLocation.y << "\n";
+    std::cout << "new: x: " << x << ", y: " << y << "\n";
+    std::cout << "x: " << std::fmod((x - manipulationStartLocation.x), 1.0f) << ", y: " << std::fmod((y - manipulationStartLocation.y), 1.0f) << "\n";
     x -= std::fmod((x - manipulationStartLocation.x), 1.0f);
     y -= std::fmod((y - manipulationStartLocation.y), 1.0f);
     GameObject::move(x, y);
@@ -169,10 +172,10 @@ Platform::Platform(b2World& world, float x, float y, float width, float height) 
 	bodyDef.position.Set(x, y);
 	b2Body* body_ptr = world.CreateBody(&bodyDef);
 	b2Vec2 vertices[4];
-	vertices[0].Set(0, 0);
-	vertices[1].Set(width, height);
+	vertices[0].Set(PLATFORM_THRESHOLD, PLATFORM_THRESHOLD);
+	vertices[1].Set(width, height + PLATFORM_THRESHOLD);
 	vertices[2].Set(width, height + 2);
-	vertices[3].Set(0, 2);
+	vertices[3].Set(PLATFORM_THRESHOLD, 2);
 	b2PolygonShape polygonShape;
 	polygonShape.Set(vertices, 4);
 	b2FixtureDef fixtureDef;
@@ -220,9 +223,9 @@ Wall::Wall(b2World& world, float x, float y, float width, float height) : GameOb
 	bodyDef.position.Set(x, y);
 	b2Body* body_ptr = world.CreateBody(&bodyDef);
 	b2Vec2 vertices[4];
-	vertices[0].Set(0, 0);
-	vertices[3].Set(2, 0);
-	vertices[1].Set(width, height);
+	vertices[0].Set(PLATFORM_THRESHOLD, PLATFORM_THRESHOLD);
+	vertices[3].Set(2, PLATFORM_THRESHOLD);
+	vertices[1].Set(width + PLATFORM_THRESHOLD, height);
 	vertices[2].Set(width +2, height);
 	b2PolygonShape polygonShape;
 	polygonShape.Set(vertices, 4);
