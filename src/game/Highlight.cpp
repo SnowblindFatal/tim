@@ -88,74 +88,40 @@ bool Highlight::checkPoint(sf::Vector2i point) {
 
 //PlatformHighlight:
 PlatformHighlight::PlatformHighlight() : Highlight() {
-	delta_height.setFillColor(sf::Color::Transparent);
-	delta_height.setSize(sf::Vector2f(8.0f, 16.0f));
-	delta_width.setFillColor(sf::Color::Transparent);
-	delta_width.setSize(sf::Vector2f(16.0f, 8.0f));
+	delta_box.setFillColor(sf::Color::Transparent);
+	delta_box.setSize(sf::Vector2f(8.0f, 16.0f));
 }
 
 void PlatformHighlight::set(const std::string& type, bool can_place) {
 	if (type=="active") {
-		delta_height.setFillColor(sf::Color(0,0,255,150)); //Blue
-		delta_width.setFillColor(sf::Color(0,0,255,150));
+		delta_box.setFillColor(sf::Color(0,0,255,150)); //Blue
 	}
 	Highlight::set(type, can_place);
 }
 
 void PlatformHighlight::update_rect(const sf::FloatRect& polygon_bounds) {
-	delta_height.setPosition(sf::Vector2f(polygon_bounds.left+polygon_bounds.width+10,polygon_bounds.top - 10));
-	delta_width.setPosition(sf::Vector2f(polygon_bounds.left+polygon_bounds.width+10,polygon_bounds.top+polygon_bounds.height + 2));
+	delta_box.setPosition(sf::Vector2f(polygon_bounds.left+polygon_bounds.width+10,polygon_bounds.top - 10));
 	Highlight::update_rect(polygon_bounds);
 }
 void PlatformHighlight::draw(sf::RenderWindow& win) {
-	win.draw(delta_height);
-	delta_height.setFillColor(sf::Color::Transparent);
-	win.draw(delta_width);
-	delta_width.setFillColor(sf::Color::Transparent);
+	win.draw(delta_box);
+	delta_box.setFillColor(sf::Color::Transparent);
 	Highlight::draw(win);
 }
 
 bool PlatformHighlight::checkPoint(sf::Vector2i point) {	
-	if (delta_height.getGlobalBounds().contains(point.x, point.y)) {
-		local_mouse=point;
-		width_active=false;
+	if (delta_box.getGlobalBounds().contains(point.x, point.y)) {
 		delete_active=false;
-		height_active=true;
-		return true;
-	}
-	else if (delta_width.getGlobalBounds().contains(point.x, point.y)) {
-		local_mouse=point;
-		width_active=true;
-		delete_active=false;
-		height_active=false;
 		return true;
 	}
 	else {
 		sf::FloatRect box=del1.getGlobalBounds();
 		if (box.contains(point.x,point.y)) {
 			delete_active=true;
-			width_active=false;
-			height_active=false;
 			return true; 
 		}
 	}
 	return false;
-}
-
-sf::Vector2i PlatformHighlight::getDelta(const sf::Vector2i point) {
-	sf::Vector2i result(0,0);
-
-	if (height_active) {
-		
-		result = sf::Vector2i(0, point.y - local_mouse.y);
-	}
-	else if (width_active) {
-		
-		result = sf::Vector2i(point.x-local_mouse.x, 0);
-	}
-
-	local_mouse=point;
-	return result;
 }
 
 GravityChangerHighlight::GravityChangerHighlight() : Highlight() {

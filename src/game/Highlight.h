@@ -16,7 +16,6 @@ public:
     virtual void update_rect(const sf::FloatRect&);
     virtual void draw(sf::RenderWindow& win);
 	virtual bool checkPoint(sf::Vector2i);
-	virtual sf::Vector2i getDelta(sf::Vector2i) {return sf::Vector2i(0,0);}
 	virtual std::string clicked(const sf::Vector2i&);
 protected:
     sf::RectangleShape rect;
@@ -41,10 +40,7 @@ public:
 
 
 protected:
-	sf::RectangleShape delta_height;
-	sf::RectangleShape delta_width;
-	bool height_active;
-	bool width_active;
+	sf::RectangleShape delta_box;
 	sf::Vector2i local_mouse;
 };
 

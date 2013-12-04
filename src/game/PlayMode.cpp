@@ -121,7 +121,8 @@ GameState::StateSelect PlayMode::run()
 			}
 			else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 				if (active_object && active_object->highlightPoint(sf::Mouse::getPosition(App))) {
-						highlight_active=true;
+                    highlight_active=true;
+                    active_object->setManipulationStartLocation(sf::Mouse::getPosition(App));
 				}
 
 

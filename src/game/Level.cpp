@@ -127,7 +127,7 @@ GameObject* LevelData::createObject(std::string name, float x, float y) {
 GameObject* LevelData::isInsidePlayerObject(float x, float y) const {
 		for (auto it : playerobjects) {
 			if (it->isInside(x,y)) {
-                it->setManipulationStartLocation(x, y);
+                it->setMoveStartLocation(x, y);
                 return it;
             }
 		}
