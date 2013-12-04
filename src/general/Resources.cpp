@@ -25,12 +25,14 @@ namespace {
 		"small_ball.png",
 		"plank.jpg",
 		"block.jpg",
-		"domino.jpg"
+		"domino.jpg",
+        "magic.jpg"
     };
 
     const std::vector<std::string> soundFileNames = {
         "brick.wav",
-        "soccer.wav"
+        "soccer.wav",
+        "default.wav"
     };
 
     const std::vector<std::string> fontFileNames = {
@@ -39,7 +41,8 @@ namespace {
     };
 
     const std::vector<std::string> musicFileNames = {
-        "MAP01.ogg"
+        "MAP01.ogg",
+        "default.ogg"
     };
 }
 
@@ -110,21 +113,45 @@ void Resources::loadResources()
 
 const sf::Texture* Resources::getTexture(const std::string &fileName) const
 {
-    //TODO: Error handling
-    return textures.at(fileName);
+    sf::Texture* tex = NULL;
+    try {
+        tex = textures.at(fileName);
+    }    catch (const std::out_of_range& oor) {
+        std::cout << "did not find a texture resource. Here's hopefully some info:\n" << oor.what() << "\n";
+        return textures.at("magic.jpg");
+    }
+    return tex;
 }
 
-const sf::SoundBuffer& Resources::getSoundBuffer(const std::string &fileName) const
-{
-    return *soundBuffers.at(fileName);
+const sf::SoundBuffer& Resources::getSoundBuffer(const std::string &fileName) const {
+    sf::SoundBuffer* soundBuffer = NULL;
+    try {
+        soundBuffer = soundBuffers.at(fileName);
+    } catch (const std::out_of_range& oor) {
+        std::cout << "did not find a sound resource. Here's hopefully some info:\n" << oor.what() << "\n";
+        return soundBuffers.at("default.wav");
+    }
+    return *soundBuffer;
 }
 
-sf::Music& Resources::getMusic(const std::string &fileName) const 
-{
-    return *music.at(fileName);
+sf::Music& Resources::getMusic(const std::string &fileName) const {
+    sf::Music* mus = NULL;
+    try {
+        mus = music.at(fileName);
+    } catch (const std::out_of_range& oor) {
+        std::cout << "did not find a music resource. Here's hopefully some info:\n" << oor.what() << "\n";
+        return music.at("default.ogg");
+    }
+    return *mus;
 }
 
-const sf::Font& Resources::getFont(const std::string &fileName) const
-{
-    return *fonts.at(fileName);
+const sf::Font& Resources::getFont(const std::string &fileName) const {
+    sf::Font* font = NULL;
+    try {
+        font = fonts.at(fileName);
+    } catch (const std::out_of_range& oor) {
+        std::cout << "did not find a font resource. Here's hopefully some info:\n" << oor.what() << "\n";
+        return fonts.at("BLASTER.TTF");
+    }
+    return font;
 }
