@@ -69,14 +69,12 @@ bool GameObject::noOverlaps() const {
 
 void GameObject::moveDiscretely(float x, float y) 
 {
-    std::cout << x << ", " << y << "\n";
     x -= std::fmod((x - manipulationStartLocation.x), 1.0f);
     y -= std::fmod((y - manipulationStartLocation.y), 1.0f);
     GameObject::move(x, y);
 }
 void GameObject::setManipulationStartLocation(float x, float y)
 {
-    std::cout << "SET: " << x << ", " << y << "\n";
     manipulationStartLocation = b2Vec2(x, y);
 }
 void GameObject::move(float x, float y) {
