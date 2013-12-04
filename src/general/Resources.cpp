@@ -25,7 +25,8 @@ namespace {
 		"small_ball.png",
 		"plank.jpg",
 		"block.jpg",
-		"domino.jpg"
+		"domino.jpg",
+		"Sidebar.png"
     };
 
     const std::vector<std::string> soundFileNames = {
@@ -108,7 +109,7 @@ void Resources::loadResources()
 }
 
 
-const sf::Texture* Resources::getTexture(const std::string &fileName) const
+sf::Texture* Resources::getTexture(const std::string &fileName) const
 {
     //TODO: Error handling
     return textures.at(fileName);

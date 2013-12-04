@@ -14,11 +14,18 @@ GameState::StateSelect PlayMode::run()
     if (!level.loaded())
         level.loadlevel();
  
+	if (!gui_loaded)
+		load_gui();
+	
+	
     while (!done)
     {
         sf::Event event;
         while (App.pollEvent(event))
         {
+			//TGUI is given the event first. If TGUI didn't use the event, we will.
+
+
             // Close window : exit
             if (event.type == sf::Event::Closed)
             {
@@ -181,6 +188,7 @@ GameState::StateSelect PlayMode::run()
 			}
 		}
         level.draw(active_object, drawDebug, drawLevel);
+		gui.draw();
         App.display();
     }
     return retval;
@@ -195,6 +203,28 @@ void PlayMode::set_drawdebug() {
 
 void PlayMode::set_drawlevel() {
 	drawLevel=drawLevel?0:1;
+}
+
+void PlayMode::load_gui() {
+	/*
+	//The Background:
+	tgui::Panel::Ptr bar(gui); 
+	bar->setBackgroundTexture(Resources::getInstance().getTexture("Sidebar.png"));
+	bar->setSize(200, 600);
+	bar->setPosition(600,0);
+*/
+	//The Play/Reset button:
+	tgui::Button::Ptr button(gui);
+	button->load("TGUI/Black.conf");
+	button->setSize(150, 50);
+	button->setText("Simulate");
+	button->setTextFont(Resources::getInstance().getFont("BorisBlackBloxx.ttf"));
+	button->setPosition(625,10);
+
+
+
+	gui_loaded=true;
+
 }
 
 void PlayMode::handleKeyPress(sf::Event event)
