@@ -24,9 +24,11 @@ public:
     virtual ~MainMenu(){}
     GameState::StateSelect run();
 private:
+    void initialiseGUI();
 
 	tgui::Gui gui;
     void handleKeyPress(sf::Event event);
+    void handleGuiEvents();
     void drawStuff();
 };
 
