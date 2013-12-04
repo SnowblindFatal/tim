@@ -14,7 +14,7 @@ class GameObject
 {
 
 public:
-    GameObject(b2World& world, float x, float y, std::string name, Drawable* drawable= new Drawable) : can_place(false), highlight_extras(false), local_mouse(x,y), world(world), name(name), drawable(drawable) {};
+    GameObject(b2World& world, float x, float y, std::string name, Drawable* drawable= new Drawable) : can_place(false), highlight_extras(false), manipulationStartLocation(0.0, 0.0), local_mouse(x,y), world(world), name(name), drawable(drawable) {};
 	virtual ~GameObject(); 
     virtual void update_drawable(); 
     virtual void draw(sf::RenderWindow&);
@@ -34,6 +34,7 @@ public:
 	virtual bool noOverlaps() const;
 	bool can_place;	//This is just so we don't always have to calculate noOverlaps(). Returns the same.
 
+    void setManipulationStartLocation(float x, float y);
 	virtual void move(float x, float y);
 
 	//Checking wether a point is inside the GameObject
@@ -52,8 +53,11 @@ public:
 
 
 protected:
+    
+    void moveDiscretely(float x, float y);
 
 	std::vector<PhysBody> bodies;
+    b2Vec2 manipulationStartLocation;
 	b2Vec2 local_mouse;
 	b2World& world;
 	std::string name; //Needed for at least LevelData::deletePlayerObject
@@ -116,6 +120,7 @@ class Platform : public GameObject
 	public:
 		Platform(b2World& world, float x, float y, float width, float heigth);
 		void highlightDelta(sf::Vector2i);
+        virtual void move(float x, float y);
 };
 
 class Wall : public GameObject
@@ -123,6 +128,7 @@ class Wall : public GameObject
 	public:
 		Wall(b2World& world, float x, float y, float width, float heigth);
 		void highlightDelta(sf::Vector2i);
+        virtual void move(float x, float y);
 };
 
 class Seesaw : public GameObject

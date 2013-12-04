@@ -67,7 +67,18 @@ bool GameObject::noOverlaps() const {
 	return true;
 }
 
-
+void GameObject::moveDiscretely(float x, float y) 
+{
+    std::cout << x << ", " << y << "\n";
+    x -= std::fmod((x - manipulationStartLocation.x), 1.0f);
+    y -= std::fmod((y - manipulationStartLocation.y), 1.0f);
+    GameObject::move(x, y);
+}
+void GameObject::setManipulationStartLocation(float x, float y)
+{
+    std::cout << "SET: " << x << ", " << y << "\n";
+    manipulationStartLocation = b2Vec2(x, y);
+}
 void GameObject::move(float x, float y) {
 
 	for (auto& body : bodies) {
@@ -94,12 +105,6 @@ bool GameObject::isInside(float x, float y) {
 	}
 	return false;
 }
-
-	
-
-
-
-
 
 
 GameObject* GameObjectFactory(b2World& world, std::string name, float x, float y) {
@@ -208,6 +213,9 @@ void Platform::highlightDelta(sf::Vector2i point) {
 	}
 }
 
+void Platform::move(float x, float y) {
+    moveDiscretely(x, y);
+}
 
 Wall::Wall(b2World& world, float x, float y, float width, float height) : GameObject(world,x,y,"Wall", new PlatformDrawable(x,y,width,height)) {
 	b2BodyDef bodyDef;
@@ -262,6 +270,9 @@ void Wall::highlightDelta(sf::Vector2i point) {
 		vertices[wanted_index+1]-=delta_convert;
 		shape_ptr->Set(vertices,4);
 	}
+}
+void Wall::move(float x, float y) {
+    moveDiscretely(x, y);
 }
 
 Catapult::Catapult(b2World& world, float x, float y) : GameObject(world, x,y,"Catapult") {
