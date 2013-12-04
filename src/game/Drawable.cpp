@@ -11,9 +11,6 @@ std::string Drawable::highlightClicked(sf::Vector2i point) {
 bool Drawable::highlightPoint(sf::Vector2i point) {
 	return highlight->checkPoint(point);
 }
-sf::Vector2i Drawable::highlightDelta(sf::Vector2i point){
-	return highlight->getDelta(point);
-}
 
 PlatformDrawable::PlatformDrawable(float x, float y, float width, float height) : Drawable(new PlatformHighlight) {
 	x*=10;

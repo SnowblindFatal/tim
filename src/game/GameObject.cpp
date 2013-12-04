@@ -69,16 +69,20 @@ bool GameObject::noOverlaps() const {
 
 void GameObject::moveDiscretely(float x, float y) 
 {
-    std::cout << "originals: x: " << manipulationStartLocation.x << ", y: " << manipulationStartLocation.y << "\n";
-    std::cout << "new: x: " << x << ", y: " << y << "\n";
-    std::cout << "x: " << std::fmod((x - manipulationStartLocation.x), 1.0f) << ", y: " << std::fmod((y - manipulationStartLocation.y), 1.0f) << "\n";
-    x -= std::fmod((x - manipulationStartLocation.x), 1.0f);
-    y -= std::fmod((y - manipulationStartLocation.y), 1.0f);
+//    std::cout << "originals: x: " << manipulationStartLocation.x << ", y: " << manipulationStartLocation.y << "\n";
+//    std::cout << "new: x: " << x << ", y: " << y << "\n";
+//    std::cout << "x: " << std::fmod((x - manipulationStartLocation.x), 1.0f) << ", y: " << std::fmod((y - manipulationStartLocation.y), 1.0f) << "\n";
+    x -= std::fmod((x - moveStartLocation.x), DISCRETE_MOVE_UNIT);
+    y -= std::fmod((y - moveStartLocation.y), DISCRETE_MOVE_UNIT);
     GameObject::move(x, y);
 }
-void GameObject::setManipulationStartLocation(float x, float y)
+void GameObject::setMoveStartLocation(float x, float y)
 {
-    manipulationStartLocation = b2Vec2(x, y);
+    moveStartLocation = b2Vec2(x, y);
+}
+
+void GameObject::setManipulationStartLocation(sf::Vector2i pos) {
+    manipulationReferenceLocation = b2Vec2(pos.x / 10.0f, pos.y / 10.0f);
 }
 void GameObject::move(float x, float y) {
 
@@ -186,30 +190,31 @@ Platform::Platform(b2World& world, float x, float y, float width, float height) 
 	highlight_extras=true;
 }
 void Platform::highlightDelta(sf::Vector2i point) {
-	sf::Vector2i delta = drawable->highlightDelta(point);
-	b2Vec2 delta_convert((float)delta.x/10.0f,(float)delta.y/10.0f);
 	b2PolygonShape* shape_ptr = dynamic_cast<b2PolygonShape*>(bodies[0].body_ptr->GetFixtureList()->GetShape());
 
 	b2Vec2 vertices[4];
 	for (int index=0;index<4;index++) {
 		vertices[index]=shape_ptr->GetVertex(index);
 	}
-	vertices[0]+=delta_convert;
-	vertices[1]+=delta_convert;
+
+    b2Vec2 movementDelta(point.x / 10.0f - manipulationReferenceLocation.x, point.y / 10.0f - manipulationReferenceLocation.y);
+
+    movementDelta.x -= std::fmod(movementDelta.x, DISCRETE_MOVE_UNIT);
+    movementDelta.y -= std::fmod(movementDelta.y, DISCRETE_MOVE_UNIT);
+
+    manipulationReferenceLocation.x += movementDelta.x;
+    manipulationReferenceLocation.y += movementDelta.y;
     
-    //A small notch close to zero, you have to use a little more velocity:
-    if (std::abs(vertices[1].y-vertices[2].y) < 0.2f) {
-        vertices[0].y=0;
-        vertices[1].y=2;
-    }
+	vertices[0] += movementDelta;
+	vertices[1] += movementDelta;
     
 	if (std::abs(vertices[1].y-vertices[2].y)/std::abs(vertices[1].x-vertices[2].x) < 1
 		&& std::abs(vertices[1].x-vertices[2].x) > 3.0f && std::abs(vertices[1].x-vertices[2].x) < 40.0f) {
 		shape_ptr->Set(vertices, 4);
 	}
 	if (!noOverlaps()) {
-		vertices[0]-=delta_convert;
-		vertices[1]-=delta_convert;
+		vertices[0] -= movementDelta;
+		vertices[1] -= movementDelta;
 		shape_ptr->Set(vertices,4);
 	}
 }
@@ -237,8 +242,6 @@ Wall::Wall(b2World& world, float x, float y, float width, float height) : GameOb
 	highlight_extras=true;
 }
 void Wall::highlightDelta(sf::Vector2i point) {
-	sf::Vector2i delta = drawable->highlightDelta(point);
-	b2Vec2 delta_convert((float)delta.x/10.0f,(float)delta.y/10.0f);
 	b2PolygonShape* shape_ptr = dynamic_cast<b2PolygonShape*>(bodies[0].body_ptr->GetFixtureList()->GetShape());
 
 	b2Vec2 vertices[4];
@@ -249,17 +252,18 @@ void Wall::highlightDelta(sf::Vector2i point) {
     //Because of the way B2D handles vertices, we have to check here which ones we want.
     size_t wanted_index;
     if (vertices[0].y < vertices[1].y) wanted_index=1;
-    else wanted_index=0; 
+    else wanted_index=0;
     
+    b2Vec2 movementDelta(point.x / 10.0f - manipulationReferenceLocation.x, point.y / 10.0f - manipulationReferenceLocation.y);
+
+    movementDelta.x -= std::fmod(movementDelta.x, DISCRETE_MOVE_UNIT);
+    movementDelta.y -= std::fmod(movementDelta.y, DISCRETE_MOVE_UNIT);
+
+    manipulationReferenceLocation.x += movementDelta.x;
+    manipulationReferenceLocation.y += movementDelta.y;
     
-	vertices[wanted_index]+=delta_convert;
-	vertices[wanted_index+1]+=delta_convert;
-    
-    //A small notch close to zero:
-    if (std::abs(vertices[wanted_index+1].x-vertices[wanted_index+2].x) < 0.2f) {
-        vertices[wanted_index].x=2;
-        vertices[wanted_index+1].x=0;
-    }
+	vertices[wanted_index] += movementDelta;
+	vertices[wanted_index+1] += movementDelta;
     
 	if (std::abs(vertices[wanted_index+1].x-vertices[wanted_index+2].x)/std::abs(vertices[wanted_index+1].y-vertices[wanted_index+2].y) < 1
 		&& std::abs(vertices[wanted_index +1].y-vertices[wanted_index +2].y) > 3.0f && std::abs(vertices[wanted_index +1].y-vertices[wanted_index +2].y) < 40.0f) {
@@ -267,8 +271,8 @@ void Wall::highlightDelta(sf::Vector2i point) {
 	}
     
 	if (!noOverlaps()) {
-		vertices[wanted_index]-=delta_convert;
-		vertices[wanted_index+1]-=delta_convert;
+		vertices[wanted_index] -= movementDelta;
+		vertices[wanted_index+1] -= movementDelta;
 		shape_ptr->Set(vertices,4);
 	}
 }

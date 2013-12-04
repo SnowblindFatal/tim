@@ -24,7 +24,6 @@ public:
 	virtual void update(const std::vector<PhysBody>&) {} 
 	virtual void setHighlight(std::string, bool);
 	virtual std::string highlightClicked(sf::Vector2i);
-	virtual sf::Vector2i highlightDelta(sf::Vector2i);
 	bool highlightPoint(sf::Vector2i);
 protected:
     Highlight* highlight;

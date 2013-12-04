@@ -16,13 +16,15 @@ class GameObject
 public:
     GameObject(b2World& world, float x, float y, std::string name, Drawable* drawable= new Drawable) : 
         can_place(false), 
-                highlight_extras(false), 
-                manipulationStartLocation(0.0, 0.0), 
-                local_mouse(x,y), 
-                world(world), 
-                name(name), 
-                drawable(drawable), 
-                PLATFORM_THRESHOLD (0.05){};
+        highlight_extras(false), 
+        moveStartLocation(0.0, 0.0), 
+        local_mouse(x,y), 
+        world(world), 
+        name(name), 
+        drawable(drawable), 
+        PLATFORM_THRESHOLD(0.05f),
+        DISCRETE_MOVE_UNIT(1.0f)
+        {};
 	virtual ~GameObject(); 
     virtual void update_drawable(); 
     virtual void draw(sf::RenderWindow&);
@@ -42,7 +44,8 @@ public:
 	virtual bool noOverlaps() const;
 	bool can_place;	//This is just so we don't always have to calculate noOverlaps(). Returns the same.
 
-    void setManipulationStartLocation(float x, float y);
+    void setMoveStartLocation(float x, float y);
+    void setManipulationStartLocation(sf::Vector2i pos);
 	virtual void move(float x, float y);
 
 	//Checking wether a point is inside the GameObject
@@ -65,13 +68,15 @@ protected:
     void moveDiscretely(float x, float y);
 
 	std::vector<PhysBody> bodies;
-    b2Vec2 manipulationStartLocation;
+    b2Vec2 moveStartLocation;
+    b2Vec2 manipulationReferenceLocation;
 	b2Vec2 local_mouse;
 	b2World& world;
 	std::string name; //Needed for at least LevelData::deletePlayerObject
 	Drawable* drawable;
     
     const float PLATFORM_THRESHOLD;
+    const float DISCRETE_MOVE_UNIT;
 	
 	
 };	
