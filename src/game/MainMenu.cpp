@@ -103,7 +103,7 @@ void MainMenu::initialiseGUI()
     picture->setSize(800, 600);
     
     tgui::Button::Ptr button(gui);
-    button->load("res/widgets/Black.conf");
+    button->load("TGUI/Black.conf");
     button->setPosition(250, 100);
     button->setText("(test mode)");
     button->setCallbackId(1);
@@ -112,7 +112,7 @@ void MainMenu::initialiseGUI()
     button->setTransparency(220);
 
     tgui::Button::Ptr button2(gui);
-    button2->load("res/widgets/Black.conf");
+    button2->load("TGUI/Black.conf");
     button2->setPosition(250, 200);
     button2->setText("Choose level (TODO)");
     button2->setCallbackId(2);
@@ -121,7 +121,7 @@ void MainMenu::initialiseGUI()
     button2->setTransparency(220);
 
     tgui::Button::Ptr button3(gui);
-    button3->load("res/widgets/Black.conf");
+    button3->load("TGUI/Black.conf");
     button3->setPosition(250, 300);
     button3->setText("Editor");
     button3->setCallbackId(3);
@@ -130,7 +130,7 @@ void MainMenu::initialiseGUI()
     button3->setTransparency(220);
     
     tgui::Button::Ptr button4(gui);
-    button4->load("res/widgets/Black.conf");
+    button4->load("TGUI/Black.conf");
     button4->setPosition(250, 400);
     button4->setText("Quit");
     button4->setCallbackId(4);

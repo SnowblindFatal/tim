@@ -30,7 +30,7 @@ public:
     sf::Texture* getTexture(const std::string &fileName) const;
     const sf::SoundBuffer& getSoundBuffer(const std::string &fileName) const;
     sf::Music& getMusic(const std::string &fileName) const;
-    const sf::Font& getFont(const std::string &fileName) const;
+    const sf::Font getFont(const std::string &fileName) const;
 private:
     Resources(){}
 

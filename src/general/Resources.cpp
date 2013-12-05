@@ -147,7 +147,7 @@ sf::Music& Resources::getMusic(const std::string &fileName) const {
     return *mus;
 }
 
-const sf::Font& Resources::getFont(const std::string &fileName) const {
+const sf::Font Resources::getFont(const std::string &fileName) const {
     sf::Font* font = NULL;
     try {
         font = fonts.at(fileName);
