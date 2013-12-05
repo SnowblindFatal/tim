@@ -8,3 +8,4 @@ Makefile
 /src/tests.cpp
 MakeTests
 tests/
+test.sh
