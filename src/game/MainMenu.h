@@ -9,6 +9,7 @@
 #define	MAINMENU_H
 
 #include "GameState.h"
+#include <TGUI/TGUI.hpp>
 
 class MainMenu : public GameState {
 public:
@@ -17,13 +18,17 @@ private:
     
     
 public:
-    explicit MainMenu(sf::RenderWindow& _App, Resources& res) : GameState(_App, res){}
+    explicit MainMenu(sf::RenderWindow& _App) : GameState(_App), gui(_App)  {}
     MainMenu(const MainMenu& orig) = delete;
     MainMenu operator=(const MainMenu& orig) = delete;
     virtual ~MainMenu(){}
     GameState::StateSelect run();
 private:
+    void initialiseGUI();
+
+	tgui::Gui gui;
     void handleKeyPress(sf::Event event);
+    void handleGuiEvents();
     void drawStuff();
 };
 

@@ -16,6 +16,6 @@ int main()
 {
     BaseGame game;
     game.start();
-    return 0;
+return 0;
 }
 

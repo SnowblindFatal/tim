@@ -10,8 +10,10 @@
 #include <SFML/System.hpp>
 #include "DebugDraw.h"
 #include "WinCondition.h"
+#include "CollisionDetection.h" 
 #include <map>
 #include <string>
+#include <iostream>
 
 
 
@@ -44,22 +46,28 @@ public:
 
 
 
-    void draw(bool debug=false, bool drawsfml=true); //Cannot be const, because no DrawDebugData() const exists, for whatever reason
+    void draw(GameObject* priority, bool debug=false, bool drawsfml=true); //Cannot be const, because no DrawDebugData() const exists, for whatever reason
 
 
 	//Reset the level to where it was before simulation.
    	void reset() ;
 	
+	//Delete and place in available.
+	void deletePlayerObject(GameObject* obj);
+	
     //One Box2D step:
     void simulate() ;
     
     bool loaded(void) const;
+	
+	//This for access
+	std::map<std::string, size_t>& get_available();
  private:
     
     b2World phys_world;
     sf::RenderWindow& App;
     DebugDraw DebugDrawInstance;
-    
+    CollisionDetection collisions;
 	
     bool level_loaded;
     std::list<GameObject* > levelobjects;	//The level itself
@@ -68,6 +76,7 @@ public:
     std::map<std::string, size_t> available; //The objects available to be placed
     
 };
+
 
 
 #endif //LEVEL_H

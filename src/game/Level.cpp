@@ -9,7 +9,9 @@ namespace {
 
 LevelData::LevelData(sf::RenderWindow& _App) : phys_world(default_gravity), App(_App), DebugDrawInstance(_App), level_loaded(false)
 	{
-        phys_world.SetDebugDraw(&DebugDrawInstance);
+        
+		phys_world.SetContactListener(&collisions);
+		phys_world.SetDebugDraw(&DebugDrawInstance);
         DebugDrawInstance.SetFlags(b2Draw::e_shapeBit);
 		DebugDrawInstance.AppendFlags(b2Draw::e_centerOfMassBit);
 
@@ -19,19 +21,26 @@ LevelData::LevelData(sf::RenderWindow& _App) : phys_world(default_gravity), App(
 		available["BouncingBall"] = 0;
 		available["BigBall"] = 0;
 		available["BowlingBall"] = 0;
-		available["Domino"] = 0;
-		available["Chain"] = 0;
+		available["Catapult"] = 0;
+		available["Seesaw"] = 0;
+		available["GravityChanger"] = 0;
+		available["Bomb"] = 0;
+
 
 }
 LevelData::~LevelData() {
-        for (auto iter : levelobjects) {
+	
+        for (auto& iter : levelobjects) {
             delete iter;
+			iter=NULL;
         }
-		for (auto iter : playerobjects) {
+		for (auto& iter : playerobjects) {
             delete iter;
+			iter=NULL;
         }
-        for (auto iter : winconditions) {
+        for (auto& iter : winconditions) {
             delete iter;
+			iter=NULL;
         }
 }
 
@@ -46,56 +55,56 @@ void LevelData::addPlayerObject(GameObject* obj) {
 }
 
 void LevelData::loadlevel() {
-  //Load a demo level:
-/*
-	levelobjects.push_back(new HorizontalBlock(phys_world,12.0f, 40.0f));
-	levelobjects.push_back(new DroppingSquare(phys_world,22.5f,20.0f));
-	levelobjects.push_back(new DroppingSquare(phys_world,23.0f,18.0f));
-	levelobjects.push_back(new DroppingSquare(phys_world,10.0f,20.0f,3.0f));
-	levelobjects.push_back(new ExampleSquare(phys_world,15.0f,20.0f));
-	levelobjects.push_back(new BouncingBall(phys_world,31.0f,25.0f));
-	levelobjects.push_back(new Platform(phys_world, 30.0f, 30.0f, 4.0f, 4.0f));
-	levelobjects.push_back(new Platform(phys_world, 34.0f, 34.0f, 8.0f, 4.0f));
-	levelobjects.push_back(new Platform(phys_world, 42.0f, 38.0f, 12.0f, -6.0f));
-	levelobjects.push_back(new BouncingBall(phys_world, 10.0f, 10.0f));
 
-	levelobjects.push_back(new Platform(phys_world, 20.0, 40.0, 40.0, 0));
-	levelobjects.push_back(new Platform(phys_world, 5.0, 20.0, 15.0, 20.0));
-	levelobjects.push_back(new BigBall(phys_world, 6.0, 15.0));
-	
-	levelobjects.push_back(new BouncingBall(phys_world, 50.0f, 10.0f));
-	levelobjects.push_back(new Chain(phys_world));
-
-	levelobjects.push_back(new Platform(phys_world, 15.0, 12.0, 1.0, 0));
-	levelobjects.push_back(new Platform(phys_world, 35.0, 12.0, 1.0, 0));
-	level_loaded = true;
-	*/
-
-
-	//Load a "bare minimum" playable level:
-
-	levelobjects.push_back(new Platform(phys_world, 20.0, 40.0, 40.0, 10.0f));
+	std::cout << "load level\n";
 	/*	
-	for (size_t i = 0; i<10; i++)
+	for (size_t i = 0; i<7; i++)
 	{
-		levelobjects.push_back(new Domino(phys_world, 25.0f+i*2.5f, 38.0f));
+		for (size_t j=0; j<4; j++)
+		{		
+			if (i%2 != 1)
+			{
+				levelobjects.push_back(new Seesaw(phys_world, 5+j*19, 10+i*4));
+			}
+			else
+			{
+				if (j==3)
+					break;
+				levelobjects.push_back(new Seesaw(phys_world, 14.5+j*19, 10+i*4));
+			}
+		}
 	}
-*/
-	/* Chain test
-	levelobjects.push_back(new Chain(phys_world));
-	levelobjects.push_back(new Platform(phys_world, 15.0, 15.0, 2.0, 0));
-	levelobjects.push_back(new Platform(phys_world, 25.0, 15.0, 2.0, 0));
 	*/
-	levelobjects.push_back(new Catapult(phys_world, 9, 40));
-	levelobjects.push_back(new BouncingBall(phys_world, 13.0, 35.0));
-	levelobjects.push_back(new BigBall(phys_world, 5.0, 5.0));
-	winconditions.push_back(new IsNearPoint(levelobjects.back(), 40.0f, 40.0f, 5.0f));
+	//levelobjects.push_back(new Platform(phys_world, 15.0, 15.0, 100.0, 0));
+	/*
+	levelobjects.push_back(new BouncingBall(phys_world, 40, 0.0f));
+	levelobjects.push_back(new BouncingBall(phys_world, 42, 0.0f));
+	levelobjects.push_back(new BouncingBall(phys_world, 44, 0.0f));
+	levelobjects.push_back(new BouncingBall(phys_world, 46, 0.0f));
+	levelobjects.push_back(new BouncingBall(phys_world, 50, 0.0f));
+	levelobjects.push_back(new BouncingBall(phys_world, 52, 0.0f));
+	*/
+	//levelobjects.push_back(new Lift(phys_world, 10, 30, 30, 30));
+	//levelobjects.push_back(new Bomb (phys_world, 48.0f, 0.0f));
+	//levelobjects.push_back(new Bomb (phys_world, 40.0f, 0.0f));
+	//winconditions.push_back(new IsNearPoint(levelobjects.back(), 80.0f, 40.0f, 5.0f));
+	//levelobjects.push_back(new Bomb (phys_world, 48.0f, 0.0f));
+	//winconditions.push_back(new IsNearPoint(levelobjects.back(), 80.0f, 40.0f, 5.0f));
+	//levelobjects.push_back(new GravityChanger(phys_world, 20.0f, 20.0f));
+
 	available["Platform"]=5;
 	available["Wall"]=1;
-
+	available["BouncingBall"] = 4;
+	available["Seesaw"] = 20;
+	available["Bomb"] = 10;
+	available["GravityChanger"] = 3;
+	available["BowlingBall"] = 6;
+	available["Domino"] = 20;
+	level_loaded=true;
 }
 
 bool LevelData::checkWin() const {
+		if (winconditions.begin()==winconditions.end()) return false;
 		for (auto it : winconditions) {
 			if (!it->check())
 				return false;
@@ -117,13 +126,15 @@ GameObject* LevelData::createObject(std::string name, float x, float y) {
 
 GameObject* LevelData::isInsidePlayerObject(float x, float y) const {
 		for (auto it : playerobjects) {
-			if (it->isInside(x,y))
-				return it;
+			if (it->isInside(x,y)) {
+                it->setMoveStartLocation(x, y);
+                return it;
+            }
 		}
 		return NULL;
 }
 
-void LevelData::draw(bool debug, bool drawsfml) {
+void LevelData::draw(GameObject* priority, bool debug, bool drawsfml) {
       if (debug)
 		phys_world.DrawDebugData();
       
@@ -133,9 +144,15 @@ void LevelData::draw(bool debug, bool drawsfml) {
 			iter->draw(App);
       	}
       	for (auto &iter : playerobjects) {
-			iter->update_drawable();
-			iter->draw(App);
-      	}
+			if (iter!=priority) {
+				iter->update_drawable();
+				iter->draw(App);
+      		}
+		}
+		if (priority!=NULL) {
+			priority->update_drawable();
+			priority->draw(App);
+		}
 	}
 }
 
@@ -144,25 +161,38 @@ void LevelData::reset() {
 			it->reset();
 		}
 		for (auto it : playerobjects) {
-			it->reset();
+			it->reset(); 
 		}
 		for (auto it : winconditions) {
 			it->reset();
 		}
+		phys_world.SetGravity(default_gravity);
 }
 
 
 
 void LevelData::simulate() {
-      phys_world.Step(timestep, velocityIterations, positionIterations);
+	phys_world.Step(timestep, velocityIterations, positionIterations);
 }
     
 bool LevelData::loaded(void) const {
-      return level_loaded;
+	return level_loaded;
 }
 
+void LevelData::deletePlayerObject(GameObject* obj) {
+	//Basically, it should always be found. I dunno why I did this if:
+	if (available.find(obj->getName())!=available.end()) {
+		available[obj->getName()]++;
+	}
+	delete obj;
+	playerobjects.remove(obj);
+}
 	
-	
+std::map<std::string, size_t>& LevelData::get_available() {
+	return available;
+}
+
+
 	
 	
 	

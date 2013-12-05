@@ -8,23 +8,35 @@
 #include "PlayMode.h"
 #include "GameState.h"
 #include <iostream>
+#include <sstream>
+
 GameState::StateSelect PlayMode::run()
 {
     done = false;
     if (!level.loaded())
         level.loadlevel();
  
+	if (!gui_loaded)
+		load_gui();
+	
+	
     while (!done)
     {
         sf::Event event;
         while (App.pollEvent(event))
         {
+			
+
             // Close window : exit
             if (event.type == sf::Event::Closed)
             {
                 retval = GameState::StateSelect::Exit;
                 done = true;
             }
+			//TGUI is given the event first. If TGUI didn't use the event, we will.
+			if (gui.handleEvent(event)) {
+				continue;
+			}
 			
 			// If we are simulating, don't respond to anything else than resetting:
 			if (simulate) {
@@ -54,23 +66,59 @@ GameState::StateSelect PlayMode::run()
 				}
 
 				//GameObject creation:
-				if (event.key.code == sf::Keyboard::Num1) {
-					active_object = level.createObject("Platform", 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
-					dragged_object = active_object;
-					if (active_object==NULL)
-						std::cout << "No Platforms available\n";
-				}
-				if (event.key.code == sf::Keyboard::Num2) {
-					active_object = level.createObject("Wall", 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
-					dragged_object = active_object;
-					if (active_object==NULL)
-						std::cout << "No Walls available\n";
-				}
-				
-				
+				if (dragged_object==NULL) {
 
-                else handleKeyPress(event);
-            }
+					if (event.key.code == sf::Keyboard::Num1) {
+						active_object = level.createObject("Platform", 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+						dragged_object = active_object;
+						if (active_object==NULL)
+							std::cout << "No Platforms available\n";
+					}
+					if (event.key.code == sf::Keyboard::Num2) {
+						active_object = level.createObject("Wall", 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+						dragged_object = active_object;
+						if (active_object==NULL)
+							std::cout << "No Walls available\n";
+					}
+					if (event.key.code == sf::Keyboard::Num3) {
+						active_object = level.createObject("BouncingBall", 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+						dragged_object = active_object;
+						if (active_object==NULL)
+							std::cout << "No Bouncing Balls available\n";
+					}
+					if (event.key.code == sf::Keyboard::Num4) {
+						active_object = level.createObject("Seesaw", 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+						dragged_object = active_object;
+						if (active_object==NULL)
+							std::cout << "No Seesaws available\n";
+					}
+					if (event.key.code == sf::Keyboard::Num5) {
+						active_object = level.createObject("Bomb", 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+						dragged_object = active_object;
+						if (active_object==NULL)
+							std::cout << "No Bombs available\n";
+					}
+					if (event.key.code == sf::Keyboard::Num6) {
+						active_object = level.createObject("GravityChanger", 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+						dragged_object = active_object;
+						if (active_object==NULL)
+							std::cout << "No GravityChangers available\n";
+					}
+					if (event.key.code == sf::Keyboard::Num7) {
+						active_object = level.createObject("BowlingBall", 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+						dragged_object = active_object;
+						if (active_object==NULL)
+							std::cout << "No Bowling balls available\n";
+					}
+					if (event.key.code == sf::Keyboard::Num8) {
+						active_object = level.createObject("Domino", 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+						dragged_object = active_object;
+						if (active_object==NULL)
+							std::cout << "No Dominoes available\n";
+					}
+					else handleKeyPress(event);
+				}
+			}	
            	 
         	else if (event.type == sf::Event::MouseMoved) {
 				
@@ -84,8 +132,9 @@ GameState::StateSelect PlayMode::run()
 					
 			}
 			else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-				if (active_object && active_object->highlight_extras && active_object->highlightPoint(sf::Mouse::getPosition(App))) {
-						highlight_active=true;
+				if (active_object && active_object->highlightPoint(sf::Mouse::getPosition(App))) {
+                    highlight_active=true;
+                    active_object->setManipulationStartLocation(sf::Mouse::getPosition(App));
 				}
 
 
@@ -104,10 +153,42 @@ GameState::StateSelect PlayMode::run()
 				if (dragged_object!=NULL && dragged_object->can_place) {
 					dragged_object=NULL;
 				}
-				else if (highlight_active)
+				else if (highlight_active) {
+					std::string action = active_object->highlightClicked(sf::Mouse::getPosition(App));
+					if (action=="delete") {
+						level.deletePlayerObject(active_object);
+						active_object=NULL;
+					}
 					highlight_active=false;
+				}
 			}
 		}
+		//TGUI Callbacks:
+		tgui::Callback callback;
+		while (gui.pollCallback(callback)) {
+			
+			if (callback.id == 100) {
+				if (!simulate) {
+					simulate=1;
+					active_object=NULL;
+					tgui::Button::Ptr button=gui.get("simulate");
+					button->setText("Reset");
+				}
+				else {
+					simulate=0;
+					level.reset();
+					tgui::Button::Ptr button=gui.get("simulate");
+					button->setText("Simulate");
+				}
+			}
+
+			//One of the GameObject buttons was pressed:
+			else if (dragged_object==NULL) {
+					active_object = level.createObject(object_names[callback.id], 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
+					dragged_object = active_object;
+			}	
+		}
+				
 		//If not simulating, take care of highlighting
 		if (!simulate) {
 			//Notify whomever we are hovering over, if not dragging or resizing, etc.
@@ -130,13 +211,18 @@ GameState::StateSelect PlayMode::run()
 
         App.clear();
         if (simulate) {
+			
             level.simulate();
+			
 			if (level.checkWin()) {
 				set_simulate();
 				std::cout << "You win!\n";
 			}
 		}
-        level.draw(drawDebug, drawLevel);
+        level.draw(active_object, drawDebug, drawLevel);
+
+		update_available();
+		gui.draw();
         App.display();
     }
     return retval;
@@ -152,6 +238,64 @@ void PlayMode::set_drawdebug() {
 void PlayMode::set_drawlevel() {
 	drawLevel=drawLevel?0:1;
 }
+
+void PlayMode::load_gui() {
+	//Globals:
+	gui.setGlobalFont(Resources::getInstance().getFont("BorisBlackBloxx.ttf"));
+
+	//The Background:
+	tgui::Panel::Ptr bar(gui, "bg"); 
+	bar->setBackgroundTexture(Resources::getInstance().getTexture("Sidebar.png"));
+	bar->setSize(200, 600);
+	bar->setPosition(600,0);
+
+	//The Play/Reset button:
+	tgui::Button::Ptr button(gui, "simulate");
+	button->load("TGUI/Black.conf");
+	button->setSize(150, 50);
+	button->setText("Simulate");
+	button->setPosition(625,10);
+	button->setCallbackId(100); //This assumes we won't surpass 100 GameObjects. We won't.
+	button->bindCallback(tgui::Button::LeftMouseClicked);
+
+
+	//The different gameobjects:
+	int index=0;
+	for (auto pair : level.get_available()) {
+		tgui::Button::Ptr obj_button(gui, pair.first);
+		obj_button->load("TGUI/Black.conf");
+		obj_button->setSize(150, 25);
+		obj_button->setText(pair.first);
+		obj_button->setPosition(625,180+index*30);
+		obj_button->setCallbackId(index);
+		obj_button->bindCallback(tgui::Button::LeftMouseClicked);
+		//So that object_names[index] corresponds to correct object:
+		object_names.push_back(pair.first);
+		index++;
+	}
+
+	gui_loaded=true;
+
+}
+
+void PlayMode::update_available() {
+	auto available = level.get_available();
+	for (auto& pair : available) {
+		tgui::Button::Ptr button = gui.get(pair.first);
+		if (pair.second==0) {
+			button->hide();
+		}
+		else {
+			button->show();
+			std::stringstream ss;
+			ss << pair.first << ": " << pair.second;
+			button->setText(ss.str());
+		}
+	}
+}
+		
+	
+	
 
 void PlayMode::handleKeyPress(sf::Event event)
 {

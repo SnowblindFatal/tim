@@ -14,7 +14,7 @@
 
 class EditMode : public PlayingField {
 public:
-    EditMode(sf::RenderWindow& _App, Resources& res) : PlayingField(_App, res){}
+    EditMode(sf::RenderWindow& _App) : PlayingField(_App){}
     EditMode(const EditMode& orig) = delete;
     EditMode operator=(const EditMode& orig) = delete;
     virtual ~EditMode(){}

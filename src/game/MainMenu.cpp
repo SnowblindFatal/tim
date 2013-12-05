@@ -7,16 +7,15 @@
 
 #include "MainMenu.h"
 #include "GameState.h"
+#include <TGUI/TGUI.hpp>
+#include <stdexcept>
+
 GameState::StateSelect MainMenu::run()
 {
     done = false;
-    sf::Font coolFont; //!!Temp shit I can't wait to delete.
-    if (!coolFont.loadFromFile("res/fonts/BorisBlackBloxx.ttf"))
-    {
-        return GameState::StateSelect::Exit;
-    }
-    sf::Text welcomeText("Get the ball to the right side of the big platform\nYou have one Platform [press 1] and one Wall [press 2]\n[Press S] to simulate and [press R] to reset", coolFont, 20);
-    welcomeText.setPosition((App.getSize().x - welcomeText.getLocalBounds().width) / 2, (App.getSize().y - welcomeText.getLocalBounds().height) / 2);
+    
+    initialiseGUI();
+	
     while (!done)
     {
         sf::Event event;
@@ -32,9 +31,10 @@ GameState::StateSelect MainMenu::run()
             {
                 handleKeyPress(event);
             }
+            gui.handleEvent(event);
         }
+        handleGuiEvents();
         App.clear();
-        App.draw(welcomeText); //!!Temp shit I can't wait to delete.
         drawStuff(); //do the actual drawing here!
         App.display();
     }
@@ -43,7 +43,7 @@ GameState::StateSelect MainMenu::run()
 
 void MainMenu::drawStuff()
 {
-    
+    gui.draw();
 }
     
 void MainMenu::handleKeyPress(sf::Event event)
@@ -64,4 +64,79 @@ void MainMenu::handleKeyPress(sf::Event event)
         retval = GameState::StateSelect::Edit;
         done = true;
     }
+}
+
+void MainMenu::handleGuiEvents()
+{
+    tgui::Callback callback;
+    while (gui.pollCallback(callback))
+    {
+        if (callback.id == 1) 
+        {
+            retval = GameState::StateSelect::Play;
+            done = true;
+        }
+        else if (callback.id == 2) 
+        {
+            //TODO: Level select
+        }
+        else if (callback.id == 3) 
+        {
+            retval = GameState::StateSelect::Edit;
+            done = true;
+        }
+        else if (callback.id == 4) 
+        {
+            retval = GameState::StateSelect::Exit;
+            done = true;
+        }
+    }
+    
+}
+
+void MainMenu::initialiseGUI() 
+{
+    gui.setGlobalFont(Resources::getInstance().getFont("BorisBlackBloxx.ttf"));
+    
+    tgui::Picture::Ptr picture(gui);
+    picture->load("res/textures/magic.jpg");
+    picture->setSize(800, 600);
+    
+    tgui::Button::Ptr button(gui);
+    button->load("TGUI/Black.conf");
+    button->setPosition(250, 100);
+    button->setText("(test mode)");
+    button->setCallbackId(1);
+    button->bindCallback(tgui::Button::LeftMouseClicked);
+    button->setSize(300, 50);
+    button->setTransparency(220);
+
+    tgui::Button::Ptr button2(gui);
+    button2->load("TGUI/Black.conf");
+    button2->setPosition(250, 200);
+    button2->setText("Choose level (TODO)");
+    button2->setCallbackId(2);
+    button2->bindCallback(tgui::Button::LeftMouseClicked);
+    button2->setSize(500, 50);
+    button2->setTransparency(220);
+
+    tgui::Button::Ptr button3(gui);
+    button3->load("TGUI/Black.conf");
+    button3->setPosition(250, 300);
+    button3->setText("Editor");
+    button3->setCallbackId(3);
+    button3->bindCallback(tgui::Button::LeftMouseClicked);
+    button3->setSize(300, 50);
+    button3->setTransparency(220);
+    
+    tgui::Button::Ptr button4(gui);
+    button4->load("TGUI/Black.conf");
+    button4->setPosition(250, 400);
+    button4->setText("Quit");
+    button4->setCallbackId(4);
+    button4->bindCallback(tgui::Button::LeftMouseClicked);
+    button4->setSize(300, 50);
+    button4->setTransparency(220);
+    
+    
 }

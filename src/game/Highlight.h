@@ -12,35 +12,51 @@ class Highlight {
 public:
     Highlight();
 	virtual ~Highlight() {}
-    virtual void set(std::string, bool);
-    virtual void update_rect(sf::FloatRect);
+    virtual void set(const std::string&, bool);
+    virtual void update_rect(const sf::FloatRect&);
     virtual void draw(sf::RenderWindow& win);
-	virtual bool checkPoint(sf::Vector2i) {return false;}
-	virtual sf::Vector2i getDelta(sf::Vector2i) {return sf::Vector2i(0,0);}
+	virtual bool checkPoint(sf::Vector2i);
+	virtual std::string clicked(const sf::Vector2i&);
 protected:
     sf::RectangleShape rect;
+	sf::RectangleShape del1;
+	sf::RectangleShape del2;
+	bool delete_active;
+	bool real; //True when the Highlight has actually been updated with a sf::FloatRect; when it is real.
 };
 
 class PlatformHighlight : public Highlight {
 public:
 	PlatformHighlight();
-    void set(std::string, bool);
-    void update_rect(sf::FloatRect);
+    void set(const std::string&, bool);
+    void update_rect(const sf::FloatRect&);
     void draw(sf::RenderWindow& win);
 
 	//Check wether the clicked position is an active spot. True if it is, also set the corresponding bool and local_mouse.
 	bool checkPoint(sf::Vector2i point);
 	//Calculate the amount that we wanted to change.
-	sf::Vector2i getDelta(sf::Vector2i point);
+	sf::Vector2i getDelta(const sf::Vector2i point);
 	
 
 
 protected:
-	sf::RectangleShape delta_height;
-	sf::RectangleShape delta_width;
-	bool height_active;
-	bool width_active;
+	sf::RectangleShape delta_box;
 	sf::Vector2i local_mouse;
+};
+
+class GravityChangerHighlight : public Highlight {
+public:
+	GravityChangerHighlight();
+	void set(const std::string&, bool);
+	void update_rect(const sf::FloatRect&);
+	void draw(sf::RenderWindow&);
+
+	bool checkPoint(sf::Vector2i);
+	virtual std::string clicked(const sf::Vector2i&);
+
+protected:
+	sf::CircleShape	rotate;
+	bool rotate_active;
 };
 
 #endif

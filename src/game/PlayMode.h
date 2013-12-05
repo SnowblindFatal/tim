@@ -11,13 +11,17 @@
 #include "PlayingField.h"
 #include <SFML/Graphics.hpp>
 #include "Level.h"
+#include <TGUI/TGUI.hpp>
 
 class PlayMode : public PlayingField {
 public:
-    PlayMode(sf::RenderWindow& _App, Resources& res) : PlayingField(_App, res), simulate(false), level(_App), drawDebug(true), drawLevel(true), active_object(NULL), dragged_object(NULL), highlight_active(false) {}
+    PlayMode(sf::RenderWindow& _App) : PlayingField(_App), simulate(false), level(_App), drawDebug(true), drawLevel(true), active_object(NULL), dragged_object(NULL), highlight_active(false), gui(_App), gui_loaded(false) {}
     PlayMode(const PlayMode& orig) = delete;
     PlayMode operator=(const PlayMode& orig) = delete;
-    virtual ~PlayMode(){}
+    virtual ~PlayMode(){
+		active_object=NULL;
+		dragged_object=NULL;
+	}
     GameState::StateSelect run();
     void set_simulate(); // Sets the Box2D Simulation on/off.
     void set_drawdebug(); // Sets the Box2D Debug drawing on/off.
@@ -33,6 +37,12 @@ private:
 	GameObject* active_object; //NULL denotes nothing is active.
 	GameObject* dragged_object; //NULL denotes nothing is being dragged.
 	bool highlight_active; //True when we are resizing, etc.
+
+	tgui::Gui gui;
+	bool gui_loaded;
+	void load_gui();
+	void update_available();
+	std::vector<std::string> object_names; //Used by TGUI.
 };
 
 #endif	/* PLAYMODE_H */
