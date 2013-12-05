@@ -54,6 +54,10 @@ void LevelData::addPlayerObject(GameObject* obj) {
 	playerobjects.push_back(obj);	
 }
 
+void addWinCondition(WinCondition* cond) {
+	winconditions.push_back(cond);
+}
+
 void LevelData::loadlevel() {
 
 	std::cout << "load level\n";
@@ -174,9 +178,19 @@ void LevelData::reset() {
 void LevelData::simulate() {
 	phys_world.Step(timestep, velocityIterations, positionIterations);
 }
+
+b2World& LevelData::getWorld() 
+{
+	return phys_world;
+}
     
 bool LevelData::loaded(void) const {
 	return level_loaded;
+}
+
+bool LevelData::hasGoals() const
+{
+	return !winconditions.empty();
 }
 
 void LevelData::deletePlayerObject(GameObject* obj) {

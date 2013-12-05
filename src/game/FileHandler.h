@@ -1,11 +1,12 @@
 #ifndef FILEHANDLER_H
 #define	FILEHANDLER_H
 
-#include "Level.h"
+#include "../tests/Level.h"
 #include "GameObject.h"
 #include "WinCondition.h"
 
 #include <string>
+#include <vector>
 
 class FileHandler {
 	public:
@@ -15,10 +16,11 @@ class FileHandler {
 	// Returns false and sets errorMsg if the operation failed.
 	bool loadLevel(LevelData&);
 	bool saveLevel(LevelData&);
-	bool createObject(std::string);
-	bool createWinCondition(std::string);
 	std::string getError() const;
 	private:
+	GameObject* createObject(LevelData&, std::string&);
+	GameObject* createWinCondition(LevelData&, GameObject*, std::vector<std::string>&);
+	void parseLine(std::vector<std::string>&, std::string&);
 	std::string filePath;
 	std::string errorMsg;
 };
@@ -35,4 +37,4 @@ Usage example:
 		// Return to level selection screen
 	}
 */
-#endif
+#endifcd

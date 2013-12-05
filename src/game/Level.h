@@ -29,6 +29,8 @@ public:
     
     void addPlayerObject(GameObject*);
     
+    void addWinCondition(WinCondition*);
+    
 	void loadlevel();
     
     //Iterate over winconditions, if all return true, return true, else 
@@ -58,7 +60,12 @@ public:
     //One Box2D step:
     void simulate() ;
     
+    //Used by FileHandler
+    b2World& getWorld();
+    
     bool loaded(void) const;
+    
+    bool hasGoals() const;
 	
 	//This for access
 	std::map<std::string, size_t>& get_available();
