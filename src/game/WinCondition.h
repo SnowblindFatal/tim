@@ -10,7 +10,7 @@ class WinCondition
 {
 
 public:
-	WinCondition(GameObject* go_ptr) : go_ptr(go_ptr), fulfilled(false)  {}
+	WinCondition(GameObject* go_ptr, std::string _name) : go_ptr(go_ptr), fulfilled(false), name(_name)  {}
 	virtual ~WinCondition() {}
 	
 	virtual bool check() =0;
@@ -40,7 +40,7 @@ protected:
 class IsNearPoint : public WinCondition
 {
 public:
-	IsNearPoint(GameObject* go_ptr, float x, float y, float tolerance = 3.0f) : WinCondition(go_ptr), x(x), y(y), tolerance(tolerance), name("IsNearPoint") {}
+	IsNearPoint(GameObject* go_ptr, float x, float y, float tolerance = 3.0f) : WinCondition(go_ptr, "IsNearPoint"), x(x), y(y), tolerance(tolerance) {}
 	
 	bool check() {
 		if ( (std::fabs(go_ptr->getPos().x-x) < tolerance) && (std::fabs(go_ptr->getPos().y-y) < tolerance) )
