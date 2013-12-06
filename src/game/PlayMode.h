@@ -16,7 +16,7 @@
 
 class PlayMode : public PlayingField {
 public:
-    PlayMode(sf::RenderWindow& _App) : PlayingField(_App), simulate(false), level(_App), drawDebug(false), drawLevel(true), active_object(NULL), dragged_object(NULL), highlight_active(false), gui(_App), gui_loaded(false) {}
+    PlayMode(sf::RenderWindow& _App) : PlayingField(_App), simulate(false), level(_App), drawDebug(false), drawLevel(true), active_object(NULL), dragged_object(NULL), highlight_active(false), gui(_App), gui_loaded(false), currentLevelName("") {}
     PlayMode(const PlayMode& orig) = delete;
     PlayMode operator=(const PlayMode& orig) = delete;
     virtual ~PlayMode(){
@@ -44,6 +44,7 @@ private:
 	void load_gui();
 	void update_available();
 	std::vector<std::string> object_names; //Used by TGUI.
+    std::string currentLevelName;
 };
 
 #endif	/* PLAYMODE_H */

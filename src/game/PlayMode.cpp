@@ -13,11 +13,16 @@
 GameState::StateSelect PlayMode::run()
 {
     done = false;
-    if (!level.loaded())
+    if (!level.loaded() && Resources::getInstance().getCurrentLevelName() != currentLevelName)
+    {
         level.loadlevel();
+        currentLevelName = Resources::getInstance().getCurrentLevelName();
+    }
  
 	if (!gui_loaded)
-		load_gui();
+    {
+        load_gui();
+    }
 	
 	
     while (!done)
@@ -228,6 +233,7 @@ GameState::StateSelect PlayMode::run()
 			
 			if (level.checkWin()) {
 				set_simulate();
+                Resources::getInstance().winLevel(currentLevelName);
 				std::cout << "You win!\n";
 			}
 		}

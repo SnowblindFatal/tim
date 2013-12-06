@@ -56,6 +56,14 @@ void BaseGame::start()
             nextState = menu.run();
         }
     }
+    try 
+    {
+        Resources::getInstance().saveWinStatus();
+    }    
+    catch (const std::string& e) 
+    {
+        std::cout << e;
+    }
     
 }
 

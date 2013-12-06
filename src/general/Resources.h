@@ -31,14 +31,26 @@ public:
     const sf::SoundBuffer& getSoundBuffer(const std::string &fileName) const;
     sf::Music& getMusic(const std::string &fileName) const;
     const sf::Font getFont(const std::string &fileName) const;
+    void winLevel(const std::string levelname);
+    void saveWinStatus();
+    void setCurrentLevel(const std::string& fileName);
+    const std::string& getCurrentLevelName() const;
+    const std::map<std::string, bool>& getLevelInfo() const;
+    
 private:
     Resources(){}
 
+    void loadTextures();
+    void loadSounds();
+    void loadMusic();
+    void loadFonts();
+    void loadLevelInfo();
     std::map<std::string, sf::Texture*> textures;
     std::map<std::string, sf::SoundBuffer*> soundBuffers;
     std::map<std::string, sf::Music*> music;
     std::map<std::string, sf::Font*> fonts;
-
+    std::map<std::string, bool> levelInfo;
+    std::string currentLevel;
 };
 
 #endif	/* RESOURCES_H */

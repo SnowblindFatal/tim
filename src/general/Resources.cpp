@@ -11,6 +11,9 @@
 #include <exception>
 #include <stdexcept>
 #include <iostream>
+#include <fstream>
+#include <sstream>
+
 namespace {
     //The file name lists are static like this since otherwise we would either 
     //require the usage of the boost library or write platform-dependant code.
@@ -47,6 +50,8 @@ namespace {
         "MAP01.ogg",
         "default.ogg"
     };
+    
+    const std::string levelsFileName = "levelinfo.txt";
 }
 
 Resources::~Resources()
@@ -71,48 +76,106 @@ Resources::~Resources()
 
 void Resources::loadResources()
 {
-    for (const std::string& fileName : textureFileNames)
-    {
+    loadTextures();
+    loadSounds();
+    loadMusic();
+    loadFonts();
+    loadLevelInfo();
+}
+
+void Resources::loadTextures()
+{
+    for (const std::string& fileName : textureFileNames) {
         sf::Texture* texturePtr = new sf::Texture;
         textures[fileName] = texturePtr;
-        if (!texturePtr->loadFromFile("res/textures/" + fileName)) 
-        {
+        if (!texturePtr->loadFromFile("res/textures/" + fileName)) {
             throw "Did not find texture file: " + fileName;
         }
         texturePtr->setRepeated(true);
     }
-    
-    for (const std::string& fileName : soundFileNames) 
-    {
+}
+
+void Resources::loadSounds()
+{
+    for (const std::string& fileName : soundFileNames) {
         sf::SoundBuffer* soundBufferPtr = new sf::SoundBuffer;
         soundBuffers[fileName] = soundBufferPtr;
-        if (!soundBufferPtr->loadFromFile("res/sounds/" + fileName)) 
-        {
+        if (!soundBufferPtr->loadFromFile("res/sounds/" + fileName)) {
             throw "Did not find sound file: " + fileName;
         }
     }
-    
-    for (const std::string& fileName : fontFileNames) 
-    {
-        sf::Font* fontPtr = new sf::Font;
-        fonts[fileName] = fontPtr;
-        if (!fontPtr->loadFromFile("res/fonts/" + fileName)) 
-        {
-            throw "Did not find font file: " + fileName;
-        }
-    }
-    
-    for (const std::string& fileName : musicFileNames) 
-    {
+}
+
+void Resources::loadMusic()
+{
+    for (const std::string& fileName : musicFileNames) {
         sf::Music* musicPtr = new sf::Music;
         music[fileName] = musicPtr;
-        if (!musicPtr->openFromFile("res/music/" + fileName)) 
-        {
+        if (!musicPtr->openFromFile("res/music/" + fileName)) {
             throw "Did not find music file: " + fileName;
         }
     }
 }
 
+void Resources::loadFonts()
+{
+    for (const std::string& fileName : fontFileNames) {
+        sf::Font* fontPtr = new sf::Font;
+        fonts[fileName] = fontPtr;
+        if (!fontPtr->loadFromFile("res/fonts/" + fileName)) {
+            throw "Did not find font file: " + fileName;
+        }
+    }
+}
+
+void Resources::loadLevelInfo() {
+    std::ifstream file;
+    std::string name;
+    int finished;
+    file.open("res/levels/" + levelsFileName);
+
+    if (!file.is_open()) {
+        throw "Could not open file " + levelsFileName + ".";
+    }
+
+    while (file >> name >> finished) {
+        levelInfo[name] = finished;
+    }
+    file.close();
+}
+const std::map<std::string, bool>& Resources::getLevelInfo() const
+{
+    return levelInfo;
+}
+
+void Resources::winLevel(const std::string levelName)
+{
+    levelInfo[levelName] = 1;
+}
+
+void Resources::setCurrentLevel(const std::string& fileName)
+{
+    currentLevel = fileName;
+}
+
+const std::string& Resources::getCurrentLevelName() const
+{
+    return currentLevel;
+}
+
+void Resources::saveWinStatus() {
+    std::ofstream file;
+    file.open("res/levels/" + levelsFileName, std::ios::out | std::ios::trunc);
+
+    if (!file.is_open()) {
+        throw "Could not open file " + levelsFileName + ".\nGame progress was not saved!";
+    }
+    
+    for (auto& level : levelInfo)
+    {
+        file << level.first << " " << level.second << std::endl;
+    }
+}
 
 sf::Texture* Resources::getTexture(const std::string &fileName) const
 {

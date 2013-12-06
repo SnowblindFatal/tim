@@ -73,6 +73,7 @@ void MainMenu::handleGuiEvents()
     {
         if (callback.id == 1) 
         {
+            Resources::getInstance().setCurrentLevel("level1.txt");
             retval = GameState::StateSelect::Play;
             done = true;
         }
@@ -137,6 +138,4 @@ void MainMenu::initialiseGUI()
     button4->bindCallback(tgui::Button::LeftMouseClicked);
     button4->setSize(300, 50);
     button4->setTransparency(220);
-    
-    
 }
