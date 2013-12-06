@@ -6,7 +6,7 @@
 #include <fstream>
 #include <sstream>
 
-FileHandler::FileHandler(std::string path) : filePath(path)) { }
+FileHandler::FileHandler(std::string path) : filePath(path) { }
 
 FileHandler::~FileHandler() { }
 
@@ -33,37 +33,42 @@ bool FileHandler::loadLevel(LevelData& level)
 				GameObject* obj;
 				if (line == ".")
 					break;
-				if ((obj = createObject(line)) == NULL)
+				if ((obj = createObject(level, line)) == NULL)
 					return false;
 				level.addLevelObject(obj);
+				levelObjects = true;
 			}
 		}
 		if (line == "PlayerObjects")
 		{
 			while (getline(file, line))
 			{
-				GameObject* obj;
 				if (line == ".")
 					break;
-				if ((obj = createObject(level, line)) == NULL)
+				if (!level.addPlayerObject(line))
+				{
+					errorMsg = "Invalid player object.";
 					return false;
-				level.addPlayerObject(obj);
+				}
+				playerObjects = true;
 			}
 		}
 	}
+	file.close();
 	
-	if (levelObjects && playerObjects && goals)
+	if (levelObjects && playerObjects && level.hasGoals())
 		return true;
 	std::stringstream errorStream;
 	errorStream << "Level file corrupted. LevelObjects: " << levelObjects << ", PlayerObjects: " << playerObjects
-													<< ", WinConditions:" << winConditions << std::endl; // ### REMOVE ENDL LATER
+													<< ", WinConditions:" << level.hasGoals();
 	errorMsg = errorStream.str();
 	return false;
 }
 
-bool FileHandler::saveLevel(LevelData& level)
+bool FileHandler::saveLevel(LevelData&)
 {
 	// Implement this
+	return false;
 }
 
 GameObject* FileHandler::createObject(LevelData& level, std::string& line)
@@ -82,7 +87,7 @@ GameObject* FileHandler::createObject(LevelData& level, std::string& line)
 		for (size_t i = 1;i < 5;i++)
 			ss << parameters[i] << " ";
 		ss >> x >> y >> width >> height;
-		obj = new Platform(level);
+		obj = new Platform(level.getWorld(), x, y, width, height);
 		parameters.erase(parameters.begin(),parameters.begin()+5);
 	}
 	else if (name == "Wall")
@@ -90,21 +95,101 @@ GameObject* FileHandler::createObject(LevelData& level, std::string& line)
 		for (size_t i = 1;i < 5;i++)
 			ss << parameters[i] << " ";
 		ss >> x >> y >> width >> height;
-		obj = new Platform(level);
+		obj = new Wall(level.getWorld(), x, y, width, height);
 		parameters.erase(parameters.begin(),parameters.begin()+5);
+	}
+	else if (name == "BouncingBall")
+	{
+		for (size_t i = 1;i < 3;i++)
+			ss << parameters[i] << " ";
+		ss >> x >> y;
+		obj = new BouncingBall(level.getWorld(), x, y);
+		parameters.erase(parameters.begin(), parameters.begin()+3);
 	}
 	else if (name == "BigBall")
 	{
-		// Create big ball
+		for (size_t i = 1;i < 3;i++)
+			ss << parameters[i] << " ";
+		ss >> x >> y;
+		obj = new BigBall(level.getWorld(), x, y);
+		parameters.erase(parameters.begin(), parameters.begin()+3);
+	}
+	else if (name == "BowlingBall")
+	{
+		for (size_t i = 1;i < 3;i++)
+			ss << parameters[i] << " ";
+		ss >> x >> y;
+		obj = new BowlingBall(level.getWorld(), x, y);
+		parameters.erase(parameters.begin(), parameters.begin()+3);
+	}
+	else if (name == "Catapult")
+	{
+		for (size_t i = 1;i < 3;i++)
+			ss << parameters[i] << " ";
+		ss >> x >> y;
+		obj = new Catapult(level.getWorld(), x, y);
+		parameters.erase(parameters.begin(), parameters.begin()+3);
+	}
+	else if (name == "Seesaw")
+	{
+		for (size_t i = 1;i < 3;i++)
+			ss << parameters[i] << " ";
+		ss >> x >> y;
+		obj = new Seesaw(level.getWorld(), x, y);
+		parameters.erase(parameters.begin(), parameters.begin()+3);
+	}
+	else if (name == "GravityChanger")
+	{
+		for (size_t i = 1;i < 3;i++)
+			ss << parameters[i] << " ";
+		ss >> x >> y;
+		obj = new GravityChanger(level.getWorld(), x, y);
+		parameters.erase(parameters.begin(), parameters.begin()+3);
+	}
+	else if (name == "Bomb")
+	{
+		for (size_t i = 1;i < 3;i++)
+			ss << parameters[i] << " ";
+		ss >> x >> y;
+		obj = new Bomb(level.getWorld(), x, y);
+		parameters.erase(parameters.begin(), parameters.begin()+3);
 	}
 	else {
-		errorMsg = "No object named " << name << "." << std::endl; // ### REMOVE ENDL LATER
+		ss.flush();
+		ss << "No object named " << name << ".";
+		errorMsg = ss.str();
+		return NULL;
+	}
+	if (!parameters.empty())
+		return createWinCondition(level, obj, parameters);
+	return obj;
+}
+
+GameObject* FileHandler::createWinCondition(LevelData& level, GameObject* obj, std::vector<std::string>& parameters)
+{
+	WinCondition* cond;
+	std::string condType = parameters[0];
+	std::stringstream ss;
+	float x, y, tolerance;
+	if (condType == "IsNearPoint")
+	{
+		for (size_t i = 1;i < 4;i++)
+			ss << parameters[i] << " ";
+		ss >> x >> y >> tolerance;
+		cond = new IsNearPoint(obj, x, y, tolerance);
+		level.addWinCondition(cond);
+	}
+	else 
+	{
+		ss.flush();
+		ss << "No win condition named " << condType << ".";
 		return NULL;
 	}
 	
+	return obj;
 }
 
-void parseLine(std::vector<std::string>&, std::string&)
+void FileHandler::parseLine(std::vector<std::string>& parameters, std::string& line)
 {
 	if (line.length() > 0)
 	{
@@ -124,7 +209,7 @@ void parseLine(std::vector<std::string>&, std::string&)
 	}
 }
 
-std::string FileHandler::getError() const
+std::string FileHandler::getError() const
 {
 	return errorMsg;
 }

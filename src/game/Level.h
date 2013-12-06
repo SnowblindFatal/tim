@@ -27,7 +27,7 @@ public:
     
     void addLevelObject(GameObject*);
     
-    void addPlayerObject(GameObject*);
+    bool addPlayerObject(const std::string&);
     
     void addWinCondition(WinCondition*);
     
@@ -65,6 +65,7 @@ public:
     
     bool loaded(void) const;
     
+    //Used by FileHandler
     bool hasGoals() const;
 	
 	//This for access

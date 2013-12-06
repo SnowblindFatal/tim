@@ -50,8 +50,13 @@ void LevelData::addLevelObject(GameObject* obj) {
 	levelobjects.push_back(obj);
 }
 
-void LevelData::addPlayerObject(GameObject* obj) {
-	playerobjects.push_back(obj);	
+bool LevelData::addPlayerObject(const std::string& name) {
+	if (available.find(name) != available.end())
+	{
+		available[name]++;
+		return true;
+	}
+	return false;
 }
 
 void addWinCondition(WinCondition* cond) {
@@ -104,6 +109,7 @@ void LevelData::loadlevel() {
 	available["GravityChanger"] = 3;
 	available["BowlingBall"] = 6;
 	available["Domino"] = 20;
+	available["BigBall"] = 10;
 	level_loaded=true;
 }
 
