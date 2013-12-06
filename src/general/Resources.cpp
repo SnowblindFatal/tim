@@ -26,9 +26,9 @@ namespace {
 		"small_ball.png",
 		"plank.jpg",
 		"block.jpg",
-		"domino.jpg",
 		"Sidebar.png",
-        "magic.jpg"
+        "magic.jpg",
+		"bigball.png"
     };
 
     const std::vector<std::string> soundFileNames = {

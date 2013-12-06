@@ -59,7 +59,7 @@ bool LevelData::addPlayerObject(const std::string& name) {
 	return false;
 }
 
-void addWinCondition(WinCondition* cond) {
+void LevelData::addWinCondition(WinCondition* cond) {
 	winconditions.push_back(cond);
 }
 

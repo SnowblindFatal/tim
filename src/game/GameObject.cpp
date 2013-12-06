@@ -393,7 +393,7 @@ BouncingBall::BouncingBall(b2World& world, float x, float y) : Ball(world, x, y,
 
 BowlingBall::BowlingBall(b2World& world, float x, float y) : Ball(world, x, y,"BowlingBall", 1.0, 0.1, 3.0, new BowlingBallDrawable(x,y)) {}
 
-BigBall::BigBall(b2World& world, float x, float y) : Ball(world, x, y,"BigBall", 2.0, 0.1, 0.4) {}
+BigBall::BigBall(b2World& world, float x, float y) : Ball(world, x, y,"BigBall", 2.0, 0.1, 0.4, new BigBallDrawable(x,y)) {}
 
 
 Bomb::Bomb(b2World& world, float x, float y) : GameObject(world, x, y,"Bomb", new BombDrawable(x,y)) {
@@ -430,7 +430,7 @@ void Bomb::explode() {
 		//find all fixtures within blast radius AABB
 		MyQueryCallback queryCallback;
 		b2AABB aabb;
-		float blast_radius = 300;
+		float blast_radius = 15;
 		aabb.lowerBound = center - b2Vec2(blast_radius, blast_radius);
 		aabb.upperBound = center + b2Vec2(blast_radius, blast_radius);
 	   	world.QueryAABB(&queryCallback, aabb);
@@ -444,12 +444,22 @@ void Bomb::explode() {
 		        continue;
 		    applyImpulse(body, center, body_pos, power);
 		}
-	}
+	}	
 } 
 
 void Bomb::reset() {
 	exploded = false;
+	bodies[0].body_ptr->SetActive(true);
+	dynamic_cast<BombDrawable*>(drawable)->setExploded(false);
 	GameObject::reset();
+}
+
+void Bomb::update_drawable() {
+	drawable->update(bodies);
+	if (exploded == true) {
+		bodies[0].body_ptr->SetActive(false);
+		dynamic_cast<BombDrawable*>(drawable)->setExploded(true);
+	}	
 }
 
 

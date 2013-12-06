@@ -169,6 +169,7 @@ GameState::StateSelect PlayMode::run()
 			
 			if (callback.id == 100) {
 				if (!simulate) {
+					level.reset();
 					simulate=1;
 					active_object=NULL;
 					tgui::Button::Ptr button=gui.get("simulate");

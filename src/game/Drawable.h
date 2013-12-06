@@ -43,8 +43,10 @@ public:
 	BombDrawable(float x, float y);
 	void draw(sf::RenderWindow& win);
 	void update(const std::vector<PhysBody>&);
+	void setExploded(bool param);
 private:
 	sf::RectangleShape box;
+	bool exploded;
 
 };
 
@@ -75,6 +77,16 @@ public:
 private:
 	sf::CircleShape ball;	
 };
+
+class BigBallDrawable : public Drawable {
+public:
+	BigBallDrawable(float x, float y);
+	void draw(sf::RenderWindow&);
+	void update(const std::vector<PhysBody>&);
+private:
+	sf::CircleShape ball;
+};
+
 
 class SeesawDrawable : public Drawable {
 public:
