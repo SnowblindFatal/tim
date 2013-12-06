@@ -17,7 +17,7 @@ GameObject::~GameObject() {
 }
 
 b2Vec2 GameObject::getPos() const {
-	return bodies[0].body_ptr->GetPosition();
+	return position;
 }
 std::string GameObject::getName(void) const {
 	return name;
@@ -85,12 +85,13 @@ void GameObject::setManipulationStartLocation(sf::Vector2i pos) {
     manipulationReferenceLocation = b2Vec2(pos.x / 10.0f, pos.y / 10.0f);
 }
 void GameObject::move(float x, float y) {
-
+    b2Vec2 mousePos(x, y);
 	for (auto& body : bodies) {
-		body.body_ptr->SetTransform(body.body_ptr->GetTransform().p+ (b2Vec2(x,y) - local_mouse), body.body_ptr->GetAngle());
+		body.body_ptr->SetTransform(body.body_ptr->GetTransform().p+ (mousePos - local_mouse), body.body_ptr->GetAngle());
 		body.original_pos=body.body_ptr->GetTransform().p;
 	}
-	local_mouse=b2Vec2(x,y);
+    position += mousePos - local_mouse;
+	local_mouse = mousePos;
 	if (noOverlaps()) {
 		can_place=true;
 	}
@@ -170,15 +171,15 @@ Domino::Domino(b2World& world, float x, float y) : GameObject(world,x,y,"Domino"
 	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition()));
 }
 
-Platform::Platform(b2World& world, float x, float y, float width, float height) : GameObject(world,x,y,"Platform", new PlatformDrawable(x,y,width,height)) { 
+Platform::Platform(b2World& world, float x, float y, float _width, float _height) : GameObject(world,x,y,"Platform", new PlatformDrawable(x,y,_width,_height)), dimensions(_width, _height) { 
 
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
 	b2Body* body_ptr = world.CreateBody(&bodyDef);
 	b2Vec2 vertices[4];
 	vertices[0].Set(PLATFORM_THRESHOLD, PLATFORM_THRESHOLD);
-	vertices[1].Set(width, height + PLATFORM_THRESHOLD);
-	vertices[2].Set(width, height + 2);
+	vertices[1].Set(_width, _height + PLATFORM_THRESHOLD);
+	vertices[2].Set(_width, _height + 2);
 	vertices[3].Set(PLATFORM_THRESHOLD, 2);
 	b2PolygonShape polygonShape;
 	polygonShape.Set(vertices, 4);
@@ -211,10 +212,12 @@ void Platform::highlightDelta(sf::Vector2i point) {
 	if (std::abs(vertices[1].y-vertices[2].y)/std::abs(vertices[1].x-vertices[2].x) < 1
 		&& std::abs(vertices[1].x-vertices[2].x) > 3.0f && std::abs(vertices[1].x-vertices[2].x) < 40.0f) {
 		shape_ptr->Set(vertices, 4);
+        dimensions += movementDelta;
 	}
 	if (!noOverlaps()) {
 		vertices[0] -= movementDelta;
 		vertices[1] -= movementDelta;
+        dimensions -= movementDelta;
 		shape_ptr->Set(vertices,4);
 	}
 }
@@ -223,15 +226,19 @@ void Platform::move(float x, float y) {
     moveDiscretely(x, y);
 }
 
-Wall::Wall(b2World& world, float x, float y, float width, float height) : GameObject(world,x,y,"Wall", new PlatformDrawable(x,y,width,height)) {
+b2Vec2 Platform::getDimensions() {
+    return dimensions;
+}
+
+Wall::Wall(b2World& world, float x, float y, float _width, float _height) : GameObject(world,x,y,"Wall", new PlatformDrawable(x,y,_width,_height)), dimensions(_width, _height) {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
 	b2Body* body_ptr = world.CreateBody(&bodyDef);
 	b2Vec2 vertices[4];
 	vertices[0].Set(PLATFORM_THRESHOLD, PLATFORM_THRESHOLD);
 	vertices[3].Set(2, PLATFORM_THRESHOLD);
-	vertices[1].Set(width + PLATFORM_THRESHOLD, height);
-	vertices[2].Set(width +2, height);
+	vertices[1].Set(_width + PLATFORM_THRESHOLD, _height);
+	vertices[2].Set(_width +2, _height);
 	b2PolygonShape polygonShape;
 	polygonShape.Set(vertices, 4);
 	b2FixtureDef fixtureDef;
@@ -268,16 +275,22 @@ void Wall::highlightDelta(sf::Vector2i point) {
 	if (std::abs(vertices[wanted_index+1].x-vertices[wanted_index+2].x)/std::abs(vertices[wanted_index+1].y-vertices[wanted_index+2].y) < 1
 		&& std::abs(vertices[wanted_index +1].y-vertices[wanted_index +2].y) > 3.0f && std::abs(vertices[wanted_index +1].y-vertices[wanted_index +2].y) < 40.0f) {
 		shape_ptr->Set(vertices, 4);
+        dimensions += movementDelta;
 	}
     
 	if (!noOverlaps()) {
 		vertices[wanted_index] -= movementDelta;
 		vertices[wanted_index+1] -= movementDelta;
 		shape_ptr->Set(vertices,4);
+        dimensions -= movementDelta;
 	}
 }
 void Wall::move(float x, float y) {
     moveDiscretely(x, y);
+}
+
+b2Vec2 Wall::getDimensions() {
+    return dimensions;
 }
 
 Catapult::Catapult(b2World& world, float x, float y) : GameObject(world, x,y,"Catapult") {

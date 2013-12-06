@@ -18,10 +18,11 @@ public:
         can_place(false), 
         highlight_extras(false), 
         moveStartLocation(0.0, 0.0), 
-        local_mouse(x,y), 
+        local_mouse(x,y),
+        position(x, y),
         world(world), 
         name(name), 
-        drawable(drawable), 
+        drawable(drawable),
         PLATFORM_THRESHOLD(0.05f),
         DISCRETE_MOVE_UNIT(1.0f)
         {};
@@ -71,6 +72,7 @@ protected:
     b2Vec2 moveStartLocation;
     b2Vec2 manipulationReferenceLocation;
 	b2Vec2 local_mouse;
+    b2Vec2 position;
 	b2World& world;
 	std::string name; //Needed for at least LevelData::deletePlayerObject
 	Drawable* drawable;
@@ -137,6 +139,9 @@ class Platform : public GameObject
 		Platform(b2World& world, float x, float y, float width, float heigth);
 		void highlightDelta(sf::Vector2i);
         virtual void move(float x, float y);
+        b2Vec2 getDimensions();
+    protected:
+        b2Vec2 dimensions;
 };
 
 class Wall : public GameObject
@@ -145,6 +150,9 @@ class Wall : public GameObject
 		Wall(b2World& world, float x, float y, float width, float heigth);
 		void highlightDelta(sf::Vector2i);
         virtual void move(float x, float y);
+        b2Vec2 getDimensions();
+    protected:
+        b2Vec2 dimensions;
 };
 
 class Seesaw : public GameObject
