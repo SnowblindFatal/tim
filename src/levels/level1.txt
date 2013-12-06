@@ -1,0 +1,9 @@
+LevelObjects
+Platform 20.0 40.0 40.0 10.0 IsNearPoint 40.0 40.0 5.0
+Platform 10.0 10.0 10.0 5.0
+.
+PlayerObjects
+Platform
+BigBall
+BigBall
+.
