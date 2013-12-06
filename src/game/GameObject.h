@@ -126,6 +126,7 @@ class Bomb : public GameObject
 		void applyImpulse(b2Body* body, b2Vec2 blastCenter, b2Vec2 applyPoint, float blastPower);
 		void explode();
 		void reset();
+		void update_drawable();
 	private:
 		bool exploded;
 };
