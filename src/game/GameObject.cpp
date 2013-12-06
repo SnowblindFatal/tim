@@ -555,6 +555,7 @@ std::string GravityChanger::highlightClicked(sf::Vector2i point) {
 
 			bodies[1].body_ptr->SetTransform(bodies[1].original_pos+b2Vec2(0,1.5f), bodies[1].original_rot);
 			bodies[1].original_pos=bodies[1].body_ptr->GetTransform().p;
+			flipped=true;
 		}
 		else {
 			bodies[0].body_ptr->SetTransform(bodies[0].original_pos+b2Vec2(0,1.5f), 0);
@@ -563,6 +564,7 @@ std::string GravityChanger::highlightClicked(sf::Vector2i point) {
 
 			bodies[1].body_ptr->SetTransform(bodies[1].original_pos-b2Vec2(0,1.5f), bodies[1].original_rot);
 			bodies[1].original_pos=bodies[1].body_ptr->GetTransform().p;
+			flipped=false;
 		}		
 		return "nothing";
 	}

@@ -166,10 +166,10 @@ class GravityChanger : public GameObject
 		GravityChanger(b2World& world, float x, float y, bool flipped=false);
 		void buttonCheck(b2Fixture*, b2Fixture*);	
 		std::string highlightClicked(sf::Vector2i);
+		bool flipped;
 	private:
 		b2Fixture* check1;
 		b2Fixture* check2;
-		bool flipped;
 };
 
 class MyQueryCallback : public b2QueryCallback {
