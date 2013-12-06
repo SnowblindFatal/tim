@@ -54,7 +54,7 @@ void LevelData::addPlayerObject(GameObject* obj) {
 	playerobjects.push_back(obj);	
 }
 
-void addWinCondition(WinCondition* cond) {
+void LevelData::addWinCondition(WinCondition* cond) {
 	winconditions.push_back(cond);
 }
 
