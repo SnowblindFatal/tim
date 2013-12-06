@@ -174,14 +174,25 @@ GameState::StateSelect PlayMode::run()
 					active_object=NULL;
 					tgui::Button::Ptr button=gui.get("simulate");
 					button->setText("Reset");
+                    button = gui.get("main menu");
+                    button->setProperty("Enabled", "false");
+                    button->setTransparency(127);
 				}
 				else {
 					simulate=0;
 					level.reset();
 					tgui::Button::Ptr button=gui.get("simulate");
 					button->setText("Simulate");
+                    button = gui.get("main menu");
+                    button->setProperty("Enabled", "true");
+                    button->setTransparency(255);
 				}
 			}
+            
+            else if (callback.id == 101) {
+                done = true;
+                retval = GameState::StateSelect::Menu;
+            }
 
 			//One of the GameObject buttons was pressed:
 			else if (dragged_object==NULL) {
@@ -251,13 +262,22 @@ void PlayMode::load_gui() {
 	bar->setPosition(600,0);
 
 	//The Play/Reset button:
-	tgui::Button::Ptr button(gui, "simulate");
-	button->load("TGUI/Black.conf");
-	button->setSize(150, 50);
-	button->setText("Simulate");
-	button->setPosition(625,10);
-	button->setCallbackId(100); //This assumes we won't surpass 100 GameObjects. We won't.
-	button->bindCallback(tgui::Button::LeftMouseClicked);
+	tgui::Button::Ptr button_game(gui, "simulate");
+	button_game->load("TGUI/Black.conf");
+	button_game->setSize(150, 50);
+	button_game->setText("Simulate");
+	button_game->setPosition(625,10);
+	button_game->setCallbackId(100); //This assumes we won't surpass 100 GameObjects. We won't.
+	button_game->bindCallback(tgui::Button::LeftMouseClicked);
+
+    //The Return to menu button:
+    tgui::Button::Ptr button_menu(gui, "main menu");
+    button_menu->load("TGUI/Black.conf");
+    button_menu->setSize(150, 50);
+    button_menu->setText("main menu");
+    button_menu->setPosition(625, 80);
+    button_menu->setCallbackId(101);
+    button_menu->bindCallback(tgui::Button::LeftMouseClicked);
 
 
 	//The different gameobjects:
