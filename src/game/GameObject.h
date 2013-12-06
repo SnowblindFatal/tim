@@ -23,6 +23,7 @@ public:
         world(world), 
         name(name), 
         drawable(drawable),
+        id(0),
         PLATFORM_THRESHOLD(0.05f),
         DISCRETE_MOVE_UNIT(1.0f)
         {};
@@ -33,6 +34,8 @@ public:
 
 	virtual b2Vec2  getPos() const;
 	virtual std::string getName(void) const;
+	virtual int getID() const;
+	virtual void setID(int);
 	
 	
 	virtual void reset();
@@ -76,6 +79,7 @@ protected:
 	b2World& world;
 	std::string name; //Needed for at least LevelData::deletePlayerObject
 	Drawable* drawable;
+	int id;
     
     const float PLATFORM_THRESHOLD;
     const float DISCRETE_MOVE_UNIT;

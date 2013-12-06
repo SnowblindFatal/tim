@@ -1,7 +1,7 @@
 #ifndef FILEHANDLER_H
 #define	FILEHANDLER_H
 
-#include "../tests/Level.h"
+#include "Level.h"
 #include "GameObject.h"
 #include "WinCondition.h"
 
@@ -24,6 +24,7 @@ class FileHandler {
 	void parseLine(std::vector<std::string>&, std::string&);
 	std::string filePath;
 	std::string errorMsg;
+	int conds;
 };
 
 /* 

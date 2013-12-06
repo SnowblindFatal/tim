@@ -72,6 +72,11 @@ public:
 	
 	//This for access
 	std::map<std::string, size_t>& get_available();
+	
+	//Used by FileHandler
+	std::list<GameObject*>& getLevelObjects() const;
+	std::list<WinCondition*>& getWinConditions() const;
+	
  private:
     
     b2World phys_world;

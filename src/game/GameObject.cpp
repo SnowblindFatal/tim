@@ -22,6 +22,17 @@ b2Vec2 GameObject::getPos() const {
 std::string GameObject::getName(void) const {
 	return name;
 }
+
+int GameObject::getID() const
+{
+	return id;
+}
+
+void GameObject::setID(int i)
+{
+	id = i;
+}
+
 void GameObject::reset() {
 	for (auto& body : bodies) {
 		body.body_ptr->SetTransform(body.original_pos, body.original_rot);

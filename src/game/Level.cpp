@@ -236,6 +236,16 @@ std::map<std::string, size_t>& LevelData::get_available() {
 	return available;
 }
 
+std::list<GameObject*>& LevelData::getLevelObjects() const 
+{
+	return levelobjects;
+}
+
+std::list<WinCondition*>& getWinConditions() const
+{
+	return winconditions;
+}
+
 
 	
 	

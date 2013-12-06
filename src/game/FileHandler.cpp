@@ -6,7 +6,7 @@
 #include <fstream>
 #include <sstream>
 
-FileHandler::FileHandler(std::string path) : filePath(path) { }
+FileHandler::FileHandler(std::string path) : filePath(path), conds(0) { }
 
 FileHandler::~FileHandler() { }
 
@@ -65,10 +65,75 @@ bool FileHandler::loadLevel(LevelData& level)
 	return false;
 }
 
-bool FileHandler::saveLevel(LevelData&)
+bool FileHandler::saveLevel(LevelData& level)
 {
-	// Implement this
-	return false;
+	auto levelObjects = level.getLevelObjects();
+	auto availableObjects = level.get_available();
+	auto winConditions = level.getWinConditions();
+	// Check that level contains level- and player objects and win conditions
+	if (winConditions.empty())
+	{
+		errorMsg = "No goals defined.";
+		return false;
+	}
+	else if (levelObjects.empty())
+	{
+		errorMsg = "No level objects.";
+		return false;
+	}
+	else if (availableObjects.empty())
+	{
+		errorMsg = "No player objects.";
+		return false;
+	}
+	
+	std::ofstream file;
+	std::string line; // Needed?
+	std::stringstream ss;
+	
+	file.open(filePath);
+	if (!file.is_open()) 
+	{
+		errorMsg = "Could not open file " + filePath + ".";
+		return false;
+	}
+	
+	// Write level objects
+	// TODO: Implement function to handle convertion from GameObject to text
+	file << "LevelObjects\n";
+	for (auto it = winConditions.begin();it != winConditions.end();it++)
+	{
+		WinCondition* cond = *it;
+		for (auto obj = levelObjects.begin();obj != levelObjects.end();obj++)
+		{
+			if ((cond->getObject())->getID() == cond->getID())
+			{
+				// Convert GameObject to text followed by WinCondition in text form and write to file
+			}
+		}
+	}
+	
+	for (auto it = levelObjects.begin();it != levelObjects.end();it++)
+	{
+		if ((*it)->getID() == 0)
+		{
+			// Convert GameObject to text and write to file
+		}
+	}
+	
+	file << ".\n",
+	
+	// Write player objects
+	file << "PlayerObjects\n";
+	for (auto it = availableObjects.begin();it != availableObjects.end();it++)
+	{
+		for (size_t i = it->second;i > 0;i--)
+			file << it->first << "\n";
+	}
+	file << ".";
+	
+	file.close();
+	return true;
 }
 
 GameObject* FileHandler::createObject(LevelData& level, std::string& line)
@@ -176,6 +241,8 @@ GameObject* FileHandler::createWinCondition(LevelData& level, GameObject* obj, s
 		for (size_t i = 1;i < 4;i++)
 			ss << parameters[i] << " ";
 		ss >> x >> y >> tolerance;
+		conds++;
+		obj->setID(conds); // Set unique ID for GameObject. Used to combine WinCondition with GameObject during saveLevel.
 		cond = new IsNearPoint(obj, x, y, tolerance);
 		level.addWinCondition(cond);
 	}
@@ -185,6 +252,7 @@ GameObject* FileHandler::createWinCondition(LevelData& level, GameObject* obj, s
 		ss << "No win condition named " << condType << ".";
 		return NULL;
 	}
+	
 	
 	return obj;
 }
