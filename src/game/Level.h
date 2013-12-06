@@ -33,19 +33,20 @@ public:
     
 	void loadlevel();
     
-    //Iterate over winconditions, if all return true, return true, else 
+    //Iterate over winconditions, if all return true, return true, else false
     bool checkWin() const;
 
 	/*
 	Create a new GameObject, if available. It is placed in playerobjects.
 	A pointer to the created GameObject is also returned, so that it is possible for
 	the object to follow the mouse until a suitable position is found.
+	The edit flag is for EditMode, where we don't need to check if available.
 	*/
-	GameObject* createObject(std::string name, float x, float y);
+	GameObject* createObject(std::string name, float x, float y, bool edit=false);
 	
-	//Return the first found playerobject that the point is inside of.
+	//Return the first found playerobject/levelobject that the point is inside of.
 	GameObject* isInsidePlayerObject(float x, float y) const;
-
+	GameObject* isInsideLevelObject(float x, float y) const;
 
 
     void draw(GameObject* priority, bool debug=false, bool drawsfml=true); //Cannot be const, because no DrawDebugData() const exists, for whatever reason
@@ -56,6 +57,7 @@ public:
 	
 	//Delete and place in available.
 	void deletePlayerObject(GameObject* obj);
+	void deleteLevelObject(GameObject* obj);
 	
     //One Box2D step:
     void simulate() ;

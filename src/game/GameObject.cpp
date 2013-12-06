@@ -494,7 +494,7 @@ Lift::Lift(b2World& world, float x1, float y1, float x2, float y2) : GameObject(
 	world.CreateJoint(&jointDef);
 }
 
-GravityChanger::GravityChanger(b2World& world, float x, float y) : GameObject(world, x, y, "GravityChanger", new GravityChangerDrawable(x,y)) {
+GravityChanger::GravityChanger(b2World& world, float x, float y, bool flipped) : GameObject(world, x, y, "GravityChanger", new GravityChangerDrawable(x,y)), flipped(flipped) {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x,y);
 	b2Body* body_ptr=world.CreateBody(&bodyDef);

@@ -17,6 +17,7 @@ class FileHandler {
 	bool loadLevel(LevelData&);
 	bool saveLevel(LevelData&);
 	std::string getError() const;
+	
 	private:
 	GameObject* createObject(LevelData&, std::string&);
 	GameObject* createWinCondition(LevelData&, GameObject*, std::vector<std::string>&);

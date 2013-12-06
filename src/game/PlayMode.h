@@ -12,10 +12,11 @@
 #include <SFML/Graphics.hpp>
 #include "Level.h"
 #include <TGUI/TGUI.hpp>
+#include <vector>
 
 class PlayMode : public PlayingField {
 public:
-    PlayMode(sf::RenderWindow& _App) : PlayingField(_App), simulate(false), level(_App), drawDebug(true), drawLevel(true), active_object(NULL), dragged_object(NULL), highlight_active(false), gui(_App), gui_loaded(false) {}
+    PlayMode(sf::RenderWindow& _App) : PlayingField(_App), simulate(false), level(_App), drawDebug(false), drawLevel(true), active_object(NULL), dragged_object(NULL), highlight_active(false), gui(_App), gui_loaded(false) {}
     PlayMode(const PlayMode& orig) = delete;
     PlayMode operator=(const PlayMode& orig) = delete;
     virtual ~PlayMode(){

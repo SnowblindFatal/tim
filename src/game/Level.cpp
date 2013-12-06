@@ -123,7 +123,12 @@ bool LevelData::checkWin() const {
 }
 	
 	
-GameObject* LevelData::createObject(std::string name, float x, float y) {
+GameObject* LevelData::createObject(std::string name, float x, float y, bool edit) {
+		if (edit) {
+			levelobjects.push_back(GameObjectFactory(phys_world,name,x,y));
+			return levelobjects.back();
+		}
+		
 		if (available[name]==0) {
 			return NULL; //Denoting failed creation.
 		}
@@ -133,6 +138,17 @@ GameObject* LevelData::createObject(std::string name, float x, float y) {
 			return playerobjects.back();
 		}
 }
+
+GameObject* LevelData::isInsideLevelObject(float x, float y) const {
+		for (auto it : levelobjects) {
+			if (it->isInside(x,y)) {
+                it->setMoveStartLocation(x, y);
+                return it;
+            }
+		}
+		return NULL;
+}
+
 
 GameObject* LevelData::isInsidePlayerObject(float x, float y) const {
 		for (auto it : playerobjects) {
@@ -150,8 +166,10 @@ void LevelData::draw(GameObject* priority, bool debug, bool drawsfml) {
       
       if (drawsfml) {
       	for (auto &iter : levelobjects) {
-			iter->update_drawable();
-			iter->draw(App);
+			if (iter!=priority) {
+				iter->update_drawable();
+				iter->draw(App);
+			}
       	}
       	for (auto &iter : playerobjects) {
 			if (iter!=priority) {
@@ -207,6 +225,12 @@ void LevelData::deletePlayerObject(GameObject* obj) {
 	delete obj;
 	playerobjects.remove(obj);
 }
+
+void LevelData::deleteLevelObject(GameObject* obj) {
+	delete obj;
+	levelobjects.remove(obj);
+}
+	
 	
 std::map<std::string, size_t>& LevelData::get_available() {
 	return available;
