@@ -13,8 +13,11 @@
 GameState::StateSelect MainMenu::run()
 {
     done = false;
-    
-    initialiseGUI();
+    if (!gui_loaded)
+    {
+        initialiseGUI();
+        gui_loaded = true;
+    }
 	
     while (!done)
     {

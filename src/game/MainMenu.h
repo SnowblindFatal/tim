@@ -18,7 +18,7 @@ private:
     
     
 public:
-    explicit MainMenu(sf::RenderWindow& _App) : GameState(_App), gui(_App)  {}
+    explicit MainMenu(sf::RenderWindow& _App) : GameState(_App), gui(_App), gui_loaded(false)  {}
     MainMenu(const MainMenu& orig) = delete;
     MainMenu operator=(const MainMenu& orig) = delete;
     virtual ~MainMenu(){}
@@ -30,6 +30,7 @@ private:
     void handleKeyPress(sf::Event event);
     void handleGuiEvents();
     void drawStuff();
+    bool gui_loaded;
 };
 
 #endif	/* MAINMENU_H */
