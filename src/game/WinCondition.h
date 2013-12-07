@@ -50,6 +50,16 @@ public:
 		}
 		return fulfilled;
 	}
+	
+	b2Vec2 getPos()
+	{
+		return b2Vec2(x, y);
+	}
+	
+	float getTolerance()
+	{
+		return tolerance;
+	}
 
 private:
 	float x;

@@ -60,7 +60,7 @@ bool FileHandler::loadLevel(LevelData& level)
 		return true;
 	std::stringstream errorStream;
 	errorStream << "Level file corrupted. LevelObjects: " << levelObjects << ", PlayerObjects: " << playerObjects
-													<< ", WinConditions:" << level.hasGoals();
+													<< ", WinConditions: " << level.hasGoals();
 	errorMsg = errorStream.str();
 	return false;
 }
@@ -70,6 +70,7 @@ bool FileHandler::saveLevel(LevelData& level)
 	auto levelObjects = level.getLevelObjects();
 	auto availableObjects = level.get_available();
 	auto winConditions = level.getWinConditions();
+	bool hasPlayerObjects = false;
 	// Check that level contains level- and player objects and win conditions
 	if (winConditions.empty())
 	{
@@ -81,12 +82,20 @@ bool FileHandler::saveLevel(LevelData& level)
 		errorMsg = "No level objects.";
 		return false;
 	}
-	else if (availableObjects.empty())
+	for (auto it = availableObjects.begin();it != availableObjects.end();it++)
+	{
+		if (it->second > 0)
+		{
+			hasPlayerObjects = true;
+			break;
+		}
+	}
+	if (!hasPlayerObjects)
 	{
 		errorMsg = "No player objects.";
 		return false;
 	}
-	
+		
 	std::ofstream file;
 	std::string line; // Needed?
 	std::stringstream ss;
@@ -99,26 +108,22 @@ bool FileHandler::saveLevel(LevelData& level)
 	}
 	
 	// Write level objects
-	// TODO: Implement function to handle convertion from GameObject to text
+
 	file << "LevelObjects\n";
 	for (auto it = winConditions.begin();it != winConditions.end();it++)
 	{
 		WinCondition* cond = *it;
 		for (auto obj = levelObjects.begin();obj != levelObjects.end();obj++)
 		{
-			if ((cond->getObject())->getID() == cond->getID())
-			{
-				// Convert GameObject to text followed by WinCondition in text form and write to file
-			}
+			if ((cond->getObject())->getID() == (*obj)->getID())
+				file << objectToText(cond->getObject(), true) << " " << conditionToText(cond);
 		}
 	}
 	
 	for (auto it = levelObjects.begin();it != levelObjects.end();it++)
 	{
 		if ((*it)->getID() == 0)
-		{
-			// Convert GameObject to text and write to file
-		}
+			file << objectToText(*it, false);
 	}
 	
 	file << ".\n",
@@ -205,11 +210,12 @@ GameObject* FileHandler::createObject(LevelData& level, std::string& line)
 	}
 	else if (name == "GravityChanger")
 	{
-		for (size_t i = 1;i < 3;i++)
+		bool flipped;
+		for (size_t i = 1;i < 4;i++)
 			ss << parameters[i] << " ";
-		ss >> x >> y;
-		obj = new GravityChanger(level.getWorld(), x, y);
-		parameters.erase(parameters.begin(), parameters.begin()+3);
+		ss >> x >> y >> flipped;
+		obj = new GravityChanger(level.getWorld(), x, y, flipped);
+		parameters.erase(parameters.begin(), parameters.begin()+4);
 	}
 	else if (name == "Bomb")
 	{
@@ -217,6 +223,14 @@ GameObject* FileHandler::createObject(LevelData& level, std::string& line)
 			ss << parameters[i] << " ";
 		ss >> x >> y;
 		obj = new Bomb(level.getWorld(), x, y);
+		parameters.erase(parameters.begin(), parameters.begin()+3);
+	}
+	else if (name == "Domino")
+	{
+		for (size_t i = 1;i < 3;i++)
+			ss << parameters[i] << " ";
+		ss >> x >> y;
+		obj = new Domino(level.getWorld(), x, y);
 		parameters.erase(parameters.begin(), parameters.begin()+3);
 	}
 	else {
@@ -255,6 +269,66 @@ GameObject* FileHandler::createWinCondition(LevelData& level, GameObject* obj, s
 	
 	
 	return obj;
+}
+
+std::string FileHandler::objectToText(GameObject* obj, bool hasCondition)
+{
+	std::stringstream ss;
+	std::string name = obj->getName();
+	
+	ss << name << " " << (obj->getPos()).x << " " << (obj->getPos()).y;
+	
+	if ((name == "Platform") || (name == "Wall"))
+	{
+		// x, y, width, height
+		float width, height;
+		if (name == "Platform") 
+		{
+			Platform* plat = dynamic_cast<Platform*>(obj);
+			width = (plat->getDimensions()).x;
+			height = (plat->getDimensions()).y;
+		}
+		else if (name == "Wall")
+		{
+			Wall* wall = dynamic_cast<Wall*>(obj);
+			width = (wall->getDimensions()).x;
+			height = (wall->getDimensions()).y;
+		}
+		ss << " " << width << " " << height;
+	} 
+	else if (name == "GravityChanger")
+	{
+		GravityChanger* gc = dynamic_cast<GravityChanger*>(obj);
+		// x, y, flipped
+		ss << " " << gc->flipped;
+	}
+	
+	if (!hasCondition)
+		ss << "\n";
+	return ss.str();
+}
+
+std::string FileHandler::conditionToText(WinCondition* cond)
+{
+	std::stringstream ss;
+	std::string name = cond->getName();
+	
+	ss << name;
+	
+	if (name == "IsNearPoint")
+	{
+		IsNearPoint* inp = dynamic_cast<IsNearPoint*>(cond);
+		// x, y, tolerance
+		ss << " " << (inp->getPos()).x << " " << (inp->getPos()).y << " " << inp->getTolerance();
+	}
+	/*
+	#####################################
+	### ADD MORE WIN CONDITIONS LATER ###
+	#####################################
+	*/
+	
+	ss << "\n";
+	return ss.str();
 }
 
 void FileHandler::parseLine(std::vector<std::string>& parameters, std::string& line)
