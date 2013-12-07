@@ -32,7 +32,8 @@ namespace {
 		"Sidebar.png",
         "magic.jpg",
 		"bigball.png",
-		"savebox.png"
+		"savebox.png",
+		"explosion.png"
     };
 
     const std::vector<std::string> soundFileNames = {

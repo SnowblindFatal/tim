@@ -44,9 +44,12 @@ public:
 	void draw(sf::RenderWindow& win);
 	void update(const std::vector<PhysBody>&);
 	void setExploded(bool param);
+	void setExplosionStatus(int num);
 private:
 	sf::RectangleShape box;
+	sf::Sprite explosion;
 	bool exploded;
+	int explosion_status;
 
 };
 
@@ -97,6 +100,18 @@ private:
 	sf::RectangleShape box;	
 	sf::ConvexShape polygon;
 };
+
+class CatapultDrawable : public Drawable {
+public:
+	CatapultDrawable(float x, float y);
+	void draw(sf::RenderWindow&);
+	void update(const std::vector<PhysBody>&);
+private:
+	sf::RectangleShape box;
+	sf::RectangleShape box2;	
+	sf::ConvexShape polygon;
+};
+
 
 class DominoDrawable : public Drawable {
 public:

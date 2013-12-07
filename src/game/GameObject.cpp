@@ -176,8 +176,8 @@ Domino::Domino(b2World& world, float x, float y) : GameObject(world,x,y,"Domino"
     dominoShape.SetAsBox(0.4, 1.5);
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &dominoShape;
-    fixtureDef.density = 3.0f;
-    fixtureDef.friction = 0.5f;
+    fixtureDef.density = 13.0f;
+    fixtureDef.friction = 0.6f;
     body_ptr->CreateFixture(&fixtureDef);
 	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition()));
 }
@@ -304,7 +304,7 @@ b2Vec2 Wall::getDimensions() {
     return dimensions;
 }
 
-Catapult::Catapult(b2World& world, float x, float y) : GameObject(world, x,y,"Catapult") {
+Catapult::Catapult(b2World& world, float x, float y) : GameObject(world, x,y,"Catapult", new CatapultDrawable(x,y)) {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
 	b2Body* body_ptr = world.CreateBody(&bodyDef);
@@ -323,17 +323,17 @@ Catapult::Catapult(b2World& world, float x, float y) : GameObject(world, x,y,"Ca
 	
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(x, y);
-	bodyDef.angle = 0;
+	bodyDef.angle = 0.4;
 	b2Body* body_ptr2 =world.CreateBody(&bodyDef);
 	b2PolygonShape boxShape;
 	boxShape.SetAsBox(5,0.2);
 	b2FixtureDef fixtureDef2;
 	fixtureDef2.shape = &boxShape;
-	fixtureDef2.density = 1;
+	fixtureDef2.density = 0.1;
 	fixtureDef2.friction = 1;
 	fixtureDef2.restitution = 0;
 	body_ptr2->CreateFixture(&fixtureDef2);
-	bodies.push_back(PhysBody(body_ptr2, body_ptr2->GetPosition()));
+	bodies.push_back(PhysBody(body_ptr2, body_ptr2->GetPosition(), body_ptr2->GetAngle()));
 
 	boxShape.SetAsBox(0.2,1, b2Vec2(4.8,-1.2),0);
 	fixtureDef2.shape = &boxShape;
@@ -341,6 +341,7 @@ Catapult::Catapult(b2World& world, float x, float y) : GameObject(world, x,y,"Ca
 	fixtureDef2.friction = 1;
 	fixtureDef2.restitution = 0;
 	body_ptr2->CreateFixture(&fixtureDef2);
+
 
 	b2RevoluteJointDef jointDef;
 	jointDef.localAnchorA.Set(0, 0);
@@ -413,11 +414,11 @@ Ball::Ball(b2World& world, float x, float y,std::string name, float r, float res
 
 }
 
-BouncingBall::BouncingBall(b2World& world, float x, float y) : Ball(world, x, y,"BouncingBall", 0.5, 0.5, 1.0, new BouncingBallDrawable(x,y)) {}
+BouncingBall::BouncingBall(b2World& world, float x, float y) : Ball(world, x, y,"BouncingBall", 0.5, 0.5, 5.0, new BouncingBallDrawable(x,y)) {}
 
 BowlingBall::BowlingBall(b2World& world, float x, float y) : Ball(world, x, y,"BowlingBall", 1.0, 0.1, 3.0, new BowlingBallDrawable(x,y)) {}
 
-BigBall::BigBall(b2World& world, float x, float y) : Ball(world, x, y,"BigBall", 2.0, 0.1, 0.4, new BigBallDrawable(x,y)) {}
+BigBall::BigBall(b2World& world, float x, float y) : Ball(world, x, y,"BigBall", 2.0, 0.3, 0.4, new BigBallDrawable(x,y)) {}
 
 
 Bomb::Bomb(b2World& world, float x, float y) : GameObject(world, x, y,"Bomb", new BombDrawable(x,y)) {
@@ -475,6 +476,7 @@ void Bomb::reset() {
 	exploded = false;
 	bodies[0].body_ptr->SetActive(true);
 	dynamic_cast<BombDrawable*>(drawable)->setExploded(false);
+	dynamic_cast<BombDrawable*>(drawable)->setExplosionStatus(0);
 	GameObject::reset();
 }
 

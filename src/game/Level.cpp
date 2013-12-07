@@ -16,15 +16,16 @@ LevelData::LevelData(sf::RenderWindow& _App) : phys_world(default_gravity), App(
 		DebugDrawInstance.AppendFlags(b2Draw::e_centerOfMassBit);
 
 		//List the various GameObjects, there will of course be 0 available by default:
-		available["Platform"] = 0;
-		available["Wall"] = 0;
-		available["BouncingBall"] = 0;
-		available["BigBall"] = 0;
-		available["BowlingBall"] = 0;
-		available["Catapult"] = 0;
-		available["Seesaw"] = 0;
-		available["GravityChanger"] = 0;
-		available["Bomb"] = 0;
+		available["Platform"] = 10;
+		available["Wall"] =10;
+		available["BouncingBall"] = 10;
+		available["BigBall"] = 10;
+		available["BowlingBall"] = 4;
+		available["Catapult"] = 10;
+		available["Seesaw"] = 10;
+		available["GravityChanger"] = 10;
+		available["Bomb"] = 24;
+		available["Domino"] = 40;
 
 
 }

@@ -50,6 +50,11 @@ BombDrawable::BombDrawable(float x, float y) : Drawable() {
 	x*=10;
 	y*=10;
 	exploded = false;
+	explosion_status = 0;
+	sf::Texture *texture = Resources::getInstance().getTexture("explosion.png");
+	explosion.setTexture(*texture);	
+	explosion.setPosition(x,y);
+	explosion.setOrigin(64,64);
 	box.setSize(sf::Vector2f(26,26));
 	box.setOrigin(13, 13);
 	box.setPosition(x,y);
@@ -63,17 +68,29 @@ void BombDrawable::draw(sf::RenderWindow& win) {
 		win.draw(box);
     	highlight->draw(win);
 	}
+	else {
+		if (explosion_status != 40) {
+			explosion.setTextureRect(sf::IntRect(explosion_status*128, 0, 128, 128));
+			win.draw(explosion);
+			explosion_status++;
+		}
+	}
 }
 
 void BombDrawable::update(const std::vector<PhysBody>& bodies) {
 	box.setPosition(sf::Vector2f(bodies[0].body_ptr->GetPosition().x*10,bodies[0].body_ptr->GetPosition().y*10));
 	box.setRotation(bodies[0].body_ptr->GetAngle()*180.0f/3.141592f);
+	explosion.setPosition(sf::Vector2f(bodies[0].body_ptr->GetPosition().x*10,bodies[0].body_ptr->GetPosition().y*10));
 	const sf::FloatRect rect=box.getGlobalBounds();
 	highlight->update_rect(rect);
 }
 
 void BombDrawable::setExploded(bool param) {
 	exploded = param;
+}
+
+void BombDrawable::setExplosionStatus(int num) {
+	explosion_status = num;
 }
 
 GravityChangerDrawable::GravityChangerDrawable(float x, float y) : Drawable(new GravityChangerHighlight()) {
@@ -215,6 +232,57 @@ void SeesawDrawable::update(const std::vector<PhysBody>& bodies) {
    // polygon.setTextureRect(sf::IntRect(0, 0, rect.width, rect.height));
 	box.setPosition(sf::Vector2f(bodies[1].body_ptr->GetPosition().x*10,bodies[1].body_ptr->GetPosition().y*10));
 	box.setRotation(bodies[1].body_ptr->GetAngle()*180.0f/3.141592f);
+	const sf::FloatRect rect =box.getGlobalBounds();
+	highlight->update_rect(rect);
+}
+
+
+CatapultDrawable::CatapultDrawable(float x, float y) : Drawable() {
+	x*=10;
+	y*=10;
+	polygon.setPointCount(3);
+	polygon.setPoint(0, sf::Vector2f(x, y));
+	polygon.setPoint(1, sf::Vector2f(x+10, y+20));
+	polygon.setPoint(2, sf::Vector2f(x-10, y+20));
+	polygon.setTexture(Resources::getInstance().getTexture("block.jpg"));
+	polygon.setOutlineThickness(1);	
+	polygon.setOutlineColor(sf::Color(145,145,145));
+
+	box.setSize(sf::Vector2f(100,4));
+	box.setOrigin(50, 2);
+	box.setPosition(x,y);
+	box.setFillColor(sf::Color(160,160,160));
+	box.setOutlineThickness(1);
+	box.setOutlineColor(sf::Color(128,128,128));
+
+	box2.setSize(sf::Vector2f(4,20));
+	box2.setOrigin(-46, 22);
+	box2.setPosition(x,y);
+	box2.setFillColor(sf::Color(160,160,160));
+	box2.setOutlineThickness(1);
+	box2.setOutlineColor(sf::Color(128,128,128));
+}
+
+void CatapultDrawable::draw(sf::RenderWindow& win) {
+	win.draw(box);
+	win.draw(box2);
+	win.draw(polygon);
+    highlight->draw(win);
+}
+
+void CatapultDrawable::update(const std::vector<PhysBody>& bodies) {
+	b2Body* ptr= bodies[0].body_ptr;
+	b2Vec2 pos = ptr->GetPosition();
+	for (int index=0;index<3;index++) {
+		b2Vec2 vert = dynamic_cast<b2PolygonShape*>(ptr->GetFixtureList()->GetShape())->GetVertex(index);
+		polygon.setPoint(index, sf::Vector2f(pos.x*10 + vert.x*10, pos.y*10 + vert.y*10));
+	}
+    //const sf::FloatRect rect = polygon.getGlobalBounds();
+   // polygon.setTextureRect(sf::IntRect(0, 0, rect.width, rect.height));
+	box.setPosition(sf::Vector2f(bodies[1].body_ptr->GetPosition().x*10,bodies[1].body_ptr->GetPosition().y*10));
+	box.setRotation(bodies[1].body_ptr->GetAngle()*180.0f/3.141592f);
+	box2.setPosition(sf::Vector2f(bodies[1].body_ptr->GetPosition().x*10,bodies[1].body_ptr->GetPosition().y*10));
+	box2.setRotation(bodies[1].body_ptr->GetAngle()*180.0f/3.141592f);
 	const sf::FloatRect rect =box.getGlobalBounds();
 	highlight->update_rect(rect);
 }
