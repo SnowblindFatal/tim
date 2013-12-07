@@ -1,5 +1,5 @@
 #include "Level.h"
-
+#include "FileHandler.h"
 namespace {
     b2Vec2 default_gravity(0.0f, 9.8f);
     float32 timestep = 1.0f/60.0f;
@@ -16,16 +16,16 @@ LevelData::LevelData(sf::RenderWindow& _App) : phys_world(default_gravity), App(
 		DebugDrawInstance.AppendFlags(b2Draw::e_centerOfMassBit);
 
 		//List the various GameObjects, there will of course be 0 available by default:
-		available["Platform"] = 10;
-		available["Wall"] =10;
-		available["BouncingBall"] = 10;
-		available["BigBall"] = 10;
-		available["BowlingBall"] = 4;
-		available["Catapult"] = 10;
-		available["Seesaw"] = 10;
-		available["GravityChanger"] = 10;
-		available["Bomb"] = 24;
-		available["Domino"] = 40;
+		available["Platform"] = 0;
+		available["Wall"] =0;
+		available["BouncingBall"] = 0;
+		available["BigBall"] = 0;
+		available["BowlingBall"] = 0;
+		available["Catapult"] = 0;
+		available["Seesaw"] = 0;
+		available["GravityChanger"] = 0;
+		available["Bomb"] = 0;
+		available["Domino"] = 0;
 
 
 }
@@ -67,51 +67,26 @@ void LevelData::addWinCondition(WinCondition* cond) {
 void LevelData::loadlevel() {
 
 	std::cout << "load level\n";
-	/*	
-	for (size_t i = 0; i<7; i++)
-	{
-		for (size_t j=0; j<4; j++)
-		{		
-			if (i%2 != 1)
-			{
-				levelobjects.push_back(new Seesaw(phys_world, 5+j*19, 10+i*4));
-			}
-			else
-			{
-				if (j==3)
-					break;
-				levelobjects.push_back(new Seesaw(phys_world, 14.5+j*19, 10+i*4));
-			}
-		}
-	}
-	*/
-	//levelobjects.push_back(new Platform(phys_world, 15.0, 15.0, 100.0, 0));
-	/*
-	levelobjects.push_back(new BouncingBall(phys_world, 40, 0.0f));
-	levelobjects.push_back(new BouncingBall(phys_world, 42, 0.0f));
-	levelobjects.push_back(new BouncingBall(phys_world, 44, 0.0f));
-	levelobjects.push_back(new BouncingBall(phys_world, 46, 0.0f));
-	levelobjects.push_back(new BouncingBall(phys_world, 50, 0.0f));
-	levelobjects.push_back(new BouncingBall(phys_world, 52, 0.0f));
-	*/
-	//levelobjects.push_back(new Lift(phys_world, 10, 30, 30, 30));
-	//levelobjects.push_back(new Bomb (phys_world, 48.0f, 0.0f));
-	//levelobjects.push_back(new Bomb (phys_world, 40.0f, 0.0f));
-	//winconditions.push_back(new IsNearPoint(levelobjects.back(), 80.0f, 40.0f, 5.0f));
-	//levelobjects.push_back(new Bomb (phys_world, 48.0f, 0.0f));
-	//winconditions.push_back(new IsNearPoint(levelobjects.back(), 80.0f, 40.0f, 5.0f));
-	//levelobjects.push_back(new GravityChanger(phys_world, 20.0f, 20.0f));
 
+	FileHandler fh ("src/levels/level1.txt");
+	if (fh.loadLevel(*this)) {
+		level_loaded=true;
+	} else {
+		std::cout << "error: " << fh.getError() << std::endl;
+		// Return to level selection screen
+	}
+	/*
 	available["Platform"]=5;
 	available["Wall"]=1;
 	available["BouncingBall"] = 4;
 	available["Seesaw"] = 20;
-	available["Bomb"] = 10;
+	available["Bomb"] = 100;
 	available["GravityChanger"] = 3;
 	available["BowlingBall"] = 6;
 	available["Domino"] = 20;
 	available["BigBall"] = 10;
-	level_loaded=true;
+*/	
+	
 }
 
 bool LevelData::checkWin() const {
