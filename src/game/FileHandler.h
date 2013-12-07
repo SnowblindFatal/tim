@@ -21,6 +21,8 @@ class FileHandler {
 	private:
 	GameObject* createObject(LevelData&, std::string&);
 	GameObject* createWinCondition(LevelData&, GameObject*, std::vector<std::string>&);
+	std::string objectToText(GameObject*, bool);
+	std::string conditionToText(WinCondition*);
 	void parseLine(std::vector<std::string>&, std::string&);
 	std::string filePath;
 	std::string errorMsg;
