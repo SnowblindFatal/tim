@@ -7,6 +7,7 @@
 
 #include "PlayMode.h"
 #include "GameState.h"
+#include "FileHandler.h"
 #include <iostream>
 #include <sstream>
 
@@ -15,8 +16,9 @@ GameState::StateSelect PlayMode::run()
     done = false;
     if (!level.loaded() && Resources::getInstance().getCurrentLevelName() != currentLevelName)
     {
-        level.loadlevel();
         currentLevelName = Resources::getInstance().getCurrentLevelName();
+        FileHandler handler("res/leveldata/"+currentLevelName);
+        handler.loadLevel(level);
     }
  
 	if (!gui_loaded)

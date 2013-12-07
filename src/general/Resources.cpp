@@ -149,6 +149,11 @@ const std::map<std::string, bool>& Resources::getLevelInfo() const
     return levelInfo;
 }
 
+void Resources::addLevel(std::string levelName) 
+{
+    levelInfo[levelName] = 0;
+}
+
 void Resources::winLevel(const std::string levelName)
 {
     levelInfo[levelName] = 1;

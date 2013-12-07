@@ -10,6 +10,8 @@
 
 #include "GameState.h"
 #include <TGUI/TGUI.hpp>
+#include <string>
+#include <vector>
 
 class MainMenu : public GameState {
 public:
@@ -30,7 +32,11 @@ private:
     void handleKeyPress(sf::Event event);
     void handleGuiEvents();
     void drawStuff();
+    void selectLevel();
     bool gui_loaded;
+    void disableOrEnableWidgets(std::string value);
+    void populateLevelSelector(std::vector<std::string>& levelNames);
+    void handleLevelPicker(std::vector<std::string>& levelNames);
 };
 
 #endif	/* MAINMENU_H */

@@ -68,7 +68,7 @@ void LevelData::loadlevel() {
 
 	std::cout << "load level\n";
 
-	FileHandler fh ("src/levels/level1.txt");
+	FileHandler fh("res/leveldata/level1.txt");
 	if (fh.loadLevel(*this)) {
 		level_loaded=true;
 	} else {

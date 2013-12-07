@@ -36,6 +36,7 @@ public:
     void setCurrentLevel(const std::string& fileName);
     const std::string& getCurrentLevelName() const;
     const std::map<std::string, bool>& getLevelInfo() const;
+    void addLevel(std::string levelName);
     
 private:
     Resources(){}

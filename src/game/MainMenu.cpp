@@ -9,6 +9,7 @@
 #include "GameState.h"
 #include <TGUI/TGUI.hpp>
 #include <stdexcept>
+#include <vector>
 
 GameState::StateSelect MainMenu::run()
 {
@@ -74,15 +75,9 @@ void MainMenu::handleGuiEvents()
     tgui::Callback callback;
     while (gui.pollCallback(callback))
     {
-        if (callback.id == 1) 
+        if (callback.id == 2) 
         {
-            Resources::getInstance().setCurrentLevel("level1.txt");
-            retval = GameState::StateSelect::Play;
-            done = true;
-        }
-        else if (callback.id == 2) 
-        {
-            //TODO: Level select
+            selectLevel();
         }
         else if (callback.id == 3) 
         {
@@ -105,20 +100,11 @@ void MainMenu::initialiseGUI()
     tgui::Picture::Ptr picture(gui);
     picture->load("res/textures/magic.jpg");
     picture->setSize(800, 600);
-    
-    tgui::Button::Ptr button(gui);
-    button->load("TGUI/Black.conf");
-    button->setPosition(250, 100);
-    button->setText("(test mode)");
-    button->setCallbackId(1);
-    button->bindCallback(tgui::Button::LeftMouseClicked);
-    button->setSize(300, 50);
-    button->setTransparency(220);
 
     tgui::Button::Ptr button2(gui);
     button2->load("TGUI/Black.conf");
     button2->setPosition(250, 200);
-    button2->setText("Choose level (TODO)");
+    button2->setText("Choose level");
     button2->setCallbackId(2);
     button2->bindCallback(tgui::Button::LeftMouseClicked);
     button2->setSize(500, 50);
@@ -141,4 +127,106 @@ void MainMenu::initialiseGUI()
     button4->bindCallback(tgui::Button::LeftMouseClicked);
     button4->setSize(300, 50);
     button4->setTransparency(220);
+}
+
+void MainMenu::selectLevel()
+{
+    disableOrEnableWidgets("false");
+    
+    std::vector<std::string> levelNames;
+
+    populateLevelSelector(levelNames);
+    
+    handleLevelPicker(levelNames);
+    
+    tgui::Panel::Ptr panel = gui.get("panel1");
+    panel->removeAllWidgets();
+    gui.remove(panel);
+    disableOrEnableWidgets("true");
+}
+
+void MainMenu::populateLevelSelector(std::vector<std::string>& levelNames) 
+{
+    //the button callback id i will match the index in levelNames.
+    //For instance, if the third button is clicked, it triggers
+    //callback id 2, and the level name in index 2 of levelNames vector
+    //will be used as the next level.
+    
+    int x = 20, y = 60, i = 0;
+    tgui::Panel::Ptr panel(gui, "panel1");
+    panel->setPosition(100, 50);
+    panel->setSize(600, 400);
+    panel->setBackgroundColor(sf::Color(60, 100, 140));
+    for (const auto& pair : Resources::getInstance().getLevelInfo()) {
+        levelNames.push_back(pair.first);
+        tgui::Button::Ptr button(*panel);
+        button->load("TGUI/Black.conf");
+        button->setPosition(x, y);
+        if (pair.second) {
+            button->setText(pair.first + "\n (beaten)");
+        } else {
+            button->setText(pair.first);
+        }
+        button->setCallbackId(i);
+        button->bindCallback(tgui::Button::LeftMouseClicked);
+        button->setSize(90, 50);
+        y += 60;
+        if (y > 550) {
+            x += 100;
+            y = 60;
+        }
+        i++;
+        panel->add(button);
+    }
+    
+    tgui::Button::Ptr button(*panel);
+    button->load("TGUI/Black.conf");
+    button->setPosition(500, 10);
+    button->setText("back");
+    button->setCallbackId(99999);
+    button->bindCallback(tgui::Button::LeftMouseClicked);
+    button->setSize(50, 40);
+}
+
+void MainMenu::handleLevelPicker(std::vector<std::string>& levelNames)
+{
+    bool levelPickFinished = false;
+    while (levelPickFinished == false) {
+        sf::Event event;
+        while (App.pollEvent(event)) {
+            // Close window : exit
+            if (event.type == sf::Event::Closed) {
+                retval = GameState::StateSelect::Exit;
+                done = true;
+                return;
+            }
+            gui.handleEvent(event);
+        }
+
+        tgui::Callback callback;
+        while (gui.pollCallback(callback)) {
+            if (callback.id == 99999) {
+                levelPickFinished = true;
+            } else {
+                Resources::getInstance().setCurrentLevel(levelNames.at(callback.id));
+                retval = GameState::StateSelect::Play;
+                done = true;
+                levelPickFinished = true;
+            }
+        }
+
+        App.clear();
+        gui.draw();
+        App.display();
+    }
+}
+
+
+void MainMenu::disableOrEnableWidgets(std::string value) 
+{
+    auto widgets = gui.getWidgets();
+    for (auto& widget : widgets)
+    {
+        widget->setProperty("Enabled", value);
+    }
 }
