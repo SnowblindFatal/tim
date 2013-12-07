@@ -31,8 +31,11 @@ public:
     virtual void update_drawable(); 
     virtual void draw(sf::RenderWindow&);
 	virtual void setHighlight(std::string );
-
-	virtual b2Vec2  getPos() const;
+	
+	// Returns original position
+	virtual b2Vec2 getPos() const;
+	// Used by WinCondition to get current body position
+	virtual b2Vec2 getCurrentPos() const;
 	virtual std::string getName(void) const;
 	virtual int getID() const;
 	virtual void setID(int);

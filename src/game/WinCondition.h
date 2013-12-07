@@ -43,7 +43,7 @@ public:
 	IsNearPoint(GameObject* go_ptr, float x, float y, float tolerance = 3.0f) : WinCondition(go_ptr, "IsNearPoint"), x(x), y(y), tolerance(tolerance) {}
 	
 	bool check() {
-		if ( (std::fabs(go_ptr->getPos().x-x) < tolerance) && (std::fabs(go_ptr->getPos().y-y) < tolerance) )
+		if ( (std::fabs(go_ptr->getCurrentPos().x-x) < tolerance) && (std::fabs(go_ptr->getCurrentPos().y-y) < tolerance) )
 		{
 			fulfilled=true;
 			return fulfilled;

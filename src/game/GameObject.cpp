@@ -19,6 +19,20 @@ GameObject::~GameObject() {
 b2Vec2 GameObject::getPos() const {
 	return position;
 }
+
+b2Vec2 GameObject::getCurrentPos() const
+{
+	// Calculate current body position as a mean value of all shapes
+	float x = 0;
+	float y = 0;
+	for (auto& body : bodies)
+	{
+		x += body.body_ptr->GetPosition().x;
+		y += body.body_ptr->GetPosition().y;
+	}
+	return b2Vec2(x/bodies.size(),y/bodies.size()); // ### WARNING! DIVISION BY ZERO IF GAMEOBJECT HAS NO BODIES! ###
+}
+
 std::string GameObject::getName(void) const {
 	return name;
 }
