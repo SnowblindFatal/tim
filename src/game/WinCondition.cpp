@@ -1,4 +1,6 @@
 #include "WinCondition.h"
+#include "GameObject.h"
+
 void IsNearPoint::draw(sf::RenderWindow& win) {
 	highlight.update_rect(sf::FloatRect(((float)x-tolerance)*10.0f,((float)y-tolerance)*10.0f,tolerance*20.0f,tolerance*20.0f));
 	highlight.set("wincondition", true);
@@ -37,5 +39,22 @@ void IsNearPoint::highlightDelta(sf::Vector2i mouse) {
 std::string IsNearPoint::highlightClicked(sf::Vector2i mouse) {
 	move_active=false;
 	resize_active=false;
+	return highlight.clicked(mouse);
+}
+
+
+void IsDestroyed::draw(sf::RenderWindow& win) {
+	b2Vec2 pos=go_ptr->getCurrentPos();
+	highlight.update_rect(sf::FloatRect(pos.x*10-30,pos.y*10-30,60,60));
+	highlight.set("wincondition", true);
+	highlight.draw(win);
+}
+bool IsDestroyed::highlightPoint(sf::Vector2i mouse) {
+	if (highlight.checkPoint(mouse)) {
+		return true;
+	}
+	else return false;
+}
+std::string IsDestroyed::highlightClicked(sf::Vector2i mouse) {
 	return highlight.clicked(mouse);
 }

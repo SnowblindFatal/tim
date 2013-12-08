@@ -87,6 +87,7 @@ GameState::StateSelect EditMode::run()
 				else if (highlight_active) {
 					std::string action = active_object->highlightClicked(sf::Mouse::getPosition(App));
 					if (action=="delete") {
+						level.deleteWincondition(active_object);
 						level.deleteLevelObject(active_object);
 						active_object=NULL;
 					}

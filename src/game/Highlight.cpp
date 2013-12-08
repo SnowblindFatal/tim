@@ -32,6 +32,11 @@ void Highlight::set(const std::string& type, bool can_place) {
 	if (type=="dragged" && !can_place) {
 		rect.setFillColor(sf::Color(255,0,0,80)); //Red
 	}
+	if (type=="wincondition") {
+		rect.setFillColor(sf::Color(0,0,255,100)); //Blue
+		del1.setFillColor(sf::Color(255,0,0,255)); //RED
+		del2.setFillColor(sf::Color(255,0,0,255)); //YEAH
+	}
 }
 
 void Highlight::update_rect(const sf::FloatRect& polygon_bounds) {
@@ -97,11 +102,7 @@ void PlatformHighlight::set(const std::string& type, bool can_place) {
 		delta_box.setFillColor(sf::Color(0,0,255,150)); //Blue
 	}
 	if (type=="wincondition") {
-		rect.setFillColor(sf::Color(0,0,255,100)); //Blue
-		del1.setFillColor(sf::Color(255,0,0,255)); //RED
-		del2.setFillColor(sf::Color(255,0,0,255)); //YEAH
 		delta_box.setFillColor(sf::Color(0,255,0,150)); //Green
-		return;
 	}
 	Highlight::set(type, can_place);
 }

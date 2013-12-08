@@ -1,3 +1,2 @@
-Catapult.txt 1
 level1.txt 1
 level2.txt 0

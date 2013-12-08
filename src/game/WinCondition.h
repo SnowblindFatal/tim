@@ -81,7 +81,7 @@ private:
 
 class IsDestroyed : public WinCondition
 {
-	public:
+public:
 	IsDestroyed(GameObject* go_ptr) : WinCondition(go_ptr, "IsDestroyed") {}
 	
 	bool check()
@@ -93,7 +93,11 @@ class IsDestroyed : public WinCondition
 		}
 		return fulfilled;
 	}
-	void draw(sf::RenderWindow&) {}
+	void draw(sf::RenderWindow&);
+	bool highlightPoint(sf::Vector2i); 
+	std::string highlightClicked(sf::Vector2i);
+private:
+	Highlight highlight;		
 };
 
 #endif
