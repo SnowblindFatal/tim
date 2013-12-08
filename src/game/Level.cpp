@@ -167,6 +167,61 @@ void LevelData::draw(GameObject* priority, bool debug, bool drawsfml) {
 	}
 }
 
+void LevelData::drawWincondition(GameObject* target) {
+	for (auto ptr : winconditions) {
+		if (ptr->getObject() == target) {
+			ptr->draw(App);
+		}
+	}
+}
+
+bool LevelData::winconditionPoint(sf::Vector2i mouse, GameObject* target) {
+	for (auto ptr : winconditions) {
+		if (ptr->getObject() == target) {
+			return ptr->highlightPoint(mouse);
+		}
+	}
+	return false;
+}
+void LevelData::winconditionDelta(sf::Vector2i mouse, GameObject* target) {
+	for (auto ptr : winconditions) {
+		if (ptr->getObject() == target) {
+			return ptr->highlightDelta(mouse);
+		}
+	}
+}
+std::string LevelData::winconditionClicked(sf::Vector2i mouse, GameObject* target) {
+	for (auto ptr : winconditions) {
+		if (ptr->getObject() == target) {
+			return ptr->highlightClicked(mouse);
+		}
+	}
+	return "nothing";
+}
+
+void LevelData::deleteWincondition(GameObject* target) {
+	for (auto ptr : winconditions) {
+		if (ptr->getObject() == target) {
+			delete ptr;
+			winconditions.remove(ptr);
+			return;
+		}
+	}
+}
+
+bool LevelData::canCreateWincondition(GameObject* target) {
+	if (target==NULL) {
+		return false;
+	}
+	for (auto ptr : winconditions) {
+		if (ptr->getObject() == target) {
+			return false;
+		}
+	}
+	return true;
+}
+
+
 void LevelData::reset() {
 		for (auto it : levelobjects) {
 			it->reset();

@@ -14,6 +14,10 @@ public:
 	virtual ~WinCondition() {}
 	
 	virtual bool check() =0;
+	virtual void draw(sf::RenderWindow&) =0;
+	virtual bool highlightPoint(sf::Vector2i) {return false;}
+	virtual void highlightDelta(sf::Vector2i) {}
+	virtual std::string highlightClicked(sf::Vector2i) {return "nothing";}
 	virtual void reset() {
 		fulfilled=false;
 	}
@@ -40,7 +44,7 @@ protected:
 class IsNearPoint : public WinCondition
 {
 public:
-	IsNearPoint(GameObject* go_ptr, float x, float y, float tolerance = 3.0f) : WinCondition(go_ptr, "IsNearPoint"), x(x), y(y), tolerance(tolerance) {}
+	IsNearPoint(GameObject* go_ptr, float x, float y, float tolerance = 3.0f) : WinCondition(go_ptr, "IsNearPoint"), x(x), y(y), tolerance(tolerance), local_mouse(0,0), move_active(false),resize_active(false) {}
 	
 	bool check() {
 		if ( (std::fabs(go_ptr->getCurrentPos().x-x) < tolerance) && (std::fabs(go_ptr->getCurrentPos().y-y) < tolerance) )
@@ -60,11 +64,19 @@ public:
 	{
 		return tolerance;
 	}
+	void draw(sf::RenderWindow&);
+	bool highlightPoint(sf::Vector2i); 
+	void highlightDelta(sf::Vector2i);
+	std::string highlightClicked(sf::Vector2i);
 
 private:
 	float x;
 	float y;
 	float tolerance;
+	sf::Vector2i local_mouse;
+	bool move_active;
+	bool resize_active;
+	PlatformHighlight highlight;		
 };
 
 class IsDestroyed : public WinCondition
@@ -81,6 +93,7 @@ class IsDestroyed : public WinCondition
 		}
 		return fulfilled;
 	}
+	void draw(sf::RenderWindow&) {}
 };
 
 #endif

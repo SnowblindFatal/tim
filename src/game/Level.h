@@ -50,6 +50,13 @@ public:
 
 
     void draw(GameObject* priority, bool debug=false, bool drawsfml=true); //Cannot be const, because no DrawDebugData() const exists, for whatever reason
+	void drawWincondition(GameObject*); //Used in EditMode
+	bool winconditionPoint(sf::Vector2i, GameObject*);
+	void winconditionDelta(sf::Vector2i, GameObject*);
+	std::string winconditionClicked(sf::Vector2i, GameObject*);
+	void deleteWincondition(GameObject*);
+	bool canCreateWincondition(GameObject*);
+
 
 
 	//Reset the level to where it was before simulation.

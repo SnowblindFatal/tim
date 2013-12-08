@@ -54,12 +54,18 @@ GameState::StateSelect EditMode::run()
 				else if (highlight_active) {
 					active_object->highlightDelta(sf::Mouse::getPosition(App));
 				}
+				else if (wincondition_active) {
+					level.winconditionDelta(sf::Mouse::getPosition(App), active_object);
+				}
 					
 			}
 			else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 				if (active_object && active_object->highlightPoint(sf::Mouse::getPosition(App))) {
                     highlight_active=true;
                     active_object->setManipulationStartLocation(sf::Mouse::getPosition(App));
+				}
+				else if (active_object && level.winconditionPoint(sf::Mouse::getPosition(App), active_object)) {
+					wincondition_active=true;
 				}
 
 
@@ -85,6 +91,14 @@ GameState::StateSelect EditMode::run()
 						active_object=NULL;
 					}
 					highlight_active=false;
+				}
+				else if (wincondition_active) {
+					std::string action = level.winconditionClicked(sf::Mouse::getPosition(App), active_object);
+					if (action=="delete") {
+						level.deleteWincondition(active_object);
+						active_object->setID(0);
+					}
+					wincondition_active=false;
 				}
 			}
 		}
@@ -118,7 +132,11 @@ GameState::StateSelect EditMode::run()
 				}
 			}	
 			else if (locked_goals) {
-				if (callback.id==141) {
+				if (callback.id==140) {
+					close_goals();
+				}
+					
+				else if (callback.id==141) {
 					active_object->setID(running_id++);
 					IsNearPoint* cond_ptr= new IsNearPoint(active_object, active_object->getCurrentPos().x+5, active_object->getCurrentPos().y);
 					level.addWinCondition(cond_ptr);
@@ -173,6 +191,8 @@ GameState::StateSelect EditMode::run()
 		if (locked_available) {
 			update_available_procedure();
 		}
+		level.drawWincondition(active_object);
+		update_gui();
 
 		gui.draw();
         App.display();
@@ -280,6 +300,15 @@ void EditMode::goals_procedure() {
 	box->setBackgroundTexture(Resources::getInstance().getTexture("savebox.png"));
 	box->setSize(250, 250);
 	box->setPosition(100,100);
+
+	//The Cancel:
+	tgui::Button::Ptr cancel(gui, "cancelgoals");
+	cancel->load("TGUI/Black.conf");
+	cancel->setSize(150,30);
+	cancel->setPosition(150, 300);
+	cancel->setText("Cancel");
+	cancel->setCallbackId(140);
+	cancel->bindCallback(tgui::Button::LeftMouseClicked);
 	
 	//The buttons::
 	if (active_object!=NULL && (active_object->getName()=="Domino" || active_object->getName()=="BigBall" || active_object->getName()=="BouncingBall" || active_object->getName()=="BowlingBall")) {
@@ -297,13 +326,14 @@ void EditMode::goals_procedure() {
 		destroyed->setSize(150, 30);
 		destroyed->setPosition(120,155);
 		destroyed->setText("Destroyed");
-		destroyed->setCallbackId(141);
+		destroyed->setCallbackId(142);
 		destroyed->bindCallback(tgui::Button::LeftMouseClicked);
 	}
 }
 
 void EditMode::close_goals() {
 	gui.remove(gui.get("goalsbox"));
+	gui.remove(gui.get("cancelgoals"));
 	if (gui.get("isnearbutton") != NULL) {
 		gui.remove(gui.get("isnearbutton"));
 	}
@@ -444,6 +474,16 @@ void EditMode::load_gui() {
 	
 	gui_loaded=true;
 
+}
+
+void EditMode::update_gui() {
+	tgui::Button::Ptr addgoal = gui.get("addgoal");
+	if (level.canCreateWincondition(active_object)) {
+		addgoal->show();
+	}
+	else {
+		addgoal->hide();
+	}
 }
 
 		

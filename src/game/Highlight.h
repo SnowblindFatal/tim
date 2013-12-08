@@ -17,6 +17,7 @@ public:
     virtual void draw(sf::RenderWindow& win);
 	virtual bool checkPoint(sf::Vector2i);
 	virtual std::string clicked(const sf::Vector2i&);
+	friend class IsNearPoint;
 protected:
     sf::RectangleShape rect;
 	sf::RectangleShape del1;
