@@ -8,3 +8,6 @@ Platform
 Wall
 Wall
 .
+Description
+The goal is to roll the ball to the right.
+.

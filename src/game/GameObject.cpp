@@ -484,7 +484,17 @@ void Bomb::explode() {
 		    applyImpulse(body, center, body_pos, power);
 		}
 	}	
-} 
+}
+
+bool Bomb::explodeStatus() const
+{
+	return exploded;
+}
+
+bool Bomb::isDestructable() const
+{
+	return true;
+}
 
 void Bomb::reset() {
 	exploded = false;

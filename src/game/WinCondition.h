@@ -67,4 +67,20 @@ private:
 	float tolerance;
 };
 
+class IsDestroyed : public WinCondition
+{
+	public:
+	IsDestroyed(GameObject* go_ptr) : WinCondition(go_ptr, "IsDestroyed") {}
+	
+	bool check()
+	{
+		if (go_ptr->explodeStatus())
+		{
+			fulfilled = true;
+			return fulfilled;
+		}
+		return fulfilled;
+	}
+};
+
 #endif

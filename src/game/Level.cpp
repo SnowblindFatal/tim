@@ -8,26 +8,26 @@ namespace {
 }
 
 LevelData::LevelData(sf::RenderWindow& _App) : phys_world(default_gravity), App(_App), DebugDrawInstance(_App), level_loaded(false)
-	{
+{
         
-		phys_world.SetContactListener(&collisions);
-		phys_world.SetDebugDraw(&DebugDrawInstance);
-        DebugDrawInstance.SetFlags(b2Draw::e_shapeBit);
-		DebugDrawInstance.AppendFlags(b2Draw::e_centerOfMassBit);
+	phys_world.SetContactListener(&collisions);
+	phys_world.SetDebugDraw(&DebugDrawInstance);
+	DebugDrawInstance.SetFlags(b2Draw::e_shapeBit);
+	DebugDrawInstance.AppendFlags(b2Draw::e_centerOfMassBit);
 
-		//List the various GameObjects, there will of course be 0 available by default:
-		available["Platform"] = 0;
-		available["Wall"] =0;
-		available["BouncingBall"] = 0;
-		available["BigBall"] = 0;
-		available["BowlingBall"] = 0;
-		available["Catapult"] = 0;
-		available["Seesaw"] = 0;
-		available["GravityChanger"] = 0;
-		available["Bomb"] = 0;
-		available["Domino"] = 0;
-
-
+	//List the various GameObjects, there will of course be 0 available by default:
+	available["Platform"] = 0;
+	available["Wall"] =0;
+	available["BouncingBall"] = 0;
+	available["BigBall"] = 0;
+	available["BowlingBall"] = 0;
+	available["Catapult"] = 0;
+	available["Seesaw"] = 0;
+	available["GravityChanger"] = 0;
+	available["Bomb"] = 0;
+	available["Domino"] = 0;
+	
+	description = "No description available.";
 }
 LevelData::~LevelData() {
 	
@@ -64,6 +64,7 @@ void LevelData::addWinCondition(WinCondition* cond) {
 	winconditions.push_back(cond);
 }
 
+/*
 void LevelData::loadlevel() {
 
 	std::cout << "load level\n";
@@ -75,7 +76,7 @@ void LevelData::loadlevel() {
 		std::cout << "error: " << fh.getError() << std::endl;
 		// Return to level selection screen
 	}
-	/*
+
 	available["Platform"]=5;
 	available["Wall"]=1;
 	available["BouncingBall"] = 4;
@@ -85,8 +86,14 @@ void LevelData::loadlevel() {
 	available["BowlingBall"] = 6;
 	available["Domino"] = 20;
 	available["BigBall"] = 10;
-*/	
 	
+	
+}
+*/
+
+void LevelData::setLoaded(bool b)
+{
+	level_loaded = b;
 }
 
 bool LevelData::checkWin() const {
@@ -173,6 +180,31 @@ void LevelData::reset() {
 		phys_world.SetGravity(default_gravity);
 }
 
+void LevelData::clear()
+{
+	for (auto& iter : levelobjects) 
+	{
+	    delete iter;
+		iter=NULL;
+	}
+	for (auto& iter : playerobjects) 
+	{
+	    delete iter;
+		iter=NULL;
+	}
+	for (auto& iter : winconditions) 
+	{
+	    delete iter;
+		iter=NULL;
+	}
+	
+	for (auto iter = available.begin();iter != available.end();iter++)
+		iter->second = 0;
+	
+	description = "No description available.";
+	level_loaded = false;
+}
+
 
 
 void LevelData::simulate() {
@@ -222,17 +254,12 @@ const std::list<WinCondition*>& LevelData::getWinConditions() const
 	return winconditions;
 }
 
+const std::string LevelData::getDescription() const
+{
+	return description;
+}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+void LevelData::setDescription(std::string str)
+{
+	description = str;
+}

@@ -44,8 +44,9 @@ public:
 	virtual void reset();
 
 	virtual void explode() {}
-	virtual bool contactStatus() { return false;}
-	virtual bool explodeStatus() { return false;}
+	virtual bool explodeStatus() const { return false; }
+	
+	virtual bool isDestructable() const { return false; }
 	
 	//Returns true if the body is not overlapping and false otherwise. 
 	virtual bool noOverlaps() const;
@@ -134,6 +135,8 @@ class Bomb : public GameObject
 		Bomb(b2World& world, float x, float y);
 		void applyImpulse(b2Body* body, b2Vec2 blastCenter, b2Vec2 applyPoint, float blastPower);
 		void explode();
+		bool explodeStatus() const;
+		bool isDestructable() const;
 		void reset();
 		void update_drawable();
 	private:

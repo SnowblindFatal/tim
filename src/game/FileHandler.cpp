@@ -53,11 +53,25 @@ bool FileHandler::loadLevel(LevelData& level)
 				playerObjects = true;
 			}
 		}
+		if (line == "Description")
+		{
+			while (getline(file, line))
+			{
+				if (line.length() == 0)
+					continue; // Skip empty lines
+				if (line == ".")
+					break;
+				level.setDescription(line);
+			}
+		}
 	}
 	file.close();
 	
 	if (levelObjects && playerObjects && level.hasGoals())
+	{
+		level.setLoaded(true);
 		return true;
+	}
 	std::stringstream errorStream;
 	errorStream << "Level file corrupted. LevelObjects: " << levelObjects << ", PlayerObjects: " << playerObjects
 													<< ", WinConditions: " << level.hasGoals();
@@ -135,7 +149,10 @@ bool FileHandler::saveLevel(LevelData& level)
 		for (size_t i = it->second;i > 0;i--)
 			file << it->first << "\n";
 	}
-	file << ".";
+	file << ".\n";
+	
+	// Write level description
+	file << "Description\n" << level.getDescription() << "\n.";
 	
 	file.close();
 	return true;
@@ -148,7 +165,6 @@ GameObject* FileHandler::createObject(LevelData& level, std::string& line)
 	std::string name;
 	std::stringstream ss;
 	float x, y, width, height;
-	
 	parseLine(parameters, line);
 	name = parameters[0];
 	
@@ -260,10 +276,15 @@ GameObject* FileHandler::createWinCondition(LevelData& level, GameObject* obj, s
 		cond = new IsNearPoint(obj, x, y, tolerance);
 		level.addWinCondition(cond);
 	}
+	else if (condType == "IsDestroyed")
+	{
+		return NULL;
+	}
 	else 
 	{
 		ss.flush();
 		ss << "No win condition named " << condType << ".";
+		delete obj;
 		return NULL;
 	}
 	

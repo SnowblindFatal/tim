@@ -31,7 +31,7 @@ public:
     
     void addWinCondition(WinCondition*);
     
-	void loadlevel();
+	void setLoaded(bool);
     
     //Iterate over winconditions, if all return true, return true, else false
     bool checkWin() const;
@@ -54,6 +54,8 @@ public:
 
 	//Reset the level to where it was before simulation.
    	void reset() ;
+   	
+   	void clear(); // Empty level of all objects, win conditions and the description
 	
 	//Delete and place in available.
 	void deletePlayerObject(GameObject* obj);
@@ -77,6 +79,9 @@ public:
 	const std::list<GameObject*>& getLevelObjects() const;
 	const std::list<WinCondition*>& getWinConditions() const;
 	
+	const std::string getDescription() const;
+	void setDescription(std::string);
+	
  private:
     
     b2World phys_world;
@@ -85,6 +90,7 @@ public:
     CollisionDetection collisions;
 	
     bool level_loaded;
+    std::string description; // Instructions on how to complete the level
     std::list<GameObject* > levelobjects;	//The level itself
     std::list<GameObject* > playerobjects;	//The objects that the player has placed
    	std::list<WinCondition* > winconditions;
