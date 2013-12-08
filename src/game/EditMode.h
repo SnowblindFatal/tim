@@ -18,7 +18,7 @@
 
 class EditMode : public PlayingField {
 public:
-    EditMode(sf::RenderWindow& _App) : PlayingField(_App), drawLevel(true), drawDebug(false), gui(_App), gui_loaded(false), level(_App) {}
+    EditMode(sf::RenderWindow& _App) : PlayingField(_App), drawLevel(true), drawDebug(false), gui(_App), gui_loaded(false), level(_App),locked_available(false),locked_save(false), locked_goals(false), active_object(NULL), dragged_object(NULL), highlight_active(false), running_id(1) {}
     EditMode(const EditMode& orig) = delete;
     EditMode operator=(const EditMode& orig) = delete;
     virtual ~EditMode(){}
@@ -34,14 +34,30 @@ private:
     bool gui_loaded;
     LevelData level;
 	std::vector<std::string> object_names;
-	bool locked;
+	//Available:
+	bool locked_available;
+	void available_procedure();
+	void update_available_procedure();
+	void close_available();
+
+	//Save:
+	bool locked_save;
 	void save_procedure();
-	void update_save_procedure();
+	void close_save();
+	void commit_save();
+
+	//Goals:
+	bool locked_goals;
+	void goals_procedure();
+	void close_goals();
+	
+	bool not_locked();
 	void set_drawdebug();
 	void set_drawlevel();
 	GameObject* active_object;
 	GameObject* dragged_object;
 	bool highlight_active;
+	size_t running_id;
 };
 
 
