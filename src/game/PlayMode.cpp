@@ -202,7 +202,7 @@ GameState::StateSelect PlayMode::run()
             }
 
 			//One of the GameObject buttons was pressed:
-			else if (dragged_object==NULL) {
+			else if (dragged_object==NULL && !simulate) {
 					active_object = level.createObject(object_names[callback.id], 0.1f*(float)sf::Mouse::getPosition(App).x, 0.1f*(float)sf::Mouse::getPosition(App).y);
 					dragged_object = active_object;
 			}	
@@ -287,6 +287,14 @@ void PlayMode::load_gui() {
     button_menu->setCallbackId(101);
     button_menu->bindCallback(tgui::Button::LeftMouseClicked);
 
+	//The Bottombar:
+	tgui::Label::Ptr bottom(gui, "bottombar");
+	bottom->setSize(600,100);
+	bottom->setPosition(0,500);
+	bottom->setBackgroundColor(sf::Color::White);
+	bottom->setTextColor(sf::Color::Black);
+	bottom->setTextSize(22);
+	bottom->setText(level.getDescription());
 
 	//The different gameobjects:
 	int index=0;

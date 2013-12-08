@@ -587,7 +587,14 @@ GravityChanger::GravityChanger(b2World& world, float x, float y, bool flipped) :
 	prismDef.maxMotorForce=25;
 	prismDef.motorSpeed=-3;
 	world.CreateJoint(&prismDef);
+	if (flipped) {
+		bodies[0].body_ptr->SetTransform(bodies[0].original_pos-b2Vec2(0,1.5f), 3.14159);
+		bodies[0].original_pos=bodies[0].body_ptr->GetTransform().p;
+		bodies[0].original_rot=3.14159;
 
+		bodies[1].body_ptr->SetTransform(bodies[1].original_pos+b2Vec2(0,1.5f), bodies[1].original_rot);
+		bodies[1].original_pos=bodies[1].body_ptr->GetTransform().p;
+	}
 }
 
 void GravityChanger::buttonCheck(b2Fixture* fixA, b2Fixture* fixB) {

@@ -30,6 +30,11 @@ GameState::StateSelect EditMode::run()
             }
 			//TGUI is given the event first. If TGUI didn't use the event, we will.
 			if (gui.handleEvent(event)) {
+				//Reset the bottom bar:
+				if (event.type==sf::Event::MouseButtonPressed && event.mouseButton.button== sf::Mouse::Left) {
+					tgui::Label::Ptr bottom=gui.get("bottombar");
+					bottom->setText(" ");
+				}
 				continue;
 			}
 			if (!not_locked()) continue; 
@@ -60,6 +65,10 @@ GameState::StateSelect EditMode::run()
 					
 			}
 			else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+				//Reset the bottom bar:
+				tgui::Label::Ptr bottom=gui.get("bottombar");
+				bottom->setText(" ");
+
 				if (active_object && active_object->highlightPoint(sf::Mouse::getPosition(App))) {
                     highlight_active=true;
                     active_object->setManipulationStartLocation(sf::Mouse::getPosition(App));
@@ -116,6 +125,10 @@ GameState::StateSelect EditMode::run()
 			}
 			else if (callback.id == 102 && not_locked()) {
 				goals_procedure();
+			}
+			else if (callback.id == 103 && not_locked()) {
+				done=true;
+				retval = GameState::StateSelect::Menu;
 			}
 
 
@@ -366,7 +379,7 @@ void EditMode::save_procedure() {
 	description->setSize(400,200);
 	description->setPosition(100,200);
 	description->setTextSize(22);
-	description->setText("Write a description of the level here");	
+	description->setText("Write a\ndescription of\nthe level\nhere");	
 
 	//The save and cancel buttons:
 	tgui::Button::Ptr savebutton(gui, "commitsave");
@@ -401,13 +414,13 @@ void EditMode::commit_save() {
 	tgui::TextBox::Ptr description = gui.get("description");
 	level.setDescription(description->getText());
 	FileHandler fh("res/leveldata/"+name->getText()+".txt");
+	tgui::Label::Ptr bottom=gui.get("bottombar");
 	if (!fh.saveLevel(level)) {
-		std::cout << fh.getError() << std::endl;
+		bottom->setText("Save failed: \n"+fh.getError());
 	}
 	else {
 		Resources::getInstance().addLevel(name->getText()+".txt");
-		done=true;
-        retval = GameState::StateSelect::Menu;
+		bottom->setText("Save succesful!");
 	}
 	close_save();
 }
@@ -432,7 +445,7 @@ void EditMode::load_gui() {
 	save->load("TGUI/Black.conf");
 	save->setSize(150, 30);
 	save->setText("Save");
-	save->setPosition(625,10);
+	save->setPosition(625,7);
 	save->setCallbackId(100); //This assumes we won't surpass 100 GameObjects. We won't.
 	save->bindCallback(tgui::Button::LeftMouseClicked);
 	
@@ -442,7 +455,7 @@ void EditMode::load_gui() {
 	button->load("TGUI/Black.conf");
 	button->setSize(150, 30);
 	button->setText("Available");
-	button->setPosition(625,45);
+	button->setPosition(625,42);
 	button->setCallbackId(101); 
 	button->bindCallback(tgui::Button::LeftMouseClicked);
 
@@ -451,9 +464,27 @@ void EditMode::load_gui() {
 	addgoal->load("TGUI/Black.conf");
 	addgoal->setSize(150, 30);
 	addgoal->setText("Add goal");
-	addgoal->setPosition(625,80);
+	addgoal->setPosition(625,77);
 	addgoal->setCallbackId(102); 
 	addgoal->bindCallback(tgui::Button::LeftMouseClicked);
+	
+	//The Main menu button:
+	tgui::Button::Ptr mainmenu(gui, "mainmenu");
+	mainmenu->load("TGUI/Black.conf");
+	mainmenu->setSize(150, 30);
+	mainmenu->setText("Main menu");
+	mainmenu->setPosition(625,112);
+	mainmenu->setCallbackId(103);
+	mainmenu->bindCallback(tgui::Button::LeftMouseClicked);
+
+	//The Bottombar:
+	tgui::Label::Ptr bottom(gui, "bottombar");
+	bottom->setSize(600,100);
+	bottom->setPosition(0,500);
+	bottom->setBackgroundColor(sf::Color::White);
+	bottom->setTextColor(sf::Color::Black);
+	bottom->setTextSize(22);
+	bottom->setText(" ");
 	
 
 	
