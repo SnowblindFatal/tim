@@ -278,7 +278,10 @@ GameObject* FileHandler::createWinCondition(LevelData& level, GameObject* obj, s
 	}
 	else if (condType == "IsDestroyed")
 	{
-		return NULL;
+		conds++;
+		obj->setID(conds);
+		cond = new IsDestroyed(obj);
+		level.addWinCondition(cond);
 	}
 	else 
 	{
