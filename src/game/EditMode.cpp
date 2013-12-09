@@ -228,7 +228,7 @@ GameState::StateSelect EditMode::run()
 }
 
 void EditMode::loadLevel() {
-    locked_save=true;
+    locked_load=true;
     
     std::vector<std::string> levelNames;
     populateLevelSelector(levelNames);
@@ -236,7 +236,7 @@ void EditMode::loadLevel() {
     tgui::Panel::Ptr panel = gui.get("panel1");
     panel->removeAllWidgets();
     gui.remove(panel);
-    locked_save=false;
+    locked_load=false;
 }
 
 void EditMode::populateLevelSelector(std::vector<std::string>& levelNames) 
