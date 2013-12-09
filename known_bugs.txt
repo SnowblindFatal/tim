@@ -2,6 +2,10 @@ AA list of known bugs etc.
 
 --Open editor -> load level -> click on an object -> object is not dropped if the user doesn't move mouse
 
+--Level description can overflow if the text is too long.
+
+--Add a delay on winning. For example, the example animation doesn't play now since winning is instant.
+
 
 
 --SFML seems to leak some memory. It is a constant sized chunk and does not grow over time.

@@ -1,6 +1,4 @@
-climb.txt 1
-level1.txt 1
-level2.txt 0
-maze.txt 0
-playground.txt 0
-reverse.txt 1
+03-climb 0
+02-maze 0
+playground 0
+01-reverse 0
