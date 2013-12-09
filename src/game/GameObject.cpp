@@ -85,6 +85,7 @@ bool GameObject::noOverlaps() const {
 					}
 				}
 				if (found) break;
+				other_fixtures=body_list->GetFixtureList();
 			}
 		}
 		if (found && !on_the_same) return false;
@@ -600,6 +601,10 @@ GravityChanger::GravityChanger(b2World& world, float x, float y, bool flipped) :
 void GravityChanger::buttonCheck(b2Fixture* fixA, b2Fixture* fixB) {
 	if ((fixA==check2 && fixB==check1) || (fixA==check1 && fixB==check2)) {
 		world.SetGravity(-world.GetGravity());
+		b2Body* body_list = world.GetBodyList();
+		for (;body_list!=NULL;body_list=body_list->GetNext()) {
+			body_list->SetAwake(true);
+		}
 	}
 }
 std::string GravityChanger::highlightClicked(sf::Vector2i point) {
