@@ -168,6 +168,12 @@ GameState::StateSelect EditMode::run()
 					level.addWinCondition(cond_ptr);
 					close_goals();
 				}
+				else if (callback.id==144) {
+					active_object->setID(running_id++);
+					IsUntouched* cond_ptr=new IsUntouched(active_object);
+					level.addWinCondition(cond_ptr);
+					close_goals();
+				}
 
 			}
 			else if (locked_save) {
@@ -357,6 +363,14 @@ void EditMode::goals_procedure() {
 		destroyed->setText("Destroyed");
 		destroyed->setCallbackId(143);
 		destroyed->bindCallback(tgui::Button::LeftMouseClicked);
+		
+		tgui::Button::Ptr untouched(gui, "untouched");
+		untouched->load("TGUI/Black.conf");
+		untouched->setSize(150, 30);
+		untouched->setPosition(120,225);
+		untouched->setText("Untouched");
+		untouched->setCallbackId(144);
+		untouched->bindCallback(tgui::Button::LeftMouseClicked);
 	}
 }
 
@@ -371,6 +385,9 @@ void EditMode::close_goals() {
 	}
 	if (gui.get("destroyed") != NULL) {
 		gui.remove(gui.get("destroyed"));
+	}
+	if (gui.get("untouched") != NULL) {
+		gui.remove(gui.get("untouched"));
 	}
 	locked_goals=false;
 }

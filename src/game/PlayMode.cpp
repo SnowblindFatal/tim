@@ -13,6 +13,7 @@
 
 GameState::StateSelect PlayMode::run()
 {
+	std::cout << "File: " << __FILE__ << " line: " << __LINE__ << std::endl; // WACKDEBUG
     done = false;
 	
     if (!level.loaded() || Resources::getInstance().getCurrentLevelName() != currentLevelName)
@@ -243,7 +244,8 @@ GameState::StateSelect PlayMode::run()
 			if (level.checkWin()) {
 				set_simulate();
                 Resources::getInstance().winLevel(currentLevelName);
-				std::cout << "You win!\n";
+				tgui::Label::Ptr bottombar = gui.get("bottombar");
+				bottombar->setText("Level completed!");
 			}
 		}
         level.draw(active_object, drawDebug, drawLevel);
