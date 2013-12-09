@@ -13,7 +13,6 @@
 
 GameState::StateSelect PlayMode::run()
 {
-	std::cout << "File: " << __FILE__ << " line: " << __LINE__ << std::endl; // WACKDEBUG
     done = false;
 	
     if (!level.loaded() || Resources::getInstance().getCurrentLevelName() != currentLevelName)

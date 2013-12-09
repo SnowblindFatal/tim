@@ -251,7 +251,16 @@ GameObject* FileHandler::createObject(LevelData& level, std::string& line)
 		obj = new Domino(level.getWorld(), x, y);
 		parameters.erase(parameters.begin(), parameters.begin()+3);
 	}
-	else {
+	else if (name == "Crate")
+	{
+		for (size_t i = 1;i < 3;i++)
+			ss << parameters[i] << " ";
+		ss >> x >> y;
+		obj = new Crate(level.getWorld(), x, y);
+		parameters.erase(parameters.begin(), parameters.begin()+3);
+	}
+	else 
+	{
 		ss.flush();
 		ss << "No object named " << name << ".";
 		errorMsg = ss.str();
