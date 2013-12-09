@@ -523,6 +523,8 @@ std::string Seesaw::highlightClicked(sf::Vector2i point) {
 	
 }
 
+
+
 Crate::Crate(b2World& world, float x, float y) : GameObject(world, x, y,"Crate", new CrateDrawable(x,y)) {
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
@@ -532,9 +534,12 @@ Crate::Crate(b2World& world, float x, float y) : GameObject(world, x, y,"Crate",
 	boxShape.SetAsBox(1.5,1.5);
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &boxShape;
+	fixtureDef.density = 1.0;
+	fixtureDef.friction = 0.5;
+	fixtureDef.restitution = 0.1;
 	body_ptr->CreateFixture(&fixtureDef);
 	body_ptr->SetUserData(this);
-	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition(), body_ptr->GetAngle()));
+	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition()));
 }
 
 Ball::Ball(b2World& world, float x, float y,std::string name, float r, float restitution = 0, float density = 1.0, Drawable* drawable= new Drawable) : GameObject(world, x,y,name, drawable) {

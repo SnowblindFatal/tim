@@ -1,7 +1,7 @@
 #include "Level.h"
 #include "FileHandler.h"
 namespace {
-    b2Vec2 default_gravity(0.0f, 9.8f); // 9.8f
+    b2Vec2 default_gravity(0.0f, 20.0f); // 9.8f
     float32 timestep = 1.0f/60.0f;
     int32 velocityIterations = 6; // 6
     int32 positionIterations = 2; // 2
