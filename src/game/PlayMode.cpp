@@ -14,9 +14,11 @@
 GameState::StateSelect PlayMode::run()
 {
     done = false;
-    if (!level.loaded() && Resources::getInstance().getCurrentLevelName() != currentLevelName)
+	
+    if (!level.loaded() || Resources::getInstance().getCurrentLevelName() != currentLevelName)
     {
-        currentLevelName = Resources::getInstance().getCurrentLevelName();
+        level.clear();
+		currentLevelName = Resources::getInstance().getCurrentLevelName();
         FileHandler handler("res/leveldata/"+currentLevelName);
         handler.loadLevel(level);
     }
