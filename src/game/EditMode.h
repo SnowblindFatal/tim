@@ -18,7 +18,7 @@
 
 class EditMode : public PlayingField {
 public:
-    EditMode(sf::RenderWindow& _App) : PlayingField(_App), drawLevel(true), drawDebug(false), gui(_App), gui_loaded(false), level(_App),locked_available(false),locked_save(false), locked_goals(false), active_object(NULL), dragged_object(NULL), highlight_active(false), running_id(1), wincondition_active(false) {}
+    EditMode(sf::RenderWindow& _App) : PlayingField(_App), drawLevel(true), drawDebug(false), gui(_App), gui_loaded(false), level(_App),locked_available(false),locked_save(false), locked_load(false), locked_goals(false), active_object(NULL), dragged_object(NULL), highlight_active(false), running_id(1), wincondition_active(false) {}
     EditMode(const EditMode& orig) = delete;
     EditMode operator=(const EditMode& orig) = delete;
     virtual ~EditMode(){}
@@ -45,6 +45,12 @@ private:
 	void save_procedure();
 	void close_save();
 	void commit_save();
+
+    //Load:
+    bool locked_load;
+    void loadLevel();
+    void populateLevelSelector(std::vector<std::string>& levelNames);
+    void handleLevelPicker(std::vector<std::string>& levelNames);
 
 	//Goals:
 	bool locked_goals;

@@ -1,14 +1,17 @@
 AA list of known bugs etc.
 
+--Open editor -> load level -> click on an object -> object is not dropped if the user doesn't move mouse
+
+--Level description can overflow if the text is too long.
+
+--Add a delay on winning. For example, the example animation doesn't play now since winning is instant.
+
+
 
 --SFML seems to leak some memory. It is a constant sized chunk and does not grow over time.
 	Anton: I heard the same thing from a friend that attended the course last year. SFML does indeed leak memory
 
---A weird crash that happens sometimes when resizing Platform while violently shaking the mouse around and then clicking on the screen.'
 
-TODO:
-
---A GameObject need to be assigned a unique ID using setID() before adding a WinCondition while editing a level in the Level Editor
 
 
 

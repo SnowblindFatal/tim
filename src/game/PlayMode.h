@@ -31,6 +31,7 @@ private:
     bool simulate;
     void drawStuff();
     void handleKeyPress(sf::Event event);
+    void toggleSimulation();
     LevelData level;
     bool drawDebug;
     bool drawLevel;

@@ -50,7 +50,15 @@ private:
 	sf::Sprite explosion;
 	bool exploded;
 	int explosion_status;
+};
 
+class CrateDrawable : public Drawable {
+public:
+	CrateDrawable(float x, float y);
+	void draw(sf::RenderWindow& win);
+	void update(const std::vector<PhysBody>&);
+private:
+	sf::RectangleShape box;
 };
 
 class GravityChangerDrawable : public Drawable {
@@ -103,13 +111,15 @@ private:
 
 class CatapultDrawable : public Drawable {
 public:
-	CatapultDrawable(float x, float y);
+	CatapultDrawable(float x, float y, bool flipped);
 	void draw(sf::RenderWindow&);
 	void update(const std::vector<PhysBody>&);
+	void setFlipped(bool flip);
 private:
 	sf::RectangleShape box;
 	sf::RectangleShape box2;	
 	sf::ConvexShape polygon;
+	bool flipped;
 };
 
 

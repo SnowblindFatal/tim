@@ -46,6 +46,31 @@ void PlatformDrawable::update(const std::vector<PhysBody>& bodies) {
 	highlight->update_rect(rect);	
 }
 
+
+CrateDrawable::CrateDrawable(float x, float y) : Drawable() {
+	x*=10;
+	y*=10;
+	box.setSize(sf::Vector2f(30,30));
+	box.setOrigin(15, 15);
+	box.setPosition(x,y);
+	box.setTexture(Resources::getInstance().getTexture("crate.jpg"));
+	box.setOutlineThickness(1);
+	box.setOutlineColor(sf::Color(205,133,63));
+}
+
+void CrateDrawable::draw(sf::RenderWindow& win) {
+	win.draw(box);
+	highlight->draw(win);
+}
+
+void CrateDrawable::update(const std::vector<PhysBody>& bodies) {
+	box.setPosition(sf::Vector2f(bodies[0].body_ptr->GetPosition().x*10,bodies[0].body_ptr->GetPosition().y*10));
+	box.setRotation(bodies[0].body_ptr->GetAngle()*180.0f/3.141592f);
+	const sf::FloatRect rect=box.getGlobalBounds();
+	highlight->update_rect(rect);
+}
+
+
 BombDrawable::BombDrawable(float x, float y) : Drawable() {
 	x*=10;
 	y*=10;
@@ -196,7 +221,7 @@ void BigBallDrawable::update(const std::vector<PhysBody>& bodies) {
 
 
 
-SeesawDrawable::SeesawDrawable(float x, float y) : Drawable() {
+SeesawDrawable::SeesawDrawable(float x, float y) : Drawable(new SeesawHighlight()) {
 	x*=10;
 	y*=10;
 	polygon.setPointCount(3);
@@ -237,7 +262,7 @@ void SeesawDrawable::update(const std::vector<PhysBody>& bodies) {
 }
 
 
-CatapultDrawable::CatapultDrawable(float x, float y) : Drawable() {
+CatapultDrawable::CatapultDrawable(float x, float y, bool flipped) : Drawable(new CatapultHighlight()), flipped(flipped) {
 	x*=10;
 	y*=10;
 	polygon.setPointCount(3);
@@ -254,13 +279,26 @@ CatapultDrawable::CatapultDrawable(float x, float y) : Drawable() {
 	box.setFillColor(sf::Color(160,160,160));
 	box.setOutlineThickness(1);
 	box.setOutlineColor(sf::Color(128,128,128));
+	if (!flipped) {
+		box2.setSize(sf::Vector2f(4,20));
+		box2.setOrigin(-46, 22);
+		box2.setPosition(x,y);
+		box2.setFillColor(sf::Color(160,160,160));
+		box2.setOutlineThickness(1);
+		box2.setOutlineColor(sf::Color(128,128,128));
+	}
+	else {
+		box2.setSize(sf::Vector2f(4,20));
+		box2.setOrigin(50, 22);
+		box2.setPosition(x,y);
+		box2.setFillColor(sf::Color(160,160,160));
+		box2.setOutlineThickness(1);
+		box2.setOutlineColor(sf::Color(128,128,128));
+	}
+}
 
-	box2.setSize(sf::Vector2f(4,20));
-	box2.setOrigin(-46, 22);
-	box2.setPosition(x,y);
-	box2.setFillColor(sf::Color(160,160,160));
-	box2.setOutlineThickness(1);
-	box2.setOutlineColor(sf::Color(128,128,128));
+void CatapultDrawable::setFlipped(bool flip) {
+	flipped = flip;
 }
 
 void CatapultDrawable::draw(sf::RenderWindow& win) {
@@ -281,6 +319,12 @@ void CatapultDrawable::update(const std::vector<PhysBody>& bodies) {
    // polygon.setTextureRect(sf::IntRect(0, 0, rect.width, rect.height));
 	box.setPosition(sf::Vector2f(bodies[1].body_ptr->GetPosition().x*10,bodies[1].body_ptr->GetPosition().y*10));
 	box.setRotation(bodies[1].body_ptr->GetAngle()*180.0f/3.141592f);
+	if (!flipped) {
+		box2.setOrigin(-46, 22);
+	}
+	else {
+		box2.setOrigin(50, 22);
+	}
 	box2.setPosition(sf::Vector2f(bodies[1].body_ptr->GetPosition().x*10,bodies[1].body_ptr->GetPosition().y*10));
 	box2.setRotation(bodies[1].body_ptr->GetAngle()*180.0f/3.141592f);
 	const sf::FloatRect rect =box.getGlobalBounds();

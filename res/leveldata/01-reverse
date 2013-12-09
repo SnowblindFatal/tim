@@ -1,5 +1,5 @@
 LevelObjects
-BouncingBall 9.4 15 IsNearPoint 9.2 9.6 3
+BouncingBall 9.1 14.4 IsNearPoint 8.9 8.1 1.65
 Wall 5 6 0 7
 Platform 7 6 4 0
 Wall 11 6 0 7
@@ -16,5 +16,5 @@ PlayerObjects
 Seesaw
 .
 Description
-Get the small ball into the basket in upper left corner.
+Get the small ball into the box on the left.
 .

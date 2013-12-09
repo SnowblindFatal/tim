@@ -168,14 +168,15 @@ GameObject* GameObjectFactory(b2World& world, std::string name, float x, float y
 		return new Domino(world,x,y);
 	if (name=="Teleport")
 		return new Teleport(world,x,y);
-	
+	if (name=="Crate")
+		return new Crate(world,x,y);
 	return NULL; //Name not found!
 }
 
 
 void GameObject::update_drawable() {
 	drawable->update(bodies);
-	if (teleportSet==true && (name=="BigBall" || name=="BouncingBall" || name=="BowlingBall" || name=="Domino" || name=="Box")) {
+	if (teleportSet==true && (name=="BigBall" || name=="BouncingBall" || name=="BowlingBall" || name=="Domino" || name=="Crate")) {
 		bodies[0].body_ptr->SetTransform(teleporttarget, bodies[0].body_ptr->GetAngle());
 		teleportSet=false;
 	}
@@ -332,7 +333,8 @@ b2Vec2 Wall::getDimensions() {
     return dimensions;
 }
 
-Catapult::Catapult(b2World& world, float x, float y) : GameObject(world, x,y,"Catapult", new CatapultDrawable(x,y)) {
+Catapult::Catapult(b2World& world, float x, float y, bool flipped) : GameObject(world, x,y,"Catapult", new CatapultDrawable(x,y, flipped)), flipped(flipped) {
+	std::cout << "catapult\n";
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
 	b2Body* body_ptr = world.CreateBody(&bodyDef);
@@ -347,29 +349,50 @@ Catapult::Catapult(b2World& world, float x, float y) : GameObject(world, x,y,"Ca
 	fixtureDef.shape = &polygonShape;
 	body_ptr->CreateFixture(&fixtureDef);	
 	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition()));
-	
-	
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(x, y);
-	bodyDef.angle = 0.4;
-	b2Body* body_ptr2 =world.CreateBody(&bodyDef);
-	b2PolygonShape boxShape;
-	boxShape.SetAsBox(5,0.2);
-	b2FixtureDef fixtureDef2;
-	fixtureDef2.shape = &boxShape;
-	fixtureDef2.density = 0.1;
-	fixtureDef2.friction = 1;
-	fixtureDef2.restitution = 0;
-	body_ptr2->CreateFixture(&fixtureDef2);
-	bodies.push_back(PhysBody(body_ptr2, body_ptr2->GetPosition(), body_ptr2->GetAngle()));
+	b2Body* body_ptr2;
 
-	boxShape.SetAsBox(0.2,1, b2Vec2(4.8,-1.2),0);
-	fixtureDef2.shape = &boxShape;
-	fixtureDef2.density = 1;
-	fixtureDef2.friction = 1;
-	fixtureDef2.restitution = 0;
-	body_ptr2->CreateFixture(&fixtureDef2);
+	if (!flipped) {
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.position.Set(x, y);
+		bodyDef.angle = 0.4;
+		body_ptr2 =world.CreateBody(&bodyDef);
+		b2PolygonShape boxShape;
+		boxShape.SetAsBox(5,0.2);		
+		fixtureDef2.shape = &boxShape;
+		fixtureDef2.density = 0.1;
+		fixtureDef2.friction = 1;
+		fixtureDef2.restitution = 0;
+		body_ptr2->CreateFixture(&fixtureDef2);
+		bodies.push_back(PhysBody(body_ptr2, body_ptr2->GetPosition(), body_ptr2->GetAngle()));
 
+		boxShape.SetAsBox(0.2,1, b2Vec2(4.8,-1.2),0);
+		fixtureDef2.shape = &boxShape;
+		fixtureDef2.density = 1;
+		fixtureDef2.friction = 1;
+		fixtureDef2.restitution = 0;
+		body_ptr2->CreateFixture(&fixtureDef2);
+	}
+	else {
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.position.Set(x, y);
+		bodyDef.angle = -0.4;
+		body_ptr2 =world.CreateBody(&bodyDef);
+		b2PolygonShape boxShape;
+		boxShape.SetAsBox(5,0.2);
+		fixtureDef2.shape = &boxShape;
+		fixtureDef2.density = 0.1;
+		fixtureDef2.friction = 1;
+		fixtureDef2.restitution = 0;
+		body_ptr2->CreateFixture(&fixtureDef2);
+		bodies.push_back(PhysBody(body_ptr2, body_ptr2->GetPosition(), body_ptr2->GetAngle()));
+
+		boxShape.SetAsBox(0.2,1, b2Vec2(-4.8,-1.2),0);
+		fixtureDef2.shape = &boxShape;
+		fixtureDef2.density = 1;
+		fixtureDef2.friction = 1;
+		fixtureDef2.restitution = 0;
+		body_ptr2->CreateFixture(&fixtureDef2);
+	}
 
 	b2RevoluteJointDef jointDef;
 	jointDef.localAnchorA.Set(0, 0);
@@ -380,9 +403,74 @@ Catapult::Catapult(b2World& world, float x, float y) : GameObject(world, x,y,"Ca
 	jointDef.lowerAngle = -0.4;
 	jointDef.upperAngle =  0.4;
 	world.CreateJoint(&jointDef);
+
+	if (flipped) {
+		bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), -0.4);
+	}
 }
 
-Seesaw::Seesaw(b2World& world, float x, float y) : GameObject(world, x,y,"Seesaw", new SeesawDrawable(x,y)) {
+std::string Catapult::highlightClicked(sf::Vector2i point) {
+	std::string result=drawable->highlightClicked(point);
+	std::cout << result << std::endl;
+	if (result=="rotate") {
+		std::cout << bodies[1].body_ptr->GetAngle() << std::endl;
+		if (bodies[1].body_ptr->GetAngle() > 0) {
+			std::cout << "0.4\n";
+			bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), -0.4);
+			b2Fixture* fix = bodies[1].body_ptr->GetFixtureList();
+			for (;fix!=NULL;fix=fix->GetNext()) {
+				bodies[1].body_ptr->DestroyFixture(fix);
+			}
+
+			b2PolygonShape boxShape;
+			boxShape.SetAsBox(5,0.2);
+			fixtureDef2.shape = &boxShape;
+			fixtureDef2.density = 0.1;
+			fixtureDef2.friction = 1;
+			fixtureDef2.restitution = 0;
+			bodies[1].body_ptr->CreateFixture(&fixtureDef2);
+
+			boxShape.SetAsBox(0.2,1, b2Vec2(-4.8,-1.2),0);
+			fixtureDef2.shape = &boxShape;
+			fixtureDef2.density = 1;
+			fixtureDef2.friction = 1;
+			fixtureDef2.restitution = 0;
+			bodies[1].body_ptr->CreateFixture(&fixtureDef2);
+			flipped = true;
+			dynamic_cast<CatapultDrawable*>(drawable)->setFlipped(true);
+		}
+		else {
+			std::cout << "0.0\n";
+			bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), 0.4);
+			b2Fixture* fix = bodies[1].body_ptr->GetFixtureList();
+			for (;fix!=NULL;fix=fix->GetNext()) {
+				bodies[1].body_ptr->DestroyFixture(fix);
+			}
+
+			b2PolygonShape boxShape;
+			boxShape.SetAsBox(5,0.2);
+			fixtureDef2.shape = &boxShape;
+			fixtureDef2.density = 0.1;
+			fixtureDef2.friction = 1;
+			fixtureDef2.restitution = 0;
+			bodies[1].body_ptr->CreateFixture(&fixtureDef2);
+
+			boxShape.SetAsBox(0.2,1, b2Vec2(4.8,-1.2),0);
+			fixtureDef2.shape = &boxShape;
+			fixtureDef2.density = 1;
+			fixtureDef2.friction = 1;
+			fixtureDef2.restitution = 0;
+			bodies[1].body_ptr->CreateFixture(&fixtureDef2);
+			flipped = false;
+			dynamic_cast<CatapultDrawable*>(drawable)->setFlipped(false);
+		}
+		return "nothing";
+	}
+	return result;
+	
+}
+
+Seesaw::Seesaw(b2World& world, float x, float y, bool flipped) : GameObject(world, x,y,"Seesaw", new SeesawDrawable(x,y)), flipped(flipped) {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
 	b2Body* body_ptr = world.CreateBody(&bodyDef);
@@ -422,6 +510,49 @@ Seesaw::Seesaw(b2World& world, float x, float y) : GameObject(world, x,y,"Seesaw
 	jointDef.lowerAngle = -0.4;
 	jointDef.upperAngle =  0.4;
 	world.CreateJoint(&jointDef);
+
+	if (flipped) {
+		bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), -0.4);
+	}
+}
+
+
+std::string Seesaw::highlightClicked(sf::Vector2i point) {
+	std::string result=drawable->highlightClicked(point);
+	std::cout << result << std::endl;
+	if (result=="rotate") {
+		std::cout << bodies[1].body_ptr->GetAngle() << std::endl;
+		if (bodies[1].body_ptr->GetAngle() > 0) {
+			bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), -0.4);
+			flipped = true;
+		}
+		else {
+			bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), 0.4);
+			flipped = false;
+		}
+		return "nothing";
+	}
+	return result;
+	
+}
+
+
+
+Crate::Crate(b2World& world, float x, float y) : GameObject(world, x, y,"Crate", new CrateDrawable(x,y)) {
+	b2BodyDef bodyDef;
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(x, y);
+	b2Body* body_ptr = world.CreateBody(&bodyDef);
+	b2PolygonShape boxShape;
+	boxShape.SetAsBox(1.5,1.5);
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &boxShape;
+	fixtureDef.density = 1.0;
+	fixtureDef.friction = 0.5;
+	fixtureDef.restitution = 0.1;
+	body_ptr->CreateFixture(&fixtureDef);
+	body_ptr->SetUserData(this);
+	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition()));
 }
 
 Ball::Ball(b2World& world, float x, float y,std::string name, float r, float restitution = 0, float density = 1.0, Drawable* drawable= new Drawable) : GameObject(world, x,y,name, drawable) {

@@ -149,6 +149,12 @@ class Bomb : public GameObject
 		bool exploded;
 };
 
+class Crate : public GameObject
+{
+	public:
+		Crate(b2World& world, float x, float y);
+};
+
 class Platform : public GameObject
 {
 	public:
@@ -174,14 +180,20 @@ class Wall : public GameObject
 class Seesaw : public GameObject
 {
 	public:	
-		Seesaw(b2World& world, float x, float y);
+		Seesaw(b2World& world, float x, float y, bool flipped= false);
+		std::string highlightClicked(sf::Vector2i point);
+		bool flipped;
 };
 
 class Catapult : public GameObject
 {
 	public:
-		Catapult(b2World& world, float x, float y);
-
+		Catapult(b2World& world, float x, float y, bool flipped= false);
+		std::string highlightClicked(sf::Vector2i point);
+		bool flipped;
+	private:
+		b2FixtureDef fixtureDef2;
+		
 };
 
 class GravityChanger : public GameObject
