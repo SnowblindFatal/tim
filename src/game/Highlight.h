@@ -18,6 +18,7 @@ public:
 	virtual bool checkPoint(sf::Vector2i);
 	virtual std::string clicked(const sf::Vector2i&);
 	friend class IsNearPoint;
+	friend class IsNotNearPoint;
 protected:
     sf::RectangleShape rect;
 	sf::RectangleShape del1;
