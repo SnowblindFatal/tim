@@ -1,17 +1,13 @@
 AA list of known bugs etc.
 
---On editor when load is clicked second time segmentation fault occurs.
+--Open editor -> load level -> click on an object -> object is not dropped if the user doesn't move mouse
 
 
 
 --SFML seems to leak some memory. It is a constant sized chunk and does not grow over time.
 	Anton: I heard the same thing from a friend that attended the course last year. SFML does indeed leak memory
 
---A weird crash that happens sometimes when resizing Platform while violently shaking the mouse around and then clicking on the screen.'
 
-TODO:
-
---A GameObject need to be assigned a unique ID using setID() before adding a WinCondition while editing a level in the Level Editor
 
 
 

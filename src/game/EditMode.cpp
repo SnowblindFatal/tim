@@ -236,6 +236,10 @@ void EditMode::loadLevel() {
     tgui::Panel::Ptr panel = gui.get("panel1");
     panel->removeAllWidgets();
     gui.remove(panel);
+    
+    dragged_object = NULL;
+    active_object = NULL;
+    
     locked_load=false;
 }
 
@@ -251,7 +255,6 @@ void EditMode::populateLevelSelector(std::vector<std::string>& levelNames)
     panel->setPosition(50, 30);
     panel->setSize(700, 540);
     panel->setBackgroundColor(sf::Color(60, 100, 140));
-    panel->moveToFront();
     for (const auto& pair : Resources::getInstance().getLevelInfo()) {
         levelNames.push_back(pair.first);
         tgui::Button::Ptr button(*panel);
@@ -563,7 +566,7 @@ void EditMode::load_gui() {
 	//The Save button:
 	tgui::Button::Ptr save(gui, "save");
 	save->load("TGUI/Black.conf");
-	save->setSize(60, 30);
+	save->setSize(72, 30);
 	save->setText("Save");
 	save->setPosition(625,7);
 	save->setCallbackId(100); //This assumes we won't surpass 100 GameObjects. We won't.
@@ -572,9 +575,9 @@ void EditMode::load_gui() {
 	//The Load button:
 	tgui::Button::Ptr load(gui, "load");
 	load->load("TGUI/Black.conf");
-	load->setSize(60, 30);
+	load->setSize(72, 30);
 	load->setText("Load");
-	load->setPosition(715,7);
+	load->setPosition(703,7);
 	load->setCallbackId(104);
 	load->bindCallback(tgui::Button::LeftMouseClicked);
 	
