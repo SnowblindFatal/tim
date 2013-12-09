@@ -26,6 +26,7 @@ LevelData::LevelData(sf::RenderWindow& _App) : phys_world(default_gravity), App(
 	available["GravityChanger"] = 0;
 	available["Bomb"] = 0;
 	available["Domino"] = 0;
+	available["Teleport"] = 1;
 	
 	description = "No description available.";
 }

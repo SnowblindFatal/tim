@@ -5,6 +5,7 @@
 #include <cmath>
 #include <iostream>
 #include "PhysBody.h"
+#include <algorithm>
 
 
 GameObject::~GameObject() {
@@ -126,6 +127,11 @@ void GameObject::move(float x, float y) {
 	}
 }
 
+void GameObject::teleport(b2Vec2 target) {
+	teleporttarget=target;	
+	teleportSet=true;
+}
+
 bool GameObject::isInside(float x, float y) {
 	local_mouse = b2Vec2(x,y);
 	for (auto& body : bodies) {
@@ -160,6 +166,8 @@ GameObject* GameObjectFactory(b2World& world, std::string name, float x, float y
 		return new Catapult(world,x,y);
 	if (name=="Domino")
 		return new Domino(world,x,y);
+	if (name=="Teleport")
+		return new Teleport(world,x,y);
 	
 	return NULL; //Name not found!
 }
@@ -167,6 +175,10 @@ GameObject* GameObjectFactory(b2World& world, std::string name, float x, float y
 
 void GameObject::update_drawable() {
 	drawable->update(bodies);
+	if (teleportSet==true && (name=="BigBall" || name=="BouncingBall" || name=="BowlingBall" || name=="Domino" || name=="Box")) {
+		bodies[0].body_ptr->SetTransform(teleporttarget, bodies[0].body_ptr->GetAngle());
+		teleportSet=false;
+	}
 }
 void GameObject::draw(sf::RenderWindow& win) {
 	drawable->draw(win);
@@ -194,6 +206,7 @@ Domino::Domino(b2World& world, float x, float y) : GameObject(world,x,y,"Domino"
     fixtureDef.density = 13.0f;
     fixtureDef.friction = 0.6f;
     body_ptr->CreateFixture(&fixtureDef);
+	body_ptr->SetUserData(this);
 	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition()));
 }
 
@@ -425,6 +438,7 @@ Ball::Ball(b2World& world, float x, float y,std::string name, float r, float res
 	fixtureDef.friction = 0.5;
 	fixtureDef.restitution = restitution;
 	body_ptr->CreateFixture(&fixtureDef);
+	body_ptr->SetUserData(this);
 	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition(), body_ptr->GetAngle()));
 
 }
@@ -632,26 +646,84 @@ std::string GravityChanger::highlightClicked(sf::Vector2i point) {
 	}
 	else return result;
 }
-/*
-Teleport::Teleport(b2World& world, float x1, float y1, float x2, float y2) : GameObject(world, x1, y1) {
-	//contacting = false;
-	body_ptr->SetUserData(this);
+Teleport::Teleport(b2World& world, float x, float y) : GameObject(world, x, y, "Teleport", new TeleportDrawable(x,y)) {
 
 	b2BodyDef bodyDef;
-	bodyDef.position.Set(x1, y1);
-	body_ptr = world.CreateBody(&bodyDef);
+	bodyDef.position.Set(x, y);
+	b2Body* body_ptr = world.CreateBody(&bodyDef);
 	b2PolygonShape boxShape;
-	boxShape.SetAsBox(2,0.2);
+	boxShape.SetAsBox(4,0.2);
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &boxShape;
-	body_ptr->CreateFixture(&fixtureDef);
+	fixtureDef.isSensor=true;
+	my_check=body_ptr->CreateFixture(&fixtureDef);
+	body_ptr->SetUserData(this);
+	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition(), body_ptr->GetAngle()));
 
-	bodyDef.position.Set(x2, y2);
-	body_ptr2 = world.CreateBody(&bodyDef);
-	body_ptr2->CreateFixture(&fixtureDef);
+	b2PolygonShape leftShape;
+	leftShape.SetAsBox(0.5,1, b2Vec2(-4.5,-0.8),0);
+	b2FixtureDef leftDef;
+	leftDef.shape= &leftShape;
+
+	b2PolygonShape rightShape;
+	rightShape.SetAsBox(0.5,1, b2Vec2(4.5,-0.8),0);
+	b2FixtureDef rightDef;
+	rightDef.shape= &rightShape;
+	body_ptr->CreateFixture(&leftDef);
+	body_ptr->CreateFixture(&rightDef);
+	
+	b2PolygonShape blocker;
+	blocker.SetAsBox(5,1.3);
+	b2FixtureDef blockerDef;
+	blockerDef.shape = &blocker;
+	blockerDef.isSensor=true;
+	body_ptr->CreateFixture(&blockerDef);
+	
+
+
+	teleports.push_back(this);
+}
+Teleport::~Teleport() {
+	teleports.remove(this);
+}
+GameObject* Teleport::calculate_next() {
+	if (teleports.size()==1) return NULL;
+	std::list<GameObject*>::iterator it = find(teleports.begin(), teleports.end(), this);
+	if (*it==teleports.back()) {
+		return teleports.front();
+	}	
+	else {
+		it++;
+		return *it;
+	}
+}
+void Teleport::beginContact(GameObject* go_ptr, b2Fixture* check) {
+	if (go_ptr==NULL) {
+		return;
+	}
+	if (check!=my_check) return;
+	if (find(incoming.begin(), incoming.end(), go_ptr) == incoming.end()) {
+		Teleport* next=dynamic_cast<Teleport*>(calculate_next());
+		if (next!=NULL) {
+			next->notify(go_ptr);
+			b2Vec2 target=next->getCurrentPos();
+			target+=go_ptr->getCurrentPos()-getCurrentPos();
+			go_ptr->teleport(target);
+		}
+	}
+}
+void Teleport::endContact(GameObject* go_ptr, b2Fixture* check) {
+	if (check!=my_check) return;
+	if (find(incoming.begin(), incoming.end(), go_ptr) != incoming.end()) {
+		incoming.remove(go_ptr);
+	}
+}
+void Teleport::notify(GameObject* go_ptr) {
+	incoming.push_back(go_ptr);
 }
 
-*/
+std::list<GameObject*> Teleport::teleports;
+
 
 /*
 Chain::Chain(b2World& world) : GameObject(10,10) {

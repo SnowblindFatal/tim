@@ -8,6 +8,7 @@
 #include "Drawable.h"
 #include <vector>
 #include "PhysBody.h"
+#include <list>
 
 //A Base type, that also defines the interface for drawing.
 class GameObject
@@ -25,7 +26,9 @@ public:
         drawable(drawable),
         id(0),
         PLATFORM_THRESHOLD(0.05f),
-        DISCRETE_MOVE_UNIT(1.0f)
+        DISCRETE_MOVE_UNIT(1.0f),
+		teleporttarget(0,0),
+		teleportSet(false)
         {};
 	virtual ~GameObject(); 
     virtual void update_drawable(); 
@@ -55,6 +58,7 @@ public:
     void setMoveStartLocation(float x, float y);
     void setManipulationStartLocation(sf::Vector2i pos);
 	virtual void move(float x, float y);
+	virtual void teleport(b2Vec2);
 
 	//Checking wether a point is inside the GameObject
 	//It will also change the local_transform so that dragging looks better.
@@ -87,6 +91,8 @@ protected:
     
     const float PLATFORM_THRESHOLD;
     const float DISCRETE_MOVE_UNIT;
+	b2Vec2 teleporttarget;
+	bool teleportSet;
 	
 	
 };	
@@ -206,17 +212,22 @@ class Lift : public GameObject
 		Lift(b2World& world, float x1, float y1, float x2, float y2);
 };
 
-/*
 class Teleport : public GameObject
 {
-	public:
-		Teleport(b2World& world, float x1, float y1, float x2, float y2);
-		//void startContact();
-  		//void endContact();
-		//bool contactStatus();
-		//bool reset();
-		//bool contacting;
+public:
+	Teleport(b2World& world, float x, float y);
+	~Teleport();
+	GameObject* calculate_next();	
+	void beginContact(GameObject*,b2Fixture*);
+	void endContact(GameObject*,b2Fixture*);
+	void notify(GameObject*); //Tells the Teleport that this object has just jumped.
+private:
+	static std::list<GameObject* > teleports; //List of all teleports for deciding where to jump.
+	std::list<GameObject* > incoming; //While a pointer is here, the object cannot jump. After endContact() it is removed.
+	b2Fixture* my_check;
+		
 };
+/*
 class Chain : public GameObject
 {
 	public:

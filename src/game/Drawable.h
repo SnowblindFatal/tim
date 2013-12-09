@@ -122,4 +122,13 @@ private:
 	sf::RectangleShape box;	
 };
 
+class TeleportDrawable : public Drawable {
+public:
+	TeleportDrawable(float x, float y);
+	void draw(sf::RenderWindow&);
+	void update(const std::vector<PhysBody>&);
+private:
+	sf::RectangleShape box;
+};
+
 #endif
