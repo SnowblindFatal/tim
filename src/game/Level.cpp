@@ -223,22 +223,16 @@ bool LevelData::canCreateWincondition(GameObject* target) {
 
 
 void LevelData::reset() {
-		std::cout << "File: " << __FILE__ << " Line: " << __LINE__ << std::endl;
 		for (auto it : levelobjects) {
-			std::cout << "File: " << __FILE__ << " Line: " << __LINE__ << std::endl;
 			it->reset();
 		}
-		std::cout << "File: " << __FILE__ << " Line: " << __LINE__ << std::endl;
 		for (auto it : playerobjects) {
 			it->reset(); 
 		}
-		std::cout << "File: " << __FILE__ << " Line: " << __LINE__ << std::endl;
 		for (auto it : winconditions) {
 			it->reset();
 		}
-		std::cout << "File: " << __FILE__ << " Line: " << __LINE__ << std::endl;
 		phys_world.SetGravity(default_gravity);
-		std::cout << "File: " << __FILE__ << " Line: " << __LINE__ << std::endl;
 }
 
 void LevelData::clear()

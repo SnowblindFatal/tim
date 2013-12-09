@@ -27,6 +27,11 @@ GameState::StateSelect PlayMode::run()
     {
         load_gui();
     }
+    else
+    {
+    	tgui::Label::Ptr bottombar = gui.get("bottombar");
+		bottombar->setText(level.getDescription());
+    }
 	
 	
     while (!done)
