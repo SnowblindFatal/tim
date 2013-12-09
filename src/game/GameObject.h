@@ -179,6 +179,8 @@ class Catapult : public GameObject
 		Catapult(b2World& world, float x, float y, bool flipped= false);
 		std::string highlightClicked(sf::Vector2i point);
 		bool flipped;
+	private:
+		b2FixtureDef fixtureDef2;
 		
 };
 

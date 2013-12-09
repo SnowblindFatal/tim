@@ -103,13 +103,15 @@ private:
 
 class CatapultDrawable : public Drawable {
 public:
-	CatapultDrawable(float x, float y);
+	CatapultDrawable(float x, float y, bool flipped);
 	void draw(sf::RenderWindow&);
 	void update(const std::vector<PhysBody>&);
+	void setFlipped(bool flip);
 private:
 	sf::RectangleShape box;
 	sf::RectangleShape box2;	
 	sf::ConvexShape polygon;
+	bool flipped;
 };
 
 
