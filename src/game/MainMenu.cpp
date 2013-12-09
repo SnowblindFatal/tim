@@ -107,7 +107,7 @@ void MainMenu::initialiseGUI()
     button2->setText("Choose level");
     button2->setCallbackId(2);
     button2->bindCallback(tgui::Button::LeftMouseClicked);
-    button2->setSize(500, 50);
+    button2->setSize(300, 50);
     button2->setTransparency(220);
 
     tgui::Button::Ptr button3(gui);
@@ -152,10 +152,10 @@ void MainMenu::populateLevelSelector(std::vector<std::string>& levelNames)
     //callback id 2, and the level name in index 2 of levelNames vector
     //will be used as the next level.
     
-    int x = 20, y = 60, i = 0;
+    int x = 20, y = 40, i = 0;
     tgui::Panel::Ptr panel(gui, "panel1");
-    panel->setPosition(100, 50);
-    panel->setSize(600, 400);
+    panel->setPosition(50, 30);
+    panel->setSize(700, 540);
     panel->setBackgroundColor(sf::Color(60, 100, 140));
     for (const auto& pair : Resources::getInstance().getLevelInfo()) {
         levelNames.push_back(pair.first);
@@ -169,11 +169,11 @@ void MainMenu::populateLevelSelector(std::vector<std::string>& levelNames)
         }
         button->setCallbackId(i);
         button->bindCallback(tgui::Button::LeftMouseClicked);
-        button->setSize(90, 50);
+        button->setSize(100, 50);
         y += 60;
-        if (y > 550) {
-            x += 100;
-            y = 60;
+        if (y > 480) {
+            x += 110;
+            y = 40;
         }
         i++;
         panel->add(button);
@@ -181,11 +181,11 @@ void MainMenu::populateLevelSelector(std::vector<std::string>& levelNames)
     
     tgui::Button::Ptr button(*panel);
     button->load("TGUI/Black.conf");
-    button->setPosition(500, 10);
+    button->setPosition(640, 10);
     button->setText("back");
     button->setCallbackId(99999);
     button->bindCallback(tgui::Button::LeftMouseClicked);
-    button->setSize(50, 40);
+    button->setSize(50, 25);
 }
 
 void MainMenu::handleLevelPicker(std::vector<std::string>& levelNames)

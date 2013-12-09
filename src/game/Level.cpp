@@ -237,20 +237,27 @@ void LevelData::reset() {
 
 void LevelData::clear()
 {
-	for (auto& iter : levelobjects) 
+	auto levelit = levelobjects.begin();
+	auto playerit = playerobjects.begin();
+	auto winit = winconditions.begin();
+	
+	while (!levelobjects.empty())
 	{
-	    delete iter;
-		iter=NULL;
+		levelit = levelobjects.begin();
+		delete *levelit;
+		levelit = levelobjects.erase(levelit);
 	}
-	for (auto& iter : playerobjects) 
+	while (!playerobjects.empty())
 	{
-	    delete iter;
-		iter=NULL;
+		playerit = playerobjects.begin();
+		delete *playerit;
+		playerit = playerobjects.erase(playerit);
 	}
-	for (auto& iter : winconditions) 
+	while (!winconditions.empty())
 	{
-	    delete iter;
-		iter=NULL;
+		winit = winconditions.begin();
+		delete *winit;
+		winit = winconditions.erase(winit);
 	}
 	
 	for (auto iter = available.begin();iter != available.end();iter++)

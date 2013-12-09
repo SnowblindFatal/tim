@@ -210,19 +210,21 @@ GameObject* FileHandler::createObject(LevelData& level, std::string& line)
 	}
 	else if (name == "Catapult")
 	{
-		for (size_t i = 1;i < 3;i++)
+		bool flipped;
+		for (size_t i = 1;i < 4;i++)
 			ss << parameters[i] << " ";
-		ss >> x >> y;
-		obj = new Catapult(level.getWorld(), x, y);
-		parameters.erase(parameters.begin(), parameters.begin()+3);
+		ss >> x >> y >> flipped;
+		obj = new Catapult(level.getWorld(), x, y, flipped);
+		parameters.erase(parameters.begin(), parameters.begin()+4);
 	}
 	else if (name == "Seesaw")
 	{
-		for (size_t i = 1;i < 3;i++)
+		bool flipped;
+		for (size_t i = 1;i < 4;i++)
 			ss << parameters[i] << " ";
-		ss >> x >> y;
-		obj = new Seesaw(level.getWorld(), x, y);
-		parameters.erase(parameters.begin(), parameters.begin()+3);
+		ss >> x >> y >> flipped;
+		obj = new Seesaw(level.getWorld(), x, y, flipped);
+		parameters.erase(parameters.begin(), parameters.begin()+4);
 	}
 	else if (name == "GravityChanger")
 	{
@@ -266,14 +268,21 @@ GameObject* FileHandler::createWinCondition(LevelData& level, GameObject* obj, s
 	std::string condType = parameters[0];
 	std::stringstream ss;
 	float x, y, tolerance;
-	if (condType == "IsNearPoint")
+	if (condType == "IsNearPoint" || condType == "IsNotNearPoint")
 	{
 		for (size_t i = 1;i < 4;i++)
 			ss << parameters[i] << " ";
 		ss >> x >> y >> tolerance;
 		conds++;
 		obj->setID(conds); // Set unique ID for GameObject. Used to combine WinCondition with GameObject during saveLevel.
-		cond = new IsNearPoint(obj, x, y, tolerance);
+		if (condType == "IsNearPoint") 
+		{
+			cond = new IsNearPoint(obj, x, y, tolerance);
+		}
+		else
+		{
+			cond = new IsNotNearPoint(obj, x, y, tolerance);
+		}
 		level.addWinCondition(cond);
 	}
 	else if (condType == "IsDestroyed")
@@ -290,7 +299,6 @@ GameObject* FileHandler::createWinCondition(LevelData& level, GameObject* obj, s
 		delete obj;
 		return NULL;
 	}
-	
 	
 	return obj;
 }
@@ -312,7 +320,7 @@ std::string FileHandler::objectToText(GameObject* obj, bool hasCondition)
 			width = (plat->getDimensions()).x;
 			height = (plat->getDimensions()).y;
 		}
-		else if (name == "Wall")
+		else
 		{
 			Wall* wall = dynamic_cast<Wall*>(obj);
 			width = (wall->getDimensions()).x;
@@ -320,11 +328,26 @@ std::string FileHandler::objectToText(GameObject* obj, bool hasCondition)
 		}
 		ss << " " << width << " " << height;
 	} 
-	else if (name == "GravityChanger")
+	else if ((name == "GravityChanger") || (name == "Catapult") || (name == "Seesaw"))
 	{
-		GravityChanger* gc = dynamic_cast<GravityChanger*>(obj);
+		bool flipped;
+		if (name == "GravityChanger")
+		{
+			GravityChanger* gc = dynamic_cast<GravityChanger*>(obj);
+			flipped = gc->flipped;
+		}
+		else if (name == "Catapult")
+		{
+			Catapult* ca = dynamic_cast<Catapult*>(obj);
+			flipped = ca->flipped;
+		}
+		else
+		{
+			Seesaw* se = dynamic_cast<Seesaw*>(obj);
+			flipped = se->flipped;
+		}
 		// x, y, flipped
-		ss << " " << gc->flipped;
+		ss << " " << flipped;
 	}
 	
 	if (!hasCondition)
@@ -343,6 +366,11 @@ std::string FileHandler::conditionToText(WinCondition* cond)
 	{
 		IsNearPoint* inp = dynamic_cast<IsNearPoint*>(cond);
 		// x, y, tolerance
+		ss << " " << (inp->getPos()).x << " " << (inp->getPos()).y << " " << inp->getTolerance();
+	}
+	else if (name == "IsNotNearPoint")
+	{
+		IsNotNearPoint* inp = dynamic_cast<IsNotNearPoint*>(cond);
 		ss << " " << (inp->getPos()).x << " " << (inp->getPos()).y << " " << inp->getTolerance();
 	}
 	/*

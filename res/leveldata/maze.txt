@@ -1,0 +1,26 @@
+LevelObjects
+Bomb 13.5 37.7 IsDestroyed
+Wall 4 5 0 40
+Wall 9 5 0 40
+BowlingBall 7.5 12.5
+Wall 16 16 0 25
+Platform 11 39 5 0
+Platform 11 9 20 0
+Platform 16 41 17 0
+BowlingBall 31.8 37.1
+Wall 28 37 0 4
+Wall 24 11 0 7
+Platform 30 30 10 0
+Wall 30 32 -2 5
+.
+PlayerObjects
+GravityChanger
+GravityChanger
+Platform
+Platform
+Platform
+Platform
+.
+Description
+Blow up the TNT.
+.
