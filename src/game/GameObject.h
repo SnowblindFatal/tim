@@ -143,6 +143,12 @@ class Bomb : public GameObject
 		bool exploded;
 };
 
+class Crate : public GameObject
+{
+	public:
+		Crate(b2World& world, float x, float y);
+};
+
 class Platform : public GameObject
 {
 	public:

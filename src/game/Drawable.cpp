@@ -46,6 +46,39 @@ void PlatformDrawable::update(const std::vector<PhysBody>& bodies) {
 	highlight->update_rect(rect);	
 }
 
+
+CrateDrawable::CrateDrawable(float x, float y) : Drawable() {
+	x*=10;
+	y*=10;
+	box.setSize(sf::Vector2f(30,30));
+	box.setOrigin(15, 15);
+	box.setPosition(x,y);
+	box.setTexture(Resources::getInstance().getTexture("crate.jpg"));
+	box.setOutlineThickness(1);
+	box.setOutlineColor(sf::Color::Yellow);
+}
+
+void CrateDrawable::draw(sf::RenderWindow& win) {
+	win.draw(box);
+	highlight->draw(win);
+}
+
+void CrateDrawable::update(const std::vector<PhysBody>& bodies) {
+	box.setPosition(sf::Vector2f(bodies[0].body_ptr->GetPosition().x*10,bodies[0].body_ptr->GetPosition().y*10));
+	box.setRotation(bodies[0].body_ptr->GetAngle()*180.0f/3.141592f);
+	const sf::FloatRect rect=box.getGlobalBounds();
+	highlight->update_rect(rect);
+}
+
+
+
+
+
+
+
+
+
+
 BombDrawable::BombDrawable(float x, float y) : Drawable() {
 	x*=10;
 	y*=10;
