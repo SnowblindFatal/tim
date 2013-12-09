@@ -92,7 +92,7 @@ GameState::StateSelect EditMode::run()
 				if (dragged_object!=NULL && dragged_object->can_place) {
 					dragged_object=NULL;
 				}
-				else if (highlight_active) {
+				else if (highlight_active && active_object) {
 					std::string action = active_object->highlightClicked(sf::Mouse::getPosition(App));
 					if (action=="delete") {
 						level.deleteWincondition(active_object);
@@ -101,7 +101,7 @@ GameState::StateSelect EditMode::run()
 					}
 					highlight_active=false;
 				}
-				else if (wincondition_active) {
+				else if (wincondition_active && active_object) {
 					std::string action = level.winconditionClicked(sf::Mouse::getPosition(App), active_object);
 					if (action=="delete") {
 						level.deleteWincondition(active_object);
