@@ -428,7 +428,7 @@ Ball::Ball(b2World& world, float x, float y,std::string name, float r, float res
 
 }
 
-BouncingBall::BouncingBall(b2World& world, float x, float y) : Ball(world, x, y,"BouncingBall", 0.5, 0.5, 5.0, new BouncingBallDrawable(x,y)) {}
+BouncingBall::BouncingBall(b2World& world, float x, float y) : Ball(world, x, y,"BouncingBall", 0.5, 0.5, 1.0, new BouncingBallDrawable(x,y)) {}
 
 BowlingBall::BowlingBall(b2World& world, float x, float y) : Ball(world, x, y,"BowlingBall", 1.0, 0.1, 3.0, new BowlingBallDrawable(x,y)) {}
 
