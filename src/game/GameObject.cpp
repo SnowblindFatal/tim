@@ -160,7 +160,8 @@ GameObject* GameObjectFactory(b2World& world, std::string name, float x, float y
 		return new Catapult(world,x,y);
 	if (name=="Domino")
 		return new Domino(world,x,y);
-	
+	if (name=="Crate")
+		return new Crate(world,x,y);
 	return NULL; //Name not found!
 }
 

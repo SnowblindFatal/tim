@@ -55,7 +55,7 @@ CrateDrawable::CrateDrawable(float x, float y) : Drawable() {
 	box.setPosition(x,y);
 	box.setTexture(Resources::getInstance().getTexture("crate.jpg"));
 	box.setOutlineThickness(1);
-	box.setOutlineColor(sf::Color::Yellow);
+	box.setOutlineColor(sf::Color(205,133,63));
 }
 
 void CrateDrawable::draw(sf::RenderWindow& win) {
@@ -69,14 +69,6 @@ void CrateDrawable::update(const std::vector<PhysBody>& bodies) {
 	const sf::FloatRect rect=box.getGlobalBounds();
 	highlight->update_rect(rect);
 }
-
-
-
-
-
-
-
-
 
 
 BombDrawable::BombDrawable(float x, float y) : Drawable() {
