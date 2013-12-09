@@ -158,6 +158,12 @@ GameState::StateSelect EditMode::run()
 				}
 				else if (callback.id==142) {
 					active_object->setID(running_id++);
+					IsNotNearPoint* cond_ptr= new IsNotNearPoint(active_object, active_object->getCurrentPos().x+5, active_object->getCurrentPos().y);
+					level.addWinCondition(cond_ptr);
+					close_goals();
+				}
+				else if (callback.id==143) {
+					active_object->setID(running_id++);
 					IsDestroyed* cond_ptr=new IsDestroyed(active_object);
 					level.addWinCondition(cond_ptr);
 					close_goals();
@@ -333,14 +339,23 @@ void EditMode::goals_procedure() {
 		isnear->setText("Is Near Point");
 		isnear->setCallbackId(141);
 		isnear->bindCallback(tgui::Button::LeftMouseClicked);
+
+		tgui::Button::Ptr isfar(gui, "isfarbutton");
+		isfar->load("TGUI/Black.conf");
+		isfar->setSize(150, 30);
+		isfar->setPosition(120,155);
+		isfar->setText("Is Not Near Point");
+		isfar->setCallbackId(142);
+		isfar->bindCallback(tgui::Button::LeftMouseClicked);
+
 	}
 	if (active_object!=NULL && (active_object->getName()=="Bomb") ) {
 		tgui::Button::Ptr destroyed(gui, "destroyed");
 		destroyed->load("TGUI/Black.conf");
 		destroyed->setSize(150, 30);
-		destroyed->setPosition(120,155);
+		destroyed->setPosition(120,190);
 		destroyed->setText("Destroyed");
-		destroyed->setCallbackId(142);
+		destroyed->setCallbackId(143);
 		destroyed->bindCallback(tgui::Button::LeftMouseClicked);
 	}
 }
@@ -350,6 +365,9 @@ void EditMode::close_goals() {
 	gui.remove(gui.get("cancelgoals"));
 	if (gui.get("isnearbutton") != NULL) {
 		gui.remove(gui.get("isnearbutton"));
+	}
+	if (gui.get("isfarbutton") !=NULL) {
+		gui.remove(gui.get("isfarbutton"));
 	}
 	if (gui.get("destroyed") != NULL) {
 		gui.remove(gui.get("destroyed"));
