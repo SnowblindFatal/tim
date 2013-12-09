@@ -20,8 +20,6 @@ GameState::StateSelect EditMode::run()
         sf::Event event;
         while (App.pollEvent(event))
         {
-			
-
             // Close window : exit
             if (event.type == sf::Event::Closed)
             {
@@ -130,6 +128,9 @@ GameState::StateSelect EditMode::run()
 				done=true;
 				retval = GameState::StateSelect::Menu;
 			}
+            else if (callback.id == 104 && not_locked()) {
+                loadLevel();
+            }
 
 
 			else if (locked_available) {
@@ -220,6 +221,90 @@ GameState::StateSelect EditMode::run()
     return retval;
 }
 
+void EditMode::loadLevel() {
+    locked_save=true;
+    
+    std::vector<std::string> levelNames;
+    populateLevelSelector(levelNames);
+    handleLevelPicker(levelNames);
+    tgui::Panel::Ptr panel = gui.get("panel1");
+    panel->removeAllWidgets();
+    gui.remove(panel);
+    locked_save=false;
+}
+
+void EditMode::populateLevelSelector(std::vector<std::string>& levelNames) 
+{
+    //the button callback id i will match the index in levelNames.
+    //For instance, if the third button is clicked, it triggers
+    //callback id 2, and the level name in index 2 of levelNames vector
+    //will be used as the next level.
+    
+    int x = 20, y = 40, i = 0;
+    tgui::Panel::Ptr panel(gui, "panel1");
+    panel->setPosition(50, 30);
+    panel->setSize(700, 540);
+    panel->setBackgroundColor(sf::Color(60, 100, 140));
+    panel->moveToFront();
+    for (const auto& pair : Resources::getInstance().getLevelInfo()) {
+        levelNames.push_back(pair.first);
+        tgui::Button::Ptr button(*panel);
+        button->load("TGUI/Black.conf");
+        button->setPosition(x, y);
+        if (pair.second) {
+            button->setText(pair.first + "\n (beaten)");
+        } else {
+            button->setText(pair.first);
+        }
+        button->setCallbackId(i);
+        button->bindCallback(tgui::Button::LeftMouseClicked);
+        button->setSize(100, 50);
+        y += 60;
+        if (y > 480) {
+            x += 110;
+            y = 40;
+        }
+        i++;
+        panel->add(button);
+    }
+    
+    tgui::Button::Ptr button(*panel);
+    button->load("TGUI/Black.conf");
+    button->setPosition(640, 10);
+    button->setText("back");
+    button->setCallbackId(99999);
+    button->bindCallback(tgui::Button::LeftMouseClicked);
+    button->setSize(50, 25);
+}
+
+void EditMode::handleLevelPicker(std::vector<std::string>& levelNames)
+{
+    bool levelPickFinished = false;
+    while (levelPickFinished == false) {
+        sf::Event event;
+        while (App.pollEvent(event)) {
+            // Close window : exit
+            if (event.type == sf::Event::Closed) {
+                return;
+            }
+            gui.handleEvent(event);
+        }
+
+        tgui::Callback callback;
+        while (gui.pollCallback(callback)) {
+            if (callback.id != 99999) {
+	            FileHandler fh("res/leveldata/"+levelNames.at(callback.id));
+                level.clear();
+                fh.loadLevel(level);
+            } 
+            levelPickFinished = true;
+        }
+        App.clear();
+        gui.draw();
+        App.display();
+    }
+}
+
 void EditMode::set_drawdebug() {
     drawDebug=drawDebug?0:1;
 }
@@ -229,7 +314,7 @@ void EditMode::set_drawlevel() {
 }
 
 bool EditMode::not_locked() {
-	if (!locked_available && !locked_goals && !locked_save) return true;
+	if (!locked_available && !locked_goals && !locked_save && !locked_load) return true;
 	return false;
 }
 
@@ -431,13 +516,13 @@ void EditMode::commit_save() {
 	tgui::EditBox::Ptr name = gui.get("savename");
 	tgui::TextBox::Ptr description = gui.get("description");
 	level.setDescription(description->getText());
-	FileHandler fh("res/leveldata/"+name->getText()+".txt");
+	FileHandler fh("res/leveldata/"+name->getText());
 	tgui::Label::Ptr bottom=gui.get("bottombar");
 	if (!fh.saveLevel(level)) {
 		bottom->setText("Save failed: \n"+fh.getError());
 	}
 	else {
-		Resources::getInstance().addLevel(name->getText()+".txt");
+		Resources::getInstance().addLevel(name->getText());
 		bottom->setText("Save succesful!");
 	}
 	close_save();
@@ -461,11 +546,20 @@ void EditMode::load_gui() {
 	//The Save button:
 	tgui::Button::Ptr save(gui, "save");
 	save->load("TGUI/Black.conf");
-	save->setSize(150, 30);
+	save->setSize(60, 30);
 	save->setText("Save");
 	save->setPosition(625,7);
 	save->setCallbackId(100); //This assumes we won't surpass 100 GameObjects. We won't.
 	save->bindCallback(tgui::Button::LeftMouseClicked);
+	
+	//The Load button:
+	tgui::Button::Ptr load(gui, "load");
+	load->load("TGUI/Black.conf");
+	load->setSize(60, 30);
+	load->setText("Load");
+	load->setPosition(715,7);
+	load->setCallbackId(104);
+	load->bindCallback(tgui::Button::LeftMouseClicked);
 	
 	
 	//The Available button:
