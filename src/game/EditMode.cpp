@@ -33,6 +33,7 @@ GameState::StateSelect EditMode::run()
 					tgui::Label::Ptr bottom=gui.get("bottombar");
 					bottom->setText(" ");
 				}
+                highlight_active = false;
 				continue;
 			}
 			if (!not_locked()) continue; 
