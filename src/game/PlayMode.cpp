@@ -248,6 +248,9 @@ void PlayMode::toggleSimulation() {
         button = gui.get("main menu");
         button->setProperty("Enabled", "false");
         button->setTransparency(127);
+        
+        tgui::Label::Ptr bottombar = gui.get("bottombar");
+		bottombar->setText(level.getDescription());
 	}
 	else {
 		simulate=0;
