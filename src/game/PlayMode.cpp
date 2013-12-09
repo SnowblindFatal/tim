@@ -182,25 +182,7 @@ GameState::StateSelect PlayMode::run()
 		while (gui.pollCallback(callback)) {
 			
 			if (callback.id == 100) {
-				if (!simulate) {
-					level.reset();
-					simulate=1;
-					active_object=NULL;
-					tgui::Button::Ptr button=gui.get("simulate");
-					button->setText("Reset");
-                    button = gui.get("main menu");
-                    button->setProperty("Enabled", "false");
-                    button->setTransparency(127);
-				}
-				else {
-					simulate=0;
-					level.reset();
-					tgui::Button::Ptr button=gui.get("simulate");
-					button->setText("Simulate");
-                    button = gui.get("main menu");
-                    button->setProperty("Enabled", "true");
-                    button->setTransparency(255);
-				}
+                toggleSimulation();
 			}
             
             else if (callback.id == 101) {
@@ -241,7 +223,7 @@ GameState::StateSelect PlayMode::run()
             level.simulate();
 			
 			if (level.checkWin()) {
-				set_simulate();
+				toggleSimulation();
                 Resources::getInstance().winLevel(currentLevelName);
 				std::cout << "You win!\n";
 			}
@@ -253,6 +235,28 @@ GameState::StateSelect PlayMode::run()
         App.display();
     }
     return retval;
+}
+
+void PlayMode::toggleSimulation() {
+	if (!simulate) {
+		level.reset();
+		simulate=1;
+		active_object=NULL;
+		tgui::Button::Ptr button=gui.get("simulate");
+		button->setText("Reset");
+        button = gui.get("main menu");
+        button->setProperty("Enabled", "false");
+        button->setTransparency(127);
+	}
+	else {
+		simulate=0;
+		level.reset();
+		tgui::Button::Ptr button=gui.get("simulate");
+		button->setText("Simulate");
+        button = gui.get("main menu");
+        button->setProperty("Enabled", "true");
+        button->setTransparency(255);
+	}
 }
 
 void PlayMode::set_simulate() {
