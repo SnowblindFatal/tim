@@ -1,3 +1,5 @@
-reverse.txt 0
 level1.txt 0
 level2.txt 0
+maze.txt 0
+playground.txt 0
+reverse.txt 0
