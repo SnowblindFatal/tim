@@ -223,34 +223,47 @@ bool LevelData::canCreateWincondition(GameObject* target) {
 
 
 void LevelData::reset() {
+		std::cout << "File: " << __FILE__ << " Line: " << __LINE__ << std::endl;
 		for (auto it : levelobjects) {
+			std::cout << "File: " << __FILE__ << " Line: " << __LINE__ << std::endl;
 			it->reset();
 		}
+		std::cout << "File: " << __FILE__ << " Line: " << __LINE__ << std::endl;
 		for (auto it : playerobjects) {
 			it->reset(); 
 		}
+		std::cout << "File: " << __FILE__ << " Line: " << __LINE__ << std::endl;
 		for (auto it : winconditions) {
 			it->reset();
 		}
+		std::cout << "File: " << __FILE__ << " Line: " << __LINE__ << std::endl;
 		phys_world.SetGravity(default_gravity);
+		std::cout << "File: " << __FILE__ << " Line: " << __LINE__ << std::endl;
 }
 
 void LevelData::clear()
 {
-	for (auto& iter : levelobjects) 
+	auto levelit = levelobjects.begin();
+	auto playerit = playerobjects.begin();
+	auto winit = winconditions.begin();
+	
+	while (!levelobjects.empty())
 	{
-	    delete iter;
-		iter=NULL;
+		levelit = levelobjects.begin();
+		delete *levelit;
+		levelit = levelobjects.erase(levelit);
 	}
-	for (auto& iter : playerobjects) 
+	while (!playerobjects.empty())
 	{
-	    delete iter;
-		iter=NULL;
+		playerit = playerobjects.begin();
+		delete *playerit;
+		playerit = playerobjects.erase(playerit);
 	}
-	for (auto& iter : winconditions) 
+	while (!winconditions.empty())
 	{
-	    delete iter;
-		iter=NULL;
+		winit = winconditions.begin();
+		delete *winit;
+		winit = winconditions.erase(winit);
 	}
 	
 	for (auto iter = available.begin();iter != available.end();iter++)
