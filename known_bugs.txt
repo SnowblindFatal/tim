@@ -6,6 +6,12 @@ AA list of known bugs etc.
 
 --Add a delay on winning. For example, the example animation doesn't play now since winning is instant.
 
+--Is not near point causes segfault when saving. (tolerance seems to be uninitialised when used in getTolerance()).
+
+--Resize a win condition box so that the cursor ends up in the toolbox and it becomes difficult to resize again.
+
+--Seesaw is not mirrored when loaded from a file.
+
 
 
 --SFML seems to leak some memory. It is a constant sized chunk and does not grow over time.
