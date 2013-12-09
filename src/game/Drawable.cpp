@@ -237,7 +237,7 @@ void SeesawDrawable::update(const std::vector<PhysBody>& bodies) {
 }
 
 
-CatapultDrawable::CatapultDrawable(float x, float y) : Drawable(new CatapultHighlight()) {
+CatapultDrawable::CatapultDrawable(float x, float y, bool flipped) : Drawable(new CatapultHighlight()), flipped(flipped) {
 	x*=10;
 	y*=10;
 	polygon.setPointCount(3);
@@ -254,13 +254,26 @@ CatapultDrawable::CatapultDrawable(float x, float y) : Drawable(new CatapultHigh
 	box.setFillColor(sf::Color(160,160,160));
 	box.setOutlineThickness(1);
 	box.setOutlineColor(sf::Color(128,128,128));
+	if (!flipped) {
+		box2.setSize(sf::Vector2f(4,20));
+		box2.setOrigin(-46, 22);
+		box2.setPosition(x,y);
+		box2.setFillColor(sf::Color(160,160,160));
+		box2.setOutlineThickness(1);
+		box2.setOutlineColor(sf::Color(128,128,128));
+	}
+	else {
+		box2.setSize(sf::Vector2f(4,20));
+		box2.setOrigin(50, 22);
+		box2.setPosition(x,y);
+		box2.setFillColor(sf::Color(160,160,160));
+		box2.setOutlineThickness(1);
+		box2.setOutlineColor(sf::Color(128,128,128));
+	}
+}
 
-	box2.setSize(sf::Vector2f(4,20));
-	box2.setOrigin(-46, 22);
-	box2.setPosition(x,y);
-	box2.setFillColor(sf::Color(160,160,160));
-	box2.setOutlineThickness(1);
-	box2.setOutlineColor(sf::Color(128,128,128));
+void CatapultDrawable::setFlipped(bool flip) {
+	flipped = flip;
 }
 
 void CatapultDrawable::draw(sf::RenderWindow& win) {
@@ -281,6 +294,12 @@ void CatapultDrawable::update(const std::vector<PhysBody>& bodies) {
    // polygon.setTextureRect(sf::IntRect(0, 0, rect.width, rect.height));
 	box.setPosition(sf::Vector2f(bodies[1].body_ptr->GetPosition().x*10,bodies[1].body_ptr->GetPosition().y*10));
 	box.setRotation(bodies[1].body_ptr->GetAngle()*180.0f/3.141592f);
+	if (!flipped) {
+		box2.setOrigin(-46, 22);
+	}
+	else {
+		box2.setOrigin(50, 22);
+	}
 	box2.setPosition(sf::Vector2f(bodies[1].body_ptr->GetPosition().x*10,bodies[1].body_ptr->GetPosition().y*10));
 	box2.setRotation(bodies[1].body_ptr->GetAngle()*180.0f/3.141592f);
 	const sf::FloatRect rect =box.getGlobalBounds();
