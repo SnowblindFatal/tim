@@ -196,7 +196,7 @@ void BigBallDrawable::update(const std::vector<PhysBody>& bodies) {
 
 
 
-SeesawDrawable::SeesawDrawable(float x, float y) : Drawable() {
+SeesawDrawable::SeesawDrawable(float x, float y) : Drawable(new SeesawHighlight()) {
 	x*=10;
 	y*=10;
 	polygon.setPointCount(3);
@@ -237,7 +237,7 @@ void SeesawDrawable::update(const std::vector<PhysBody>& bodies) {
 }
 
 
-CatapultDrawable::CatapultDrawable(float x, float y) : Drawable() {
+CatapultDrawable::CatapultDrawable(float x, float y) : Drawable(new CatapultHighlight()) {
 	x*=10;
 	y*=10;
 	polygon.setPointCount(3);

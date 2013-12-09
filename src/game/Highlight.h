@@ -60,4 +60,34 @@ protected:
 	bool rotate_active;
 };
 
+class SeesawHighlight : public Highlight {
+public:
+	SeesawHighlight();
+	void set(const std::string&, bool);
+	void update_rect(const sf::FloatRect&);
+	void draw(sf::RenderWindow&);
+
+	bool checkPoint(sf::Vector2i);
+	virtual std::string clicked(const sf::Vector2i&);
+
+protected:
+	sf::CircleShape	rotate;
+	bool rotate_active;
+};
+
+class CatapultHighlight : public Highlight {
+public:
+	CatapultHighlight();
+	void set(const std::string&, bool);
+	void update_rect(const sf::FloatRect&);
+	void draw(sf::RenderWindow&);
+
+	bool checkPoint(sf::Vector2i);
+	virtual std::string clicked(const sf::Vector2i&);
+
+protected:
+	sf::CircleShape	rotate;
+	bool rotate_active;
+};
+
 #endif

@@ -318,7 +318,7 @@ b2Vec2 Wall::getDimensions() {
     return dimensions;
 }
 
-Catapult::Catapult(b2World& world, float x, float y) : GameObject(world, x,y,"Catapult", new CatapultDrawable(x,y)) {
+Catapult::Catapult(b2World& world, float x, float y, bool flipped) : GameObject(world, x,y,"Catapult", new CatapultDrawable(x,y)), flipped(flipped) {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
 	b2Body* body_ptr = world.CreateBody(&bodyDef);
@@ -366,9 +366,32 @@ Catapult::Catapult(b2World& world, float x, float y) : GameObject(world, x,y,"Ca
 	jointDef.lowerAngle = -0.4;
 	jointDef.upperAngle =  0.4;
 	world.CreateJoint(&jointDef);
+
+	if (flipped) {
+		bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), -0.4);
+	}
 }
 
-Seesaw::Seesaw(b2World& world, float x, float y) : GameObject(world, x,y,"Seesaw", new SeesawDrawable(x,y)) {
+std::string Catapult::highlightClicked(sf::Vector2i point) {
+	std::string result=drawable->highlightClicked(point);
+	std::cout << result << std::endl;
+	if (result=="rotate") {
+		std::cout << bodies[1].body_ptr->GetAngle() << std::endl;
+		if (bodies[1].body_ptr->GetAngle() > 0) {
+			std::cout << "0.4\n";
+			bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), -0.4);
+		}
+		else {
+			std::cout << "0.0\n";
+			bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), 0.4);
+		}
+		return "nothing";
+	}
+	return result;
+	
+}
+
+Seesaw::Seesaw(b2World& world, float x, float y, bool flipped) : GameObject(world, x,y,"Seesaw", new SeesawDrawable(x,y)), flipped(flipped) {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
 	b2Body* body_ptr = world.CreateBody(&bodyDef);
@@ -408,6 +431,30 @@ Seesaw::Seesaw(b2World& world, float x, float y) : GameObject(world, x,y,"Seesaw
 	jointDef.lowerAngle = -0.4;
 	jointDef.upperAngle =  0.4;
 	world.CreateJoint(&jointDef);
+
+	if (flipped) {
+		bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), -0.4);
+	}
+}
+
+
+std::string Seesaw::highlightClicked(sf::Vector2i point) {
+	std::string result=drawable->highlightClicked(point);
+	std::cout << result << std::endl;
+	if (result=="rotate") {
+		std::cout << bodies[1].body_ptr->GetAngle() << std::endl;
+		if (bodies[1].body_ptr->GetAngle() > 0) {
+			std::cout << "0.4\n";
+			bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), -0.4);
+		}
+		else {
+			std::cout << "0.0\n";
+			bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), 0.4);
+		}
+		return "nothing";
+	}
+	return result;
+	
 }
 
 Ball::Ball(b2World& world, float x, float y,std::string name, float r, float restitution = 0, float density = 1.0, Drawable* drawable= new Drawable) : GameObject(world, x,y,name, drawable) {

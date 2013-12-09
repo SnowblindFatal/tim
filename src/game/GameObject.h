@@ -168,14 +168,18 @@ class Wall : public GameObject
 class Seesaw : public GameObject
 {
 	public:	
-		Seesaw(b2World& world, float x, float y);
+		Seesaw(b2World& world, float x, float y, bool flipped= false);
+		std::string highlightClicked(sf::Vector2i point);
+		bool flipped;
 };
 
 class Catapult : public GameObject
 {
 	public:
-		Catapult(b2World& world, float x, float y);
-
+		Catapult(b2World& world, float x, float y, bool flipped= false);
+		std::string highlightClicked(sf::Vector2i point);
+		bool flipped;
+		
 };
 
 class GravityChanger : public GameObject

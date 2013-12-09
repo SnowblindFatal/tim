@@ -132,6 +132,138 @@ bool PlatformHighlight::checkPoint(sf::Vector2i point) {
 	return false;
 }
 
+SeesawHighlight::SeesawHighlight() : Highlight() {
+	rotate.setFillColor(sf::Color::Transparent);
+	rotate.setRadius(5);	
+}
+
+void SeesawHighlight::set(const std::string& type, bool can_place) {
+	if (type=="active") {
+		rotate.setFillColor(sf::Color::Blue);
+	}
+	Highlight::set(type,can_place);
+	return;
+}
+
+void SeesawHighlight::update_rect(const sf::FloatRect& rect) {
+	rotate.setPosition(rect.left+rect.width+12, rect.top + 10);
+	Highlight::update_rect(rect);
+}
+
+void SeesawHighlight::draw(sf::RenderWindow& win) {
+	win.draw(rotate);
+	rotate.setFillColor(sf::Color::Transparent);
+	Highlight::draw(win);
+}
+
+bool SeesawHighlight::checkPoint(sf::Vector2i point) {
+	std::cout << "seesaw check\n";
+	if (rotate.getGlobalBounds().contains(point.x, point.y)) {
+		delete_active=false;
+		rotate_active=true;
+		return true;
+	}
+	else {
+		sf::FloatRect box=del1.getGlobalBounds();
+		if (box.contains(point.x,point.y)) {
+			delete_active=true;
+			rotate_active=false;
+			return true; 
+		}
+	}
+	return false;
+}
+
+std::string SeesawHighlight::clicked(const sf::Vector2i& point) {
+	std::cout << "seesaw clicked\n";
+	if (delete_active) {
+
+		sf::FloatRect box=del1.getGlobalBounds();
+		if (box.contains(point.x,point.y)) {
+			return "delete";
+		}
+		else {
+			delete_active=false;
+			rotate_active=false;
+			return "nothing";
+		}
+	}
+	else if (rotate_active) {
+		if (rotate.getGlobalBounds().contains(point.x, point.y)) {
+			rotate_active=false;
+			return "rotate";
+		}
+	}
+	return "nothing";
+}
+
+
+CatapultHighlight::CatapultHighlight() : Highlight() {
+	rotate.setFillColor(sf::Color::Transparent);
+	rotate.setRadius(5);	
+}
+
+void CatapultHighlight::set(const std::string& type, bool can_place) {
+	if (type=="active") {
+		rotate.setFillColor(sf::Color::Blue);
+	}
+	Highlight::set(type,can_place);
+	return;
+}
+
+void CatapultHighlight::update_rect(const sf::FloatRect& rect) {
+	rotate.setPosition(rect.left+rect.width+12, rect.top + 10);
+	Highlight::update_rect(rect);
+}
+
+void CatapultHighlight::draw(sf::RenderWindow& win) {
+	win.draw(rotate);
+	rotate.setFillColor(sf::Color::Transparent);
+	Highlight::draw(win);
+}
+
+bool CatapultHighlight::checkPoint(sf::Vector2i point) {
+	if (rotate.getGlobalBounds().contains(point.x, point.y)) {
+		delete_active=false;
+		rotate_active=true;
+		return true;
+	}
+	else {
+		sf::FloatRect box=del1.getGlobalBounds();
+		if (box.contains(point.x,point.y)) {
+			delete_active=true;
+			rotate_active=false;
+			return true; 
+		}
+	}
+	return false;
+}
+
+std::string CatapultHighlight::clicked(const sf::Vector2i& point) {
+	std::cout << "catapult clicked\n";
+	if (delete_active) {
+
+		sf::FloatRect box=del1.getGlobalBounds();
+		if (box.contains(point.x,point.y)) {
+			return "delete";
+		}
+		else {
+			delete_active=false;
+			rotate_active=false;
+			return "nothing";
+		}
+	}
+	else if (rotate_active) {
+		if (rotate.getGlobalBounds().contains(point.x, point.y)) {
+			rotate_active=false;
+			return "rotate";
+		}
+	}
+	return "nothing";
+}
+
+
+
 GravityChangerHighlight::GravityChangerHighlight() : Highlight() {
 	rotate.setFillColor(sf::Color::Transparent);
 	rotate.setRadius(5);
@@ -156,6 +288,7 @@ void GravityChangerHighlight::draw(sf::RenderWindow& win) {
 	Highlight::draw(win);
 }
 bool GravityChangerHighlight::checkPoint(sf::Vector2i point) {	
+	std::cout << "gravity check\n";
 	if (rotate.getGlobalBounds().contains(point.x, point.y)) {
 		delete_active=false;
 		rotate_active=true;
@@ -172,6 +305,7 @@ bool GravityChangerHighlight::checkPoint(sf::Vector2i point) {
 	return false;
 }
 std::string GravityChangerHighlight::clicked(const sf::Vector2i& point) {
+	std::cout << "gravity clicked\n";
 	if (delete_active) {
 
 		sf::FloatRect box=del1.getGlobalBounds();
