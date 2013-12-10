@@ -20,6 +20,9 @@ public:
 		delete highlight;	
 		highlight=NULL;
 	};
+	Drawable(const Drawable&) = delete;
+	Drawable& operator=(const Drawable&) = delete;
+
 	virtual void draw(sf::RenderWindow&) {} 
 	virtual void update(const std::vector<PhysBody>&) {} 
 	virtual void setHighlight(std::string, bool);

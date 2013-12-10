@@ -24,6 +24,8 @@ class LevelData
 public:
 	LevelData(sf::RenderWindow& _App);
     ~LevelData();
+	LevelData(const LevelData&) = delete;
+	LevelData& operator=(const LevelData&) = delete;
     
     void addLevelObject(GameObject*);
     
