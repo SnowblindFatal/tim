@@ -506,7 +506,12 @@ Seesaw::Seesaw(b2World& world, float x, float y, bool flipped) : GameObject(worl
 	
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(x, y);
-	bodyDef.angle = 0.4;
+	if (flipped) {
+		bodyDef.angle = -0.4;
+	}
+	else {
+		bodyDef.angle = 0.4;
+	}
 	b2Body* body_ptr2 =world.CreateBody(&bodyDef);
 	b2PolygonShape boxShape;
 	boxShape.SetAsBox(5,0.2);
@@ -527,10 +532,6 @@ Seesaw::Seesaw(b2World& world, float x, float y, bool flipped) : GameObject(worl
 	jointDef.lowerAngle = -0.4;
 	jointDef.upperAngle =  0.4;
 	world.CreateJoint(&jointDef);
-
-	if (flipped) {
-		bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), -0.4);
-	}
 }
 
 
