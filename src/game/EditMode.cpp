@@ -406,7 +406,7 @@ void EditMode::goals_procedure() {
 	cancel->bindCallback(tgui::Button::LeftMouseClicked);
 	
 	//The buttons::
-	if (active_object!=NULL && (active_object->getName()=="Domino" || active_object->getName()=="BigBall" || active_object->getName()=="BouncingBall" || active_object->getName()=="BowlingBall")) {
+	if (active_object!=NULL && (active_object->getName()=="Domino" || active_object->getName()=="BigBall" || active_object->getName()=="BouncingBall" || active_object->getName()=="BowlingBall" || active_object->getName()=="Crate")) {
 		tgui::Button::Ptr isnear(gui, "isnearbutton");
 		isnear->load("TGUI/Black.conf");
 		isnear->setSize(150, 30);
