@@ -154,11 +154,13 @@ const std::map<std::string, bool>& Resources::getLevelInfo() const
 void Resources::addLevel(std::string levelName) 
 {
     levelInfo[levelName] = 0;
+    saveWinStatus();
 }
 
 void Resources::winLevel(const std::string levelName)
 {
     levelInfo[levelName] = 1;
+    saveWinStatus();
 }
 
 void Resources::setCurrentLevel(const std::string& fileName)
