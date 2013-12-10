@@ -138,25 +138,4 @@ private:
 	Highlight highlight;		
 };
 
-class IsUntouched : public WinCondition
-{
-public:
-	IsUntouched(GameObject* go_ptr) : WinCondition(go_ptr, "IsUntouched") { fulfilled = true; }
-	
-	bool check()
-	{
-		if (go_ptr->explodeStatus())
-		{
-			fulfilled = false;
-			return fulfilled;
-		}
-		return fulfilled;
-	}
-	void draw(sf::RenderWindow&);
-	bool highlightPoint(sf::Vector2i); 
-	std::string highlightClicked(sf::Vector2i);
-private:
-	Highlight highlight;		
-};
-
 #endif
