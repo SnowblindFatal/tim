@@ -351,7 +351,6 @@ b2Vec2 Wall::getDimensions() {
 }
 
 Catapult::Catapult(b2World& world, float x, float y, bool flipped) : GameObject(world, x,y,"Catapult", new CatapultDrawable(x,y, flipped)), flipped(flipped) {
-	std::cout << "catapult\n";
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
 	b2Body* body_ptr = world.CreateBody(&bodyDef);
@@ -428,9 +427,7 @@ Catapult::Catapult(b2World& world, float x, float y, bool flipped) : GameObject(
 
 std::string Catapult::highlightClicked(sf::Vector2i point) {
 	std::string result=drawable->highlightClicked(point);
-	std::cout << result << std::endl;
 	if (result=="rotate") {
-		std::cout << bodies[1].body_ptr->GetAngle() << std::endl;
 		if (bodies[1].body_ptr->GetAngle() > 0) {
 			bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), -0.4);
 			bodies[1].original_rot=-0.4;
@@ -538,7 +535,6 @@ Seesaw::Seesaw(b2World& world, float x, float y, bool flipped) : GameObject(worl
 std::string Seesaw::highlightClicked(sf::Vector2i point) {
 	std::string result=drawable->highlightClicked(point);
 	if (result=="rotate") {
-		std::cout << bodies[1].body_ptr->GetAngle() << std::endl;
 		if (bodies[1].body_ptr->GetAngle() > 0) {
 			bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), -0.4);
 			bodies[1].original_rot=-0.4;
@@ -615,7 +611,6 @@ Bomb::Bomb(b2World& world, float x, float y) : GameObject(world, x, y,"Bomb", ne
 }
 
 void Bomb::applyImpulse(b2Body* body, b2Vec2 center, b2Vec2 applyPoint, float power) {
-	std::cout << "applyimpulse\n";
       b2Vec2 blastDir = applyPoint - center;
       float distance = blastDir.Normalize();
       //Ignores the bomb
@@ -628,7 +623,6 @@ void Bomb::applyImpulse(b2Body* body, b2Vec2 center, b2Vec2 applyPoint, float po
 
 void Bomb::explode() {
 	if (exploded == false) {
-		std::cout << "bomb explode\n";
 		exploded = true;
 		b2Vec2 center = bodies[0].body_ptr->GetPosition();
 		float power = 300; 
@@ -674,38 +668,6 @@ void Bomb::update_drawable() {
 		bodies[0].body_ptr->SetActive(false);
 		dynamic_cast<BombDrawable*>(drawable)->setExploded(true);
 	}	
-}
-
-
-Lift::Lift(b2World& world, float x1, float y1, float x2, float y2) : GameObject(world, x1, y1, "Lift") {
-	b2BodyDef bodyDef;
-	bodyDef.position.Set(x1, y1);
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.fixedRotation = true;
-	b2Body* body_ptr = world.CreateBody(&bodyDef);
-	b2PolygonShape boxShape;
-	boxShape.SetAsBox(3,0.3);
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &boxShape;
-	fixtureDef.density = 1;
-	fixtureDef.friction = 1;
-	fixtureDef.restitution = 0;
-	body_ptr->CreateFixture(&fixtureDef);
-	bodies.push_back(PhysBody(body_ptr, body_ptr->GetPosition(), body_ptr->GetAngle()));
-
-	bodyDef.position.Set(x2, y2);
-	b2Body* body_ptr2 = world.CreateBody(&bodyDef);
-	body_ptr2->CreateFixture(&fixtureDef);
-	bodies.push_back(PhysBody(body_ptr2, body_ptr2->GetPosition(), body_ptr2->GetAngle()));
-
-	b2Vec2 anchor1 = body_ptr->GetWorldCenter();
-	b2Vec2 anchor2 = body_ptr2->GetWorldCenter();
-	b2Vec2 groundAnchor1(anchor1.x, anchor1.y - 15.0f);
-	b2Vec2 groundAnchor2(anchor2.x, anchor2.y - 15.0f);
-	float32 ratio = 1.0f;
-	b2PulleyJointDef jointDef;
-	jointDef.Initialize(body_ptr, body_ptr2, groundAnchor1, groundAnchor2, anchor1, anchor2, ratio);
-	world.CreateJoint(&jointDef);
 }
 
 GravityChanger::GravityChanger(b2World& world, float x, float y, bool flipped) : GameObject(world, x, y, "GravityChanger", new GravityChangerDrawable(x,y)), flipped(flipped) {
@@ -934,61 +896,3 @@ std::string Teleport::highlightClicked(sf::Vector2i point) {
 void Teleport::reset() {
 	incoming.clear();
 }
-
-
-/*
-Chain::Chain(b2World& world) : GameObject(10,10) {
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(10, 10);
-	body_ptr = world.CreateBody(&bodyDef);
-	b2CircleShape circleShape;
-	circleShape.m_p.Set(0, 0);
-	circleShape.m_radius = 1;
-b2FixtureDef fixtureDef;
-	fixtureDef.shape = &circleShape;
-	fixtureDef.density = 1;
-	fixtureDef.friction = 0.3f;
-	fixtureDef.restitution = 0;
-	body_ptr->CreateFixture(&fixtureDef);
-	b2Body* first = body_ptr;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(10, 10);
-	body_ptr = world.CreateBody(&bodyDef);
-	b2PolygonShape chainShape;
-	chainShape.SetAsBox(0.25, 0.1);
-	
-	fixtureDef.shape = &chainShape;
-	fixtureDef.density = 0.1f;
-	body_ptr->CreateFixture(&fixtureDef);
-	b2RevoluteJointDef jointDef;
-	jointDef.localAnchorA.Set(0.2, 0);
-	jointDef.localAnchorB.Set(-0.2, 0);
-	jointDef.bodyA = first;
-	jointDef.bodyB = body_ptr;
-	world.CreateJoint(&jointDef);
-	b2Body* last = body_ptr;	
-	for (int i=0; i<40; i++) {
-		bodyDef.position.Set(10 + i*0.5, 10);
-		b2Body* link = world.CreateBody(&bodyDef);
-		link->CreateFixture(&fixtureDef);
-		jointDef.bodyA = body_ptr;
-		jointDef.bodyB = link;
-		world.CreateJoint(&jointDef);
-		body_ptr = link;
-		last = link;
-	}
-	bodyDef.position.Set(10 + 20, 10);
-	body_ptr = world.CreateBody(&bodyDef);
-	circleShape.m_p.Set(0, 0);
-	circleShape.m_radius = 1;
-	fixtureDef.shape = &circleShape;
-	fixtureDef.density = 1;
-	fixtureDef.friction = 0.3f;
-	fixtureDef.restitution = 0;
-	body_ptr->CreateFixture(&fixtureDef);
-	jointDef.bodyA = body_ptr;
-	jointDef.bodyB = last;
-	world.CreateJoint(&jointDef);
-}
-*/
