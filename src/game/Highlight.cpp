@@ -157,7 +157,6 @@ void SeesawHighlight::draw(sf::RenderWindow& win) {
 }
 
 bool SeesawHighlight::checkPoint(sf::Vector2i point) {
-	std::cout << "seesaw check\n";
 	if (rotate.getGlobalBounds().contains(point.x, point.y)) {
 		delete_active=false;
 		rotate_active=true;
@@ -175,7 +174,6 @@ bool SeesawHighlight::checkPoint(sf::Vector2i point) {
 }
 
 std::string SeesawHighlight::clicked(const sf::Vector2i& point) {
-	std::cout << "seesaw clicked\n";
 	if (delete_active) {
 
 		sf::FloatRect box=del1.getGlobalBounds();
@@ -240,7 +238,6 @@ bool CatapultHighlight::checkPoint(sf::Vector2i point) {
 }
 
 std::string CatapultHighlight::clicked(const sf::Vector2i& point) {
-	std::cout << "catapult clicked\n";
 	if (delete_active) {
 
 		sf::FloatRect box=del1.getGlobalBounds();
@@ -287,8 +284,7 @@ void GravityChangerHighlight::draw(sf::RenderWindow& win) {
 	rotate.setFillColor(sf::Color::Transparent);
 	Highlight::draw(win);
 }
-bool GravityChangerHighlight::checkPoint(sf::Vector2i point) {	
-	std::cout << "gravity check\n";
+bool GravityChangerHighlight::checkPoint(sf::Vector2i point) {
 	if (rotate.getGlobalBounds().contains(point.x, point.y)) {
 		delete_active=false;
 		rotate_active=true;
@@ -305,7 +301,6 @@ bool GravityChangerHighlight::checkPoint(sf::Vector2i point) {
 	return false;
 }
 std::string GravityChangerHighlight::clicked(const sf::Vector2i& point) {
-	std::cout << "gravity clicked\n";
 	if (delete_active) {
 
 		sf::FloatRect box=del1.getGlobalBounds();
