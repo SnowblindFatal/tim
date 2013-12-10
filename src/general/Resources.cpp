@@ -35,7 +35,8 @@ namespace {
 		"savebox.png",
 		"explosion.png",
 		"crate.jpg",
-		"teleport.png"
+		"teleport.png",
+		"grats2.png"
     };
 
     const std::vector<std::string> soundFileNames = {

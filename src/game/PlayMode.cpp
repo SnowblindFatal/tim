@@ -14,6 +14,7 @@
 GameState::StateSelect PlayMode::run()
 {
     done = false;
+	locked_complete=false;	
 	
     level.clear();
     currentLevelName = Resources::getInstance().getCurrentLevelName();
@@ -91,60 +92,9 @@ void PlayMode::handleInput() {
                 simulate = 0;
                 level.reset();
             }
-
-            //GameObject creation:
-            if (dragged_object == NULL) {
-
-                if (event.key.code == sf::Keyboard::Num1) {
-                    active_object = level.createObject("Platform", 0.1f * (float) sf::Mouse::getPosition(App).x, 0.1f * (float) sf::Mouse::getPosition(App).y);
-                    dragged_object = active_object;
-                    if (active_object == NULL)
-                        std::cout << "No Platforms available\n";
-                }
-                if (event.key.code == sf::Keyboard::Num2) {
-                    active_object = level.createObject("Wall", 0.1f * (float) sf::Mouse::getPosition(App).x, 0.1f * (float) sf::Mouse::getPosition(App).y);
-                    dragged_object = active_object;
-                    if (active_object == NULL)
-                        std::cout << "No Walls available\n";
-                }
-                if (event.key.code == sf::Keyboard::Num3) {
-                    active_object = level.createObject("BouncingBall", 0.1f * (float) sf::Mouse::getPosition(App).x, 0.1f * (float) sf::Mouse::getPosition(App).y);
-                    dragged_object = active_object;
-                    if (active_object == NULL)
-                        std::cout << "No Bouncing Balls available\n";
-                }
-                if (event.key.code == sf::Keyboard::Num4) {
-                    active_object = level.createObject("Seesaw", 0.1f * (float) sf::Mouse::getPosition(App).x, 0.1f * (float) sf::Mouse::getPosition(App).y);
-                    dragged_object = active_object;
-                    if (active_object == NULL)
-                        std::cout << "No Seesaws available\n";
-                }
-                if (event.key.code == sf::Keyboard::Num5) {
-                    active_object = level.createObject("Bomb", 0.1f * (float) sf::Mouse::getPosition(App).x, 0.1f * (float) sf::Mouse::getPosition(App).y);
-                    dragged_object = active_object;
-                    if (active_object == NULL)
-                        std::cout << "No Bombs available\n";
-                }
-                if (event.key.code == sf::Keyboard::Num6) {
-                    active_object = level.createObject("GravityChanger", 0.1f * (float) sf::Mouse::getPosition(App).x, 0.1f * (float) sf::Mouse::getPosition(App).y);
-                    dragged_object = active_object;
-                    if (active_object == NULL)
-                        std::cout << "No GravityChangers available\n";
-                }
-                if (event.key.code == sf::Keyboard::Num7) {
-                    active_object = level.createObject("BowlingBall", 0.1f * (float) sf::Mouse::getPosition(App).x, 0.1f * (float) sf::Mouse::getPosition(App).y);
-                    dragged_object = active_object;
-                    if (active_object == NULL)
-                        std::cout << "No Bowling balls available\n";
-                }
-                if (event.key.code == sf::Keyboard::Num8) {
-                    active_object = level.createObject("Domino", 0.1f * (float) sf::Mouse::getPosition(App).x, 0.1f * (float) sf::Mouse::getPosition(App).y);
-                    dragged_object = active_object;
-                    if (active_object == NULL)
-                        std::cout << "No Dominoes available\n";
-                } else handleKeyPress(event);
-            }
-        }
+			else handleKeyPress(event);
+		}
+        
 
         else if (event.type == sf::Event::MouseMoved) {
 
@@ -191,6 +141,20 @@ void PlayMode::handleGui() {
     //TGUI Callbacks:
     tgui::Callback callback;
     while (gui.pollCallback(callback)) {
+		if (locked_complete) {
+			if (callback.id == 666) {
+				done = true;
+				retval = GameState::StateSelect::Menu;
+				levelCompleteClose();
+				toggleSimulation();
+			}
+			else if (callback.id == 667) {
+				levelCompleteClose();
+				toggleSimulation();
+			}
+			continue;
+		}
+				
 
         if (callback.id == 100) {
             toggleSimulation();
@@ -258,11 +222,12 @@ void PlayMode::handleSimulation() {
 
         level.simulate();
 
-        if (level.checkWin()) {
-            toggleSimulation();
+        if (!locked_complete && level.checkWin()) {
+            //toggleSimulation();
             Resources::getInstance().winLevel(currentLevelName);
             tgui::Label::Ptr bottombar = gui.get("bottombar");
             bottombar->setText("Level completed!");
+			levelCompleteDialog();
         }
     }
 }
@@ -277,6 +242,55 @@ void PlayMode::set_drawdebug() {
 void PlayMode::set_drawlevel() {
 	drawLevel=drawLevel?0:1;
 }
+void PlayMode::levelCompleteDialog() {
+	locked_complete=true; 
+
+	//The Background: 
+	tgui::Panel::Ptr box(gui, "completebg");
+	box->setBackgroundTexture(Resources::getInstance().getTexture("savebox.png"));
+	box->setSize(500,300);
+	box->setPosition(50, 50);
+	box->setTransparency(180);
+	box->setBackgroundColor(sf::Color::Transparent);
+
+	//The congratulation:
+	tgui::Panel::Ptr yeah(gui, "congratulations");
+	yeah->setBackgroundTexture(Resources::getInstance().getTexture("grats2.png"));
+	yeah->setSize(288,33);
+	yeah->setPosition(156, 100);
+	yeah->setBackgroundColor(sf::Color::Transparent);
+
+
+	//The Menu Button:
+	tgui::Button::Ptr done(gui, "completeExit");
+	done->load("TGUI/Black.conf");
+	done->setSize(150, 50);
+	done->setPosition(100,200);
+	done->setText("Menu");
+	done->setCallbackId(666);
+	done->bindCallback(tgui::Button::LeftMouseClicked);
+
+	//Reset Button:
+	tgui::Button::Ptr reset(gui, "completeReset");
+	reset->load("TGUI/Black.conf");
+	reset->setSize(150, 50);
+	reset->setPosition(350,200);
+	reset->setText("Reset");
+	reset->setCallbackId(667);
+	reset->bindCallback(tgui::Button::LeftMouseClicked);
+}
+
+void PlayMode::levelCompleteClose() {
+	gui.remove(gui.get("completebg"));
+	gui.remove(gui.get("congratulations"));
+	gui.remove(gui.get("completeExit"));
+	gui.remove(gui.get("completeReset"));
+	locked_complete=false;
+}
+
+
+
+	
 
 void PlayMode::load_gui() {
 	//Globals:

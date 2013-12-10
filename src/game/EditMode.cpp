@@ -309,9 +309,9 @@ bool EditMode::not_locked() {
 }
 
 void EditMode::available_procedure() {
-	locked_available=true;
+	locked_available=true; 
 	
-	//The Background:
+	//The Background: 
 	tgui::Panel::Ptr box(gui, "availablebox");
 	box->setBackgroundTexture(Resources::getInstance().getTexture("savebox.png"));
 	box->setSize(500,500);

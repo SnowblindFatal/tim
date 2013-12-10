@@ -16,7 +16,7 @@
 
 class PlayMode : public PlayingField {
 public:
-    PlayMode(sf::RenderWindow& _App) : PlayingField(_App), simulate(false), level(_App), drawDebug(false), drawLevel(true), active_object(NULL), dragged_object(NULL), highlight_active(false), gui(_App), gui_loaded(false), currentLevelName("") {}
+    PlayMode(sf::RenderWindow& _App) : PlayingField(_App), simulate(false), locked_complete(false),level(_App), drawDebug(false), drawLevel(true), active_object(NULL), dragged_object(NULL), highlight_active(false), gui(_App), gui_loaded(false), currentLevelName("") {}
     PlayMode(const PlayMode& orig) = delete;
     PlayMode operator=(const PlayMode& orig) = delete;
     virtual ~PlayMode(){
@@ -36,6 +36,10 @@ private:
     void handleGui();
     void highlightObject();
     void handleSimulation();
+	void levelCompleteDialog();
+	void levelCompleteClose();
+	bool locked_complete;
+
     LevelData level;
     bool drawDebug;
     bool drawLevel;
