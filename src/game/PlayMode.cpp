@@ -63,6 +63,7 @@ void PlayMode::handleInput() {
         }
         //TGUI is given the event first. If TGUI didn't use the event, we will.
         if (gui.handleEvent(event)) {
+            highlight_active = false;
             continue;
         }
 
@@ -173,7 +174,7 @@ void PlayMode::handleInput() {
             //If we were dragging something, stop if we can place it here.
             if (dragged_object != NULL && dragged_object->can_place) {
                 dragged_object = NULL;
-            } else if (highlight_active) {
+            } else if (highlight_active && active_object) {
                 std::string action = active_object->highlightClicked(sf::Mouse::getPosition(App));
                 if (action == "delete") {
                     level.deletePlayerObject(active_object);

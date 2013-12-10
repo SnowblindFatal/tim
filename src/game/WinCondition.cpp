@@ -99,19 +99,3 @@ bool IsDestroyed::highlightPoint(sf::Vector2i mouse) {
 std::string IsDestroyed::highlightClicked(sf::Vector2i mouse) {
 	return highlight.clicked(mouse);
 }
-
-void IsUntouched::draw(sf::RenderWindow& win) {
-	b2Vec2 pos=go_ptr->getCurrentPos();
-	highlight.update_rect(sf::FloatRect(pos.x*10-30,pos.y*10-30,60,60));
-	highlight.set("wincondition", true);
-	highlight.draw(win);
-}
-bool IsUntouched::highlightPoint(sf::Vector2i mouse) {
-	if (highlight.checkPoint(mouse)) {
-		return true;
-	}
-	else return false;
-}
-std::string IsUntouched::highlightClicked(sf::Vector2i mouse) {
-	return highlight.clicked(mouse);
-}
