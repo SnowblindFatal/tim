@@ -1,0 +1,50 @@
+LevelObjects
+BowlingBall 26 5.4 IsNearPoint 26 37.3 1.45
+Crate 19.2 37.3
+Crate 22.5 37.3
+Crate 20.9 34
+Crate 24.2 34
+Crate 27.5 34
+Crate 29.1 37.3
+Crate 32.4 37.3
+Crate 30.8 34
+Platform 13 39 25 0
+Crate 25.7 30.7
+Crate 29 30.7
+Crate 22.4 30.7
+Bomb 25.9 37.6
+Crate 24.1 27.4
+Crate 27.4 27.4
+Crate 25.6 24.1
+Crate 35.7 37.3
+Crate 34.1 34
+Crate 32.3 30.7
+Crate 30.7 27.4
+Crate 28.9 24.1
+Crate 27.2 20.8
+Crate 15.9 37.3
+Crate 17.6 34
+Crate 19.1 30.7
+Crate 20.8 27.4
+Crate 22.3 24.1
+Crate 23.9 20.8
+Crate 25.7 17.5
+.
+PlayerObjects
+Bomb
+Bomb
+Bomb
+Bomb
+Bomb
+Bomb
+Bomb
+Bomb
+Bomb
+Bomb
+BouncingBall
+BouncingBall
+BouncingBall
+.
+Description
+Move bowling ball to the middle off the platform (TNTs current place)
+.
