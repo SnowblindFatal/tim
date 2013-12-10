@@ -1,6 +1,10 @@
 01-reverse 0
 02-maze 0
 03-climb 0
-ballin' 1
+04-platform 0
+05-domino 0
+06-seesaw 1
+07-TNT 1
+08 0
+99-TNT 1
 playground 0
-seesaw 1
