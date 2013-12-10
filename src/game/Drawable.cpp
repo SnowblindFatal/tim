@@ -1,6 +1,7 @@
 #include "Drawable.h"
 #include "../general/Resources.h"
 #include <string>
+#include <cmath>
 
 void Drawable::setHighlight(std::string type, bool can_place){
     highlight->set(type,can_place);
@@ -355,13 +356,13 @@ void DominoDrawable::update(const std::vector<PhysBody>& bodies) {
 	highlight->update_rect(rect);
 }
 
-TeleportDrawable::TeleportDrawable(float x, float y) : Drawable() {
+TeleportDrawable::TeleportDrawable(float x, float y) : Drawable(new GravityChangerHighlight()) {
 	x*=10;
 	y*=10;
 	box.setSize(sf::Vector2f(100,20));
 	box.setOrigin(50,10);
 	box.setPosition(x,y);
-	box.setFillColor(sf::Color::Red);
+	box.setTexture(Resources::getInstance().getTexture("teleport.png"));
 	box.setOutlineThickness(1);
 	box.setOutlineColor(sf::Color::White);
 }
@@ -372,7 +373,18 @@ void TeleportDrawable::draw(sf::RenderWindow& win) {
 }
 
 void TeleportDrawable::update(const std::vector<PhysBody>& bodies) {
-	box.setPosition(sf::Vector2f(bodies[0].body_ptr->GetPosition().x*10,bodies[0].body_ptr->GetPosition().y*10-8));
+	if (std::fabs(bodies[0].original_rot) <0.01f) {		
+		box.setPosition(sf::Vector2f(bodies[0].body_ptr->GetPosition().x*10,bodies[0].body_ptr->GetPosition().y*10-8));
+	}
+	else if (std::fabs(bodies[0].original_rot) <3.143/2.0f) {		
+		box.setPosition(sf::Vector2f(bodies[0].body_ptr->GetPosition().x*10+8,bodies[0].body_ptr->GetPosition().y*10));
+	}
+	else if (std::fabs(bodies[0].original_rot) <3.143f) {		
+		box.setPosition(sf::Vector2f(bodies[0].body_ptr->GetPosition().x*10,bodies[0].body_ptr->GetPosition().y*10+8));
+	}
+	else if (std::fabs(bodies[0].original_rot) <3.0f*3.143/2.0f) {		
+		box.setPosition(sf::Vector2f(bodies[0].body_ptr->GetPosition().x*10-8,bodies[0].body_ptr->GetPosition().y*10));
+	}
 	box.setRotation(bodies[0].body_ptr->GetAngle()*180.0f/3.141592f);
 	const sf::FloatRect rect=box.getGlobalBounds();
 	highlight->update_rect(rect);

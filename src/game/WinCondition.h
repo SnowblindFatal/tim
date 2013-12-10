@@ -82,7 +82,7 @@ private:
 class IsNotNearPoint : public WinCondition
 {
 public:
-	IsNotNearPoint(GameObject* go_ptr, float x, float y, float tolerance = 3.0f) : WinCondition(go_ptr, "IsNearPoint"), x(x), y(y), tolerance(tolerance), local_mouse(0,0), move_active(false),resize_active(false) {}
+	IsNotNearPoint(GameObject* go_ptr, float x, float y, float tolerance = 3.0f) : WinCondition(go_ptr, "IsNotNearPoint"), x(x), y(y), tolerance(tolerance), local_mouse(0,0), move_active(false),resize_active(false) {}
 	
 	bool check() {
 		if ( (std::fabs(go_ptr->getCurrentPos().x-x) > tolerance) && (std::fabs(go_ptr->getCurrentPos().y-y) > tolerance) )

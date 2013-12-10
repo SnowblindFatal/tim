@@ -253,11 +253,12 @@ GameObject* FileHandler::createObject(LevelData& level, std::string& line)
 	}
 	else if (name== "Teleport")
 	{
-		for (size_t i = 1;i < 3;i++)
+		int flipped;
+		for (size_t i = 1;i < 4;i++)
 			ss<<parameters[i] << " ";
-		ss >> x >> y;
-		obj = new Teleport(level.getWorld(), x, y);
-		parameters.erase(parameters.begin(), parameters.begin()+3);
+		ss >> x >> y >> flipped;
+		obj = new Teleport(level.getWorld(), x, y, flipped);
+		parameters.erase(parameters.begin(), parameters.begin()+4);
 	}
 	else if (name == "Crate")
 	{
@@ -364,6 +365,12 @@ std::string FileHandler::objectToText(GameObject* obj, bool hasCondition)
 			flipped = se->flipped;
 		}
 		// x, y, flipped
+		ss << " " << flipped;
+	}
+	else if (name=="Teleport") {
+		int flipped;
+		Teleport* tp_ptr = dynamic_cast<Teleport*>(obj);
+		flipped= tp_ptr->flipped;
 		ss << " " << flipped;
 	}
 	

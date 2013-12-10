@@ -127,9 +127,15 @@ void GameObject::move(float x, float y) {
 	}
 }
 
-void GameObject::teleport(b2Vec2 target) {
+void GameObject::teleport(b2Vec2 target, b2Vec2 velocity, bool flip) {
 	teleporttarget=target;	
 	teleportSet=true;
+	teleportvelocity=velocity;
+	teleportflip=flip;
+}
+
+b2Vec2 GameObject::getLinearVelocity() {
+	return bodies[0].body_ptr->GetLinearVelocity();
 }
 
 bool GameObject::isInside(float x, float y) {
@@ -176,9 +182,20 @@ GameObject* GameObjectFactory(b2World& world, std::string name, float x, float y
 
 void GameObject::update_drawable() {
 	drawable->update(bodies);
-	if (teleportSet==true && (name=="BigBall" || name=="BouncingBall" || name=="BowlingBall" || name=="Domino" || name=="Crate")) {
-		bodies[0].body_ptr->SetTransform(teleporttarget, bodies[0].body_ptr->GetAngle());
+	if (teleportReady==true && (name=="BigBall" || name=="BouncingBall" || name=="BowlingBall" || name=="Domino" || name=="Crate")) {
+		if (teleportflip==false) {
+			bodies[0].body_ptr->SetTransform(teleporttarget, bodies[0].body_ptr->GetAngle());
+		}
+		else {
+			bodies[0].body_ptr->SetTransform(teleporttarget, bodies[0].body_ptr->GetAngle()+3.141592f/2.0f);
+		}
+		bodies[0].body_ptr->SetLinearVelocity(teleportvelocity);
+		teleportReady=false;
+
+	}
+	if (teleportSet) {
 		teleportSet=false;
+		teleportReady=true;
 	}
 }
 void GameObject::draw(sf::RenderWindow& win) {
@@ -777,7 +794,7 @@ std::string GravityChanger::highlightClicked(sf::Vector2i point) {
 	}
 	else return result;
 }
-Teleport::Teleport(b2World& world, float x, float y) : GameObject(world, x, y, "Teleport", new TeleportDrawable(x,y)) {
+Teleport::Teleport(b2World& world, float x, float y, int flipped) : GameObject(world, x, y, "Teleport", new TeleportDrawable(x,y)), flipped(flipped) {
 
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(x, y);
@@ -808,11 +825,25 @@ Teleport::Teleport(b2World& world, float x, float y) : GameObject(world, x, y, "
 	b2FixtureDef blockerDef;
 	blockerDef.shape = &blocker;
 	blockerDef.isSensor=true;
-	body_ptr->CreateFixture(&blockerDef);
+	my_check2=body_ptr->CreateFixture(&blockerDef);
 	
 
 
 	teleports.push_back(this);
+	//Rotate:
+	if (flipped==0) {
+		bodies[0].body_ptr->SetTransform(bodies[0].body_ptr->GetPosition(),0);
+	}
+	if (flipped==3) {
+		bodies[0].body_ptr->SetTransform(bodies[0].body_ptr->GetPosition(),3.14159f/2.0f);
+	}
+	if (flipped==2) {
+		bodies[0].body_ptr->SetTransform(bodies[0].body_ptr->GetPosition(),3.14159f);
+	}
+	if (flipped==1) {
+		bodies[0].body_ptr->SetTransform(bodies[0].body_ptr->GetPosition(),3.0f*3.14159f/2.0f);
+	}
+	bodies[0].original_rot=bodies[0].body_ptr->GetAngle();
 }
 Teleport::~Teleport() {
 	teleports.remove(this);
@@ -839,12 +870,26 @@ void Teleport::beginContact(GameObject* go_ptr, b2Fixture* check) {
 			next->notify(go_ptr);
 			b2Vec2 target=next->getCurrentPos();
 			target+=go_ptr->getCurrentPos()-getCurrentPos();
-			go_ptr->teleport(target);
+
+			int flipped_delta=next->flipped-flipped;
+			if (flipped_delta<0) flipped_delta=4+flipped_delta;
+			b2Vec2 targetvelocity=go_ptr->getLinearVelocity();
+			for (;flipped_delta>0;flipped_delta--) {
+				targetvelocity=b2Vec2(targetvelocity.y,-targetvelocity.x);
+			}
+
+			flipped_delta=next->flipped-flipped;
+			if (flipped_delta%2==0) {
+				go_ptr->teleport(target, targetvelocity, false);
+			}
+			else {
+				go_ptr->teleport(target, targetvelocity, true);
+			}
 		}
 	}
 }
 void Teleport::endContact(GameObject* go_ptr, b2Fixture* check) {
-	if (check!=my_check) return;
+	if (check!=my_check2) return;
 	if (find(incoming.begin(), incoming.end(), go_ptr) != incoming.end()) {
 		incoming.remove(go_ptr);
 	}
@@ -854,6 +899,40 @@ void Teleport::notify(GameObject* go_ptr) {
 }
 
 std::list<GameObject*> Teleport::teleports;
+
+std::string Teleport::highlightClicked(sf::Vector2i point) {
+	std::string result=drawable->highlightClicked(point);
+	if (result=="rotate") {
+		flipped++;
+		if (flipped==4) flipped=0;
+		if (flipped==0) {
+			bodies[0].body_ptr->SetTransform(bodies[0].body_ptr->GetPosition(),0);
+		}
+		if (flipped==3) {
+			bodies[0].body_ptr->SetTransform(bodies[0].body_ptr->GetPosition(),3.14159f/2.0f);
+		}
+		if (flipped==2) {
+			bodies[0].body_ptr->SetTransform(bodies[0].body_ptr->GetPosition(),3.14159f);
+		}
+		if (flipped==1) {
+			bodies[0].body_ptr->SetTransform(bodies[0].body_ptr->GetPosition(),3.0f*3.14159f/2.0f);
+		}
+		if (!noOverlaps()) {
+			reset();
+		}
+		
+		else {
+			bodies[0].original_rot=bodies[0].body_ptr->GetAngle();
+		}
+			
+	return "nothing";
+	}
+	else return result;
+}
+
+void Teleport::reset() {
+	incoming.clear();
+}
 
 
 /*

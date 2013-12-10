@@ -28,7 +28,10 @@ public:
         PLATFORM_THRESHOLD(0.05f),
         DISCRETE_MOVE_UNIT(1.0f),
 		teleporttarget(0,0),
-		teleportSet(false)
+		teleportSet(false),
+		teleportReady(false),
+		teleportvelocity(0,0),
+		teleportflip(false)
         {};
 	virtual ~GameObject(); 
     virtual void update_drawable(); 
@@ -58,7 +61,8 @@ public:
     void setMoveStartLocation(float x, float y);
     void setManipulationStartLocation(sf::Vector2i pos);
 	virtual void move(float x, float y);
-	virtual void teleport(b2Vec2);
+	virtual void teleport(b2Vec2, b2Vec2, bool);
+	b2Vec2 getLinearVelocity();
 
 	//Checking wether a point is inside the GameObject
 	//It will also change the local_transform so that dragging looks better.
@@ -93,6 +97,9 @@ protected:
     const float DISCRETE_MOVE_UNIT;
 	b2Vec2 teleporttarget;
 	bool teleportSet;
+	bool teleportReady;
+	b2Vec2 teleportvelocity;
+	bool teleportflip;
 	
 	
 };	
@@ -227,16 +234,20 @@ class Lift : public GameObject
 class Teleport : public GameObject
 {
 public:
-	Teleport(b2World& world, float x, float y);
+	Teleport(b2World& world, float x, float y, int flipped=0);
 	~Teleport();
 	GameObject* calculate_next();	
 	void beginContact(GameObject*,b2Fixture*);
 	void endContact(GameObject*,b2Fixture*);
 	void notify(GameObject*); //Tells the Teleport that this object has just jumped.
+	void reset();
+	int flipped;
+	std::string highlightClicked(sf::Vector2i);
 private:
 	static std::list<GameObject* > teleports; //List of all teleports for deciding where to jump.
 	std::list<GameObject* > incoming; //While a pointer is here, the object cannot jump. After endContact() it is removed.
 	b2Fixture* my_check;
+	b2Fixture* my_check2;
 		
 };
 /*

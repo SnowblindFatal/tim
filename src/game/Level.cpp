@@ -26,7 +26,7 @@ LevelData::LevelData(sf::RenderWindow& _App) : phys_world(default_gravity), App(
 	available["GravityChanger"] = 0;
 	available["Bomb"] = 0;
 	available["Domino"] = 0;
-	available["Teleport"] = 1;
+	available["Teleport"] = 0;
 	available["Crate"] = 0;
 	
 	description = "No description available.";
@@ -146,22 +146,35 @@ GameObject* LevelData::isInsidePlayerObject(float x, float y) const {
 }
 
 void LevelData::draw(GameObject* priority, bool debug, bool drawsfml) {
-      if (debug)
+      if (debug) {
 		phys_world.DrawDebugData();
-      
+	 }
+      std::vector<GameObject*> teleports;
       if (drawsfml) {
       	for (auto &iter : levelobjects) {
 			if (iter!=priority) {
+				if (iter->getName()=="Teleport") {
+					teleports.push_back(iter);
+					continue;
+				}
 				iter->update_drawable();
 				iter->draw(App);
 			}
       	}
       	for (auto &iter : playerobjects) {
 			if (iter!=priority) {
+				if (iter->getName()=="Teleport") {
+					teleports.push_back(iter);
+					continue;
+				}
 				iter->update_drawable();
 				iter->draw(App);
       		}
 		}
+		for (auto& ptr : teleports) {
+			ptr->update_drawable();
+			ptr->draw(App);
+		}	
 		if (priority!=NULL) {
 			priority->update_drawable();
 			priority->draw(App);
