@@ -1,0 +1,21 @@
+LevelObjects
+Bomb 5.8 25.5 IsDestroyed
+Platform 0 22 40 0
+BowlingBall 6 14.6
+Wall 58 0 0 40
+Wall 1.54972e-06 24 0 28
+Wall -1.49012e-06 -3 0 25
+Wall 58 40 0 20
+Platform 2 48 40 0
+Platform 42 48 16 0
+Platform 2 1.19209e-07 35 0
+Platform 37 -1.19209e-07 21 0
+.
+PlayerObjects
+Bomb
+Bomb
+Bomb
+.
+Description
+Destroy TNT
+.

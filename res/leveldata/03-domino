@@ -1,0 +1,28 @@
+LevelObjects
+Bomb 34.4 40.6 IsDestroyed
+Platform 0 6 20 9
+Platform 20 15 20 0
+Domino 23.9 13.4
+Domino 26.8 13.4
+Domino 29.7 13.4
+Domino 32.7 13.5
+Domino 35.9 13.5
+Domino 38.9 13.4
+Platform 26 22 40 0
+Platform 20 17 9 0
+BouncingBall 27.2 21.5
+BowlingBall 9.7 8.1
+Platform -3 29 23 13
+Platform 20 42 16 0
+Platform 20 37 16 0
+Wall 36 37 0 7
+.
+PlayerObjects
+Domino
+Domino
+Domino
+Domino
+.
+Description
+Destroy TNT
+.

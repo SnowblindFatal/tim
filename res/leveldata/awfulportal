@@ -1,0 +1,16 @@
+LevelObjects
+Bomb 45.4 35.7 IsDestroyed
+Teleport 23.1 35.2 0
+Teleport 45.6 10 0
+Bomb 45.5 26.9
+BigBall 22.9 11.2
+.
+PlayerObjects
+GravityChanger
+.
+Description
+Write a
+description of
+the level
+here
+.

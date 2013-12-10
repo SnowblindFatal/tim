@@ -1,0 +1,28 @@
+LevelObjects
+Bomb 42.6 44.6 IsDestroyed
+Catapult 6.4 45.9 1
+BigBall 3.2 44.6
+Platform 27 46 20 0
+Platform 47 46 10 0
+Crate 30.6 44.4
+Crate 34.4 44.4
+Crate 32.5 41.1
+Crate 38.6 44.4
+Crate 36.5 41.2
+Crate 34.5 37.9
+Domino 34.5 34.8
+Domino 46.1 44.4
+Crate 47.1 41.2
+Domino 48 44.3
+Crate 47.1 38
+Crate 47.1 34.8
+Crate 47 31.6
+Domino 46.5 28.5
+.
+PlayerObjects
+BowlingBall
+Wall
+.
+Description
+Blow up the TNT.
+.

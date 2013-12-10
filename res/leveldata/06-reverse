@@ -1,0 +1,20 @@
+LevelObjects
+BouncingBall 9.1 14.4 IsNearPoint 8.9 8.1 1.65
+Wall 5 6 0 7
+Platform 7 6 4 0
+Wall 11 6 0 7
+Platform 21 44 4 0
+Platform 25 44 13 -7
+Platform 8 36 7 6
+Platform 15 42 6 2
+GravityChanger 42.4 20 0
+BowlingBall 39.4 4.5
+Platform 38 5 4 4
+Platform 45 16 4 -4
+.
+PlayerObjects
+Seesaw
+.
+Description
+Get the small ball into the box on the left.
+.

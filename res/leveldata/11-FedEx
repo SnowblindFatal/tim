@@ -1,0 +1,33 @@
+LevelObjects
+Crate 7.9 4.9 IsNearPoint 57.2999 49.7 4.05
+Platform 0 3.57628e-07 38 0
+Platform 38 -5.96046e-08 22 0
+Wall 58 2 0 20
+Wall 58 22 0 20
+Wall 58 42 0 8
+Wall 0 2 0 40
+Wall -7.7486e-07 42 0 8
+Platform 38 37 20 0
+Wall 38 39 0 12
+Platform 52 48 6 0
+Teleport 52.4 21.4 2
+Teleport 50.3 44.2 1
+GravityChanger 23.7 49.4 0
+GravityChanger 38.6 4.3 1
+Platform 51 35 7 -6
+Platform 27 12 10 -9
+Platform 37 13 10 8
+Teleport 28.8 32.6 0
+.
+PlayerObjects
+BowlingBall
+Domino
+Seesaw
+Seesaw
+Seesaw
+Wall
+.
+Description
+Deliver the crate to the bottom right corner.
+FedEx delivers on the floor.
+.

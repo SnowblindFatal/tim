@@ -1,0 +1,24 @@
+LevelObjects
+BouncingBall 56.6 45.6 IsNearPoint 8.5 41.2 2.85
+Catapult 52.6 44.7 0
+Catapult 38.3 38.7 0
+Catapult 24.2 31.9 0
+Wall 3 19 0 23
+Wall 12 24 0 18
+Platform 5 40 7 0
+Wall 41 7 0 23
+Wall 27 3 0 20
+.
+PlayerObjects
+BowlingBall
+BowlingBall
+BowlingBall
+Platform
+Platform
+Platform
+Platform
+Platform
+.
+Description
+Get the small ball into the basket on the left.
+.

@@ -1,0 +1,39 @@
+LevelObjects
+Bomb 56.6 46.7 IsDestroyed
+BowlingBall 5 4.7 IsNearPoint 5.2 44.9 3
+Wall 31 0 0 40
+Wall 31 40 0 13
+Platform -2 48 33 0
+Platform 33 48 30 0
+Wall 58 21 0 27
+Wall 58 -2 0 23
+Wall 1.78814e-07 10 0 38
+Wall 3.57628e-07 -10 0 20
+Platform 33 -1.19209e-07 25 0
+Platform 2 -5.96046e-08 29 0
+Platform 2 40 22 0
+Wall 8 2 0 20
+GravityChanger 34.6 47.4 0
+Wall 38 21 0 27
+Platform 40 21 18 0
+Domino 38.9 19.4
+Platform 54 19 4 -2
+Domino 41.8 19.5
+Domino 44.4 19.5
+Domino 47.6 19.5
+Domino 50.8 19.4
+Domino 54.4 16.9
+.
+PlayerObjects
+GravityChanger
+Platform
+Platform
+Platform
+Platform
+Platform
+Teleport
+Teleport
+.
+Description
+Destroy TNT and move ball to left down corner
+.
