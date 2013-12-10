@@ -61,7 +61,7 @@ bool FileHandler::loadLevel(LevelData& level)
 					continue; // Skip empty lines
 				if (line == ".")
 					break;
-				level.setDescription(line);
+				level.setDescription(level.getDescription() + "\n" + line);
 			}
 		}
 	}

@@ -26,7 +26,7 @@ GameState::StateSelect PlayMode::run()
     }
     else
     {
-    	tgui::Label::Ptr bottombar = gui.get("bottombar");
+    	tgui::TextBox::Ptr bottombar = gui.get("bottombar");
 		bottombar->setText(level.getDescription());
     }
 	
@@ -238,7 +238,7 @@ void PlayMode::toggleSimulation() {
         button->setProperty("Enabled", "false");
         button->setTransparency(127);
         
-        tgui::Label::Ptr bottombar = gui.get("bottombar");
+        tgui::TextBox::Ptr bottombar = gui.get("bottombar");
 		bottombar->setText(level.getDescription());
 	}
 	else {
@@ -261,7 +261,7 @@ void PlayMode::handleSimulation() {
         if (level.checkWin()) {
             toggleSimulation();
             Resources::getInstance().winLevel(currentLevelName);
-            tgui::Label::Ptr bottombar = gui.get("bottombar");
+            tgui::TextBox::Ptr bottombar = gui.get("bottombar");
             bottombar->setText("Level completed!");
         }
     }
@@ -307,13 +307,14 @@ void PlayMode::load_gui() {
     button_menu->bindCallback(tgui::Button::LeftMouseClicked);
 
 	//The Bottombar:
-	tgui::Label::Ptr bottom(gui, "bottombar");
+	tgui::TextBox::Ptr bottom(gui, "bottombar");
 	bottom->setSize(600,100);
 	bottom->setPosition(0,500);
 	bottom->setBackgroundColor(sf::Color::White);
 	bottom->setTextColor(sf::Color::Black);
 	bottom->setTextSize(22);
 	bottom->setText(level.getDescription());
+    bottom->setProperty("Enabled", "false");
 
 	//The different gameobjects:
 	int index=0;

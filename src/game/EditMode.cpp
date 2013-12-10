@@ -456,23 +456,23 @@ void EditMode::save_procedure() {
 	//The Background:
 	tgui::Panel::Ptr box(gui, "savebox");
 	box->setBackgroundTexture(Resources::getInstance().getTexture("savebox.png"));
-	box->setSize(500,500);
+	box->setSize(700,500);
 	box->setPosition(50,50);
 	
 	//The name:
 	tgui::EditBox::Ptr name(gui, "savename");
 	name->load("TGUI/Black.conf");
-	name->setSize(400, 30);
+	name->setSize(300, 30);
 	name->setPosition(100,100);
 	name->setText("Name");
 
 	//The Description:
 	tgui::TextBox::Ptr description(gui, "description");
 	description->load("TGUI/Black.conf");
-	description->setSize(400,200);
+	description->setSize(600,200);
 	description->setPosition(100,200);
 	description->setTextSize(22);
-	description->setText("Write a\ndescription of\nthe level\nhere");	
+	description->setText("Write a description of the level here");	
 
 	//The save and cancel buttons:
 	tgui::Button::Ptr savebutton(gui, "commitsave");
