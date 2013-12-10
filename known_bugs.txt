@@ -1,4 +1,4 @@
-AA list of known bugs etc.
+A list of known bugs etc.
 
 --Open editor -> load level -> click on an object -> object is not dropped if the user doesn't move mouse
 
