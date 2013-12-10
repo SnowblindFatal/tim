@@ -506,13 +506,22 @@ void EditMode::commit_save() {
 	tgui::EditBox::Ptr name = gui.get("savename");
 	tgui::TextBox::Ptr description = gui.get("description");
 	level.setDescription(description->getText());
-	FileHandler fh("res/leveldata/"+name->getText());
+	// Remove whitespaces from name
+	std::string insertedName = name->getText();
+	std::string newLevelName = "";
+	for (size_t i = 0;i < insertedName.length();i++)
+	{
+		if (insertedName[i] == ' ')
+			continue;
+		newLevelName += insertedName[i];
+	}
+	FileHandler fh("res/leveldata/"+newLevelName);
 	tgui::Label::Ptr bottom=gui.get("bottombar");
 	if (!fh.saveLevel(level)) {
 		bottom->setText("Save failed: \n"+fh.getError());
 	}
 	else {
-		Resources::getInstance().addLevel(name->getText());
+		Resources::getInstance().addLevel(newLevelName);
 		bottom->setText("Save succesful!");
 	}
 	close_save();
