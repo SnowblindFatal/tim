@@ -39,6 +39,9 @@ private:
 	void available_procedure();
 	void update_available_procedure();
 	void close_available();
+    void handleInput();
+    void handleGui();
+    void highlightObject();
 
 	//Save:
 	bool locked_save;
