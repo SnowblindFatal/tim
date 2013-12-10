@@ -71,7 +71,7 @@ void BaseGame::initialise()
 {
 	sf::ContextSettings sf_settings;
 	sf_settings.antialiasingLevel=8;
-    App.create(sf::VideoMode(800, 600, 32), "The Incredibly Mediocre Machine",sf::Style::Default,sf_settings);
+    App.create(sf::VideoMode(800, 600, 32), "The Incredibly Mediocre Machine",sf::Style::Titlebar,sf_settings);
     App.setFramerateLimit(60); // Limit to 60 frames per second
 }
 

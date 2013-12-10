@@ -7,7 +7,7 @@
 
 #include "game/BaseGame.h"
 
-using namespace std;
+using namespace std; //This seems unnecessary.
 
 /*
  * 
