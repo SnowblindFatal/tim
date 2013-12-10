@@ -215,12 +215,6 @@ class GravityChanger : public GameObject
 		b2Fixture* check2;
 };
 
-class Lift : public GameObject
-{
-	public:
-		Lift(b2World& world, float x1, float y1, float x2, float y2);
-};
-
 class Teleport : public GameObject
 {
 public:
@@ -257,13 +251,6 @@ public:
     }
 };
 
-/*
-class Chain : public GameObject
-{
-	public:
-		Chain(b2World& world);
-};
-*/
 #endif //GAMEOBJECT_H
 
 
