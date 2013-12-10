@@ -55,15 +55,16 @@ bool FileHandler::loadLevel(LevelData& level)
 		}
 		if (line == "Description")
 		{
-            level.setDescription("");
+            std::string desc = "";
 			while (getline(file, line))
 			{
 				if (line.length() == 0)
 					continue; // Skip empty lines
 				if (line == ".")
 					break;
-				level.setDescription(level.getDescription() + "\n" + line);
+                desc += line + "\n";
 			}
+            level.setDescription(desc);
 		}
 	}
 	file.close();
