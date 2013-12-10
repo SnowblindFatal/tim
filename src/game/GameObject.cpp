@@ -432,8 +432,8 @@ std::string Catapult::highlightClicked(sf::Vector2i point) {
 	if (result=="rotate") {
 		std::cout << bodies[1].body_ptr->GetAngle() << std::endl;
 		if (bodies[1].body_ptr->GetAngle() > 0) {
-			std::cout << "0.4\n";
 			bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), -0.4);
+			bodies[1].original_rot=-0.4;
 			b2Fixture* fix = bodies[1].body_ptr->GetFixtureList();
 			for (;fix!=NULL;fix=fix->GetNext()) {
 				bodies[1].body_ptr->DestroyFixture(fix);
@@ -457,8 +457,8 @@ std::string Catapult::highlightClicked(sf::Vector2i point) {
 			dynamic_cast<CatapultDrawable*>(drawable)->setFlipped(true);
 		}
 		else {
-			std::cout << "0.0\n";
 			bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), 0.4);
+			bodies[1].original_rot=0.4;
 			b2Fixture* fix = bodies[1].body_ptr->GetFixtureList();
 			for (;fix!=NULL;fix=fix->GetNext()) {
 				bodies[1].body_ptr->DestroyFixture(fix);
@@ -537,15 +537,16 @@ Seesaw::Seesaw(b2World& world, float x, float y, bool flipped) : GameObject(worl
 
 std::string Seesaw::highlightClicked(sf::Vector2i point) {
 	std::string result=drawable->highlightClicked(point);
-	std::cout << result << std::endl;
 	if (result=="rotate") {
 		std::cout << bodies[1].body_ptr->GetAngle() << std::endl;
 		if (bodies[1].body_ptr->GetAngle() > 0) {
 			bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), -0.4);
+			bodies[1].original_rot=-0.4;
 			flipped = true;
 		}
 		else {
 			bodies[1].body_ptr->SetTransform(bodies[1].body_ptr->GetPosition(), 0.4);
+			bodies[1].original_rot=0.4;
 			flipped = false;
 		}
 		return "nothing";
