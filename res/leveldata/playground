@@ -1,5 +1,5 @@
 LevelObjects
-BouncingBall 59 49.1 IsNearPoint 53.9 5.9 0.9
+BouncingBall 70 49.1 IsNearPoint 53.9 5.9 0.9
 .
 PlayerObjects
 BigBall
@@ -217,6 +217,20 @@ Crate
 Crate
 Crate
 Crate
+Crate
+Crate
+Crate
+Crate
+Teleport
+Teleport
+Teleport
+Teleport
+Teleport
+Teleport
+Teleport
+Teleport
+Teleport
+Teleport
 .
 Description
 Just have fun!
