@@ -629,23 +629,22 @@ void Bomb::explode() {
 		std::cout << "bomb explode\n";
 		exploded = true;
 		b2Vec2 center = bodies[0].body_ptr->GetPosition();
-		//find all fixtures within blast radius AABB
-		MyQueryCallback queryCallback;
-		b2AABB aabb;
+		float power = 300; 
 		float blast_radius = 15;
-		aabb.lowerBound = center - b2Vec2(blast_radius, blast_radius);
-		aabb.upperBound = center + b2Vec2(blast_radius, blast_radius);
-	   	world.QueryAABB(&queryCallback, aabb);
-		float power = 1500;
 		//apply impulse to bodies
-		for (size_t i = 0; i < queryCallback.foundBodies.size(); i++) {
-		    b2Body* body = queryCallback.foundBodies[i];
-		    b2Vec2 body_pos = body->GetWorldCenter();
-		    //ignore bodies outside the blast range
-		    if ((body_pos - center).Length() >= blast_radius)
-		        continue;
-		    applyImpulse(body, center, body_pos, power);
-		}
+		size_t rays = 50;
+	    for (size_t i = 0; i < rays; i++) {
+            float angle = (i / (float)rays) * 6.282;
+            b2Vec2 rayDir( sinf(angle), cosf(angle) );
+            b2Vec2 rayEnd = center + blast_radius * rayDir;
+
+            //check what this ray hits
+            RayCastClosestCallback callback;
+            world.RayCast(&callback, center, rayEnd);
+            if ( callback.m_body ) {
+                applyImpulse(callback.m_body, center, callback.m_point, power);
+            }
+        }
 	}	
 }
 

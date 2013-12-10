@@ -215,16 +215,6 @@ class GravityChanger : public GameObject
 		b2Fixture* check2;
 };
 
-class MyQueryCallback : public b2QueryCallback {
-	public:
-		std::vector<b2Body*> foundBodies;
-
-		bool ReportFixture(b2Fixture* fixture) {
-			foundBodies.push_back( fixture->GetBody() );
-			std::cout << "object\n";
-			return true;//keep going to find all fixtures in the query area
-		}
-};
 class Lift : public GameObject
 {
 	public:
@@ -250,6 +240,23 @@ private:
 	b2Fixture* my_check2;
 		
 };
+
+class RayCastClosestCallback : public b2RayCastCallback
+{
+public:
+    b2Body* m_body;
+    b2Vec2 m_point;
+
+    RayCastClosestCallback() { m_body = NULL; }
+
+    float32 ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2&, float32 fraction)
+    {
+        m_body = fixture->GetBody();
+		m_point = point;
+        return fraction;
+    }
+};
+
 /*
 class Chain : public GameObject
 {
