@@ -55,6 +55,7 @@ bool FileHandler::loadLevel(LevelData& level)
 		}
 		if (line == "Description")
 		{
+            level.setDescription("");
 			while (getline(file, line))
 			{
 				if (line.length() == 0)
